@@ -1,0 +1,1366 @@
+import { useState, useRef } from 'react'
+import { motion } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
+import { triggerFeedbackModal, hasGivenFeedback } from '../../utils/feedbackHelper'
+import { 
+  ArrowLeft, 
+  Save, 
+  Eye, 
+  Upload, 
+  Edit3, 
+  X, 
+  Plus, 
+  Code, 
+  Globe,
+  Github,
+  ExternalLink,
+  MapPin,
+  Mail,
+  Phone,
+  Monitor,
+  Database,
+  Server,
+  Smartphone,
+  Image as ImageIcon
+} from 'lucide-react'
+
+function WebDeveloperTemplateEditor() {
+  const navigate = useNavigate()
+  const fileInputRef = useRef(null)
+  const [isPreview, setIsPreview] = useState(false)
+  const [editingSection, setEditingSection] = useState(null)
+
+  // Editable portfolio data
+  const [portfolioData, setPortfolioData] = useState({
+    profile: {
+      name: "John Smith",
+      title: "Full Stack Developer",
+      specialization: "fullstack", // frontend, backend, fullstack
+      description: "Passionate full stack developer with 5+ years of experience building scalable web applications. Specialized in React, Node.js, and cloud technologies.",
+      profileImage: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face",
+      bannerImage: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=400&fit=crop",
+      location: "San Francisco, CA",
+      email: "john@developer.com",
+      phone: "+1 (555) 123-4567",
+      website: "www.johnsmith.dev",
+      github: "https://github.com/johnsmith",
+      linkedin: "https://linkedin.com/in/johnsmith"
+    },
+    techStack: {
+      frontend: ["React", "Vue.js", "TypeScript", "Tailwind CSS"],
+      backend: ["Node.js", "Python", "PostgreSQL", "MongoDB"],
+      tools: ["Git", "Docker", "AWS", "Vercel"],
+      other: ["REST APIs", "GraphQL", "CI/CD", "Agile"]
+    },
+    projects: [
+      {
+        id: 1,
+        title: "E-Commerce Platform",
+        category: "fullstack",
+        image: "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop",
+        description: "Full-featured e-commerce platform with React frontend, Node.js backend, and Stripe integration.",
+        technologies: ["React", "Node.js", "MongoDB", "Stripe"],
+        liveUrl: "https://ecommerce-demo.com",
+        githubUrl: "https://github.com/johnsmith/ecommerce",
+        features: ["User Authentication", "Payment Processing", "Admin Dashboard", "Responsive Design"],
+        year: "2024"
+      },
+      {
+        id: 2,
+        title: "Task Management App",
+        category: "frontend",
+        image: "https://images.unsplash.com/photo-1611224923853-80b023f02d71?w=600&h=400&fit=crop",
+        description: "Modern task management application with real-time collaboration features.",
+        technologies: ["Vue.js", "TypeScript", "Firebase", "Vuetify"],
+        liveUrl: "https://taskmanager-demo.com",
+        githubUrl: "https://github.com/johnsmith/taskmanager",
+        features: ["Real-time Sync", "Team Collaboration", "Drag & Drop", "Mobile Responsive"],
+        year: "2024"
+      }
+    ],
+    skills: [
+      { name: "JavaScript", level: 95, category: "frontend" },
+      { name: "React", level: 90, category: "frontend" },
+      { name: "Node.js", level: 88, category: "backend" },
+      { name: "Python", level: 85, category: "backend" },
+      { name: "PostgreSQL", level: 82, category: "backend" },
+      { name: "AWS", level: 78, category: "tools" }
+    ],
+    services: [
+      {
+        icon: "Monitor",
+        title: "Frontend Development",
+        description: "Modern, responsive web applications using React, Vue.js, and the latest frontend technologies."
+      },
+      {
+        icon: "Server",
+        title: "Backend Development", 
+        description: "Scalable server-side applications with Node.js, Python, and robust database solutions."
+      },
+      {
+        icon: "Database",
+        title: "Database Design",
+        description: "Efficient database architecture and optimization for SQL and NoSQL databases."
+      },
+      {
+        icon: "Globe",
+        title: "Full Stack Solutions",
+        description: "Complete web application development from concept to deployment and maintenance."
+      }
+    ],
+    footer: {
+      companyName: "John Smith Development",
+      tagline: "Building tomorrow's web solutions today",
+      quickStats: {
+        projects: "25+",
+        experience: "5+ years",
+        clients: "40+",
+        technologies: "15+"
+      },
+      socialLinks: [
+        { platform: "GitHub", url: "https://github.com/johnsmith", icon: "Github" },
+        { platform: "LinkedIn", url: "https://linkedin.com/in/johnsmith", icon: "Globe" },
+        { platform: "Portfolio", url: "https://johnsmith.dev", icon: "Monitor" }
+      ],
+      copyright: "© 2024 John Smith. All rights reserved."
+    }
+  })
+
+  const [selectedCategory, setSelectedCategory] = useState('all')
+  const [showUploadModal, setShowUploadModal] = useState(false)
+  const [uploadType, setUploadType] = useState('')
+
+  const categories = [
+    { id: 'all', name: 'All Projects' },
+    { id: 'frontend', name: 'Frontend' },
+    { id: 'backend', name: 'Backend' },
+    { id: 'fullstack', name: 'Full Stack' },
+    { id: 'mobile', name: 'Mobile' },
+    { id: 'api', name: 'APIs' }
+  ]
+
+  const specializationOptions = [
+    { value: 'frontend', label: 'Frontend Developer', icon: <Monitor className="w-5 h-5" /> },
+    { value: 'backend', label: 'Backend Developer', icon: <Server className="w-5 h-5" /> },
+    { value: 'fullstack', label: 'Full Stack Developer', icon: <Code className="w-5 h-5" /> }
+  ]
+
+  const techStackCategories = [
+    { key: 'frontend', name: 'Frontend Technologies', icon: <Monitor className="w-5 h-5" /> },
+    { key: 'backend', name: 'Backend Technologies', icon: <Server className="w-5 h-5" /> },
+    { key: 'tools', name: 'Tools & Platforms', icon: <Database className="w-5 h-5" /> },
+    { key: 'other', name: 'Other Skills', icon: <Code className="w-5 h-5" /> }
+  ]
+
+  const filteredProjects = selectedCategory === 'all' 
+    ? portfolioData.projects 
+    : portfolioData.projects.filter(project => project.category === selectedCategory)
+
+  const fadeInUp = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.6 }
+  }
+
+  const staggerChildren = {
+    animate: {
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  }
+
+  const handleImageUpload = (field, section = null) => {
+    setUploadType(field)
+    setEditingSection(section)
+    setShowUploadModal(true)
+  }
+
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e) => {
+        const imageUrl = e.target.result
+        
+        if (editingSection === 'profile') {
+          setPortfolioData(prev => ({
+            ...prev,
+            profile: {
+              ...prev.profile,
+              [uploadType]: imageUrl
+            }
+          }))
+        } else if (editingSection === 'projects') {
+          // Handle project image uploads
+          console.log('Project image upload:', uploadType, imageUrl)
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+    setShowUploadModal(false)
+    setUploadType('')
+    setEditingSection(null)
+  }
+
+  const updateProfileField = (field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      profile: {
+        ...prev.profile,
+        [field]: value
+      }
+    }))
+  }
+
+  const updateTechStack = (category, technologies) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      techStack: {
+        ...prev.techStack,
+        [category]: technologies
+      }
+    }))
+  }
+
+  const addProject = () => {
+    const newProject = {
+      id: Date.now(),
+      title: "New Project",
+      category: "frontend",
+      image: "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop",
+      description: "Project description...",
+      technologies: [],
+      liveUrl: "",
+      githubUrl: "",
+      features: [],
+      year: "2024"
+    }
+    setPortfolioData(prev => ({
+      ...prev,
+      projects: [...prev.projects, newProject]
+    }))
+  }
+
+  const updateProject = (id, field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      projects: prev.projects.map(project => 
+        project.id === id ? { ...project, [field]: value } : project
+      )
+    }))
+  }
+
+  const removeProject = (id) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      projects: prev.projects.filter(project => project.id !== id)
+    }))
+  }
+
+  const addSkill = () => {
+    const newSkill = { name: "New Technology", level: 70, category: "frontend" }
+    setPortfolioData(prev => ({
+      ...prev,
+      skills: [...prev.skills, newSkill]
+    }))
+  }
+
+  const updateSkill = (index, field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      skills: prev.skills.map((skill, i) => 
+        i === index ? { ...skill, [field]: value } : skill
+      )
+    }))
+  }
+
+  const removeSkill = (index) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      skills: prev.skills.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addService = () => {
+    const newService = {
+      icon: "Code",
+      title: "New Service",
+      description: "Service description..."
+    }
+    setPortfolioData(prev => ({
+      ...prev,
+      services: [...prev.services, newService]
+    }))
+  }
+
+  const updateService = (index, field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      services: prev.services.map((service, i) => 
+        i === index ? { ...service, [field]: value } : service
+      )
+    }))
+  }
+
+  const removeService = (index) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      services: prev.services.filter((_, i) => i !== index)
+    }))
+  }
+
+  const updateFooterField = (field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        [field]: value
+      }
+    }))
+  }
+
+  const updateFooterStats = (field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        quickStats: {
+          ...prev.footer.quickStats,
+          [field]: value
+        }
+      }
+    }))
+  }
+
+  const updateSocialLink = (index, field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        socialLinks: prev.footer.socialLinks.map((link, i) => 
+          i === index ? { ...link, [field]: value } : link
+        )
+      }
+    }))
+  }
+
+  const addSocialLink = () => {
+    const newLink = { platform: "New Platform", url: "", icon: "Globe" }
+    setPortfolioData(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        socialLinks: [...prev.footer.socialLinks, newLink]
+      }
+    }))
+  }
+
+  const removeSocialLink = (index) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      footer: {
+        ...prev.footer,
+        socialLinks: prev.footer.socialLinks.filter((_, i) => i !== index)
+      }
+    }))
+  }
+
+  const getServiceIcon = (iconName) => {
+    switch (iconName) {
+      case 'Code': return <Code className="w-8 h-8" />
+      case 'Monitor': return <Monitor className="w-8 h-8" />
+      case 'Server': return <Server className="w-8 h-8" />
+      case 'Database': return <Database className="w-8 h-8" />
+      case 'Globe': return <Globe className="w-8 h-8" />
+      case 'Github': return <Github className="w-8 h-8" />
+      default: return <Code className="w-8 h-8" />
+    }
+  }
+
+  const savePortfolio = () => {
+    localStorage.setItem('webDeveloperPortfolio', JSON.stringify(portfolioData))
+    alert('Portfolio saved successfully!')
+    
+    // Trigger feedback modal if user hasn't given feedback yet
+    if (!hasGivenFeedback()) {
+      triggerFeedbackModal()
+      navigate('/')
+    }
+  }
+
+  const publishPortfolio = () => {
+    savePortfolio()
+  }
+
+  if (isPreview) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Preview Header */}
+        <header className="bg-white shadow-sm sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <button
+                onClick={() => setIsPreview(false)}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Editor</span>
+              </button>
+              
+              <div className="flex space-x-4">
+                <button
+                  onClick={savePortfolio}
+                  className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </button>
+                <button
+                  onClick={publishPortfolio}
+                  className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <span>Publish</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Full Preview Content */}
+        <div className="max-w-7xl mx-auto">
+          {/* Banner Section */}
+          <div className="relative h-80 bg-gradient-to-br from-purple-600 via-violet-600 to-blue-600">
+            <img
+              src={portfolioData.profile.bannerImage}
+              alt="Banner"
+              className="w-full h-full object-cover opacity-50"
+            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="text-center text-white">
+                <img
+                  src={portfolioData.profile.profileImage}
+                  alt={portfolioData.profile.name}
+                  className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg"
+                />
+                <h1 className="text-4xl font-bold mb-2">{portfolioData.profile.name}</h1>
+                <p className="text-2xl mb-4">{portfolioData.profile.title}</p>
+                <div className="flex items-center justify-center space-x-2 text-lg">
+                  <MapPin className="w-5 h-5" />
+                  <span>{portfolioData.profile.location}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* About Section */}
+          <div className="bg-white p-8 shadow-sm">
+            <div className="max-w-4xl mx-auto">
+              <p className="text-lg text-gray-700 leading-relaxed">{portfolioData.profile.description}</p>
+              <div className="flex flex-wrap gap-4 mt-6">
+                <a href={`mailto:${portfolioData.profile.email}`} className="flex items-center text-purple-600 hover:text-purple-700">
+                  <Mail className="w-5 h-5 mr-2" />
+                  {portfolioData.profile.email}
+                </a>
+                <a href={`tel:${portfolioData.profile.phone}`} className="flex items-center text-purple-600 hover:text-purple-700">
+                  <Phone className="w-5 h-5 mr-2" />
+                  {portfolioData.profile.phone}
+                </a>
+                <a href={portfolioData.profile.github} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
+                  <Globe className="w-5 h-5 mr-2" />
+                  GitHub
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Tech Stack Section */}
+          <div className="bg-gray-50 p-8">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Tech Stack</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {Object.entries(portfolioData.techStack).map(([category, techs]) => (
+                  <div key={category}>
+                    <h3 className="text-xl font-semibold text-gray-800 mb-4 capitalize">{category}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {techs.map((tech, idx) => (
+                        <span key={idx} className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                          {tech}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Projects Section */}
+          <div className="bg-white p-8">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Projects</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {portfolioData.projects.map((project) => (
+                  <div key={project.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+                    <img src={project.image} alt={project.title} className="w-full h-48 object-cover" />
+                    <div className="p-6">
+                      <h3 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
+                      <p className="text-gray-600 mb-4">{project.description}</p>
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.technologies.map((tech, idx) => (
+                          <span key={idx} className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="flex space-x-4">
+                        {project.githubUrl && (
+                          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 font-medium">
+                            GitHub →
+                          </a>
+                        )}
+                        {project.liveUrl && (
+                          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 font-medium">
+                            Live Demo →
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Skills Section */}
+          <div className="bg-gray-50 p-8">
+            <div className="max-w-4xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Skills</h2>
+              <div className="space-y-4">
+                {portfolioData.skills.map((skill, idx) => (
+                  <div key={idx}>
+                    <div className="flex justify-between mb-2">
+                      <span className="font-medium text-gray-700">{skill.name}</span>
+                      <span className="text-gray-600">{skill.level}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-purple-600 h-2 rounded-full transition-all duration-500"
+                        style={{ width: `${skill.level}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Services Section */}
+          <div className="bg-white p-8">
+            <div className="max-w-6xl mx-auto">
+              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Services</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {portfolioData.services.map((service, idx) => (
+                  <div key={idx} className="text-center p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
+                    <div className="text-purple-600 mb-4 flex justify-center">
+                      {getServiceIcon(service.icon)}
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
+                    <p className="text-gray-600 text-sm">{service.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer className="bg-gray-900 text-white p-8">
+            <div className="max-w-6xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                  <h3 className="text-xl font-bold mb-4">{portfolioData.footer.companyName}</h3>
+                  <p className="text-gray-400">{portfolioData.footer.tagline}</p>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-4">Quick Stats</h4>
+                  <div className="space-y-2 text-gray-400">
+                    <div>Projects: {portfolioData.footer.quickStats.projects}</div>
+                    <div>Experience: {portfolioData.footer.quickStats.experience}</div>
+                    <div>Clients: {portfolioData.footer.quickStats.clients}</div>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="font-semibold mb-4">Connect</h4>
+                  <div className="flex space-x-4">
+                    {portfolioData.footer.socialLinks.map((link, idx) => (
+                      <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+                        {link.platform}
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
+                {portfolioData.footer.copyright}
+              </div>
+            </div>
+          </footer>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Editor Header */}
+      <header className="bg-white shadow-sm sticky top-0 z-40">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            <button
+              onClick={() => navigate('/#templates')}
+              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Back to Templates</span>
+            </button>
+            
+            <div className="flex space-x-4">
+              <button
+                onClick={() => setIsPreview(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Eye className="w-4 h-4" />
+                <span>Preview</span>
+              </button>
+              <button
+                onClick={savePortfolio}
+                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+              >
+                <Save className="w-4 h-4" />
+                <span>Save</span>
+              </button>
+              <button
+                onClick={publishPortfolio}
+                className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <span>Publish Portfolio</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Web Developer Portfolio Editor</h1>
+          <p className="text-gray-600">Customize your developer portfolio with your projects, tech stack, and professional information.</p>
+        </div>
+
+        <div className="space-y-12">
+          {/* Profile Section */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            initial="initial"
+            animate="animate"
+            variants={fadeInUp}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Edit3 className="w-6 h-6 mr-2 text-purple-600" />
+              Developer Profile
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              {/* Banner Image */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Banner Image
+                </label>
+                <div className="relative group">
+                  <img
+                    src={portfolioData.profile.bannerImage}
+                    alt="Banner"
+                    className="w-full h-32 object-cover rounded-lg"
+                  />
+                  <button
+                    onClick={() => handleImageUpload('bannerImage', 'profile')}
+                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                  >
+                    <Upload className="w-8 h-8 text-white" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Profile Image */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Profile Image
+                </label>
+                <div className="relative group w-32 h-32">
+                  <img
+                    src={portfolioData.profile.profileImage}
+                    alt="Profile"
+                    className="w-32 h-32 object-cover rounded-full"
+                  />
+                  <button
+                    onClick={() => handleImageUpload('profileImage', 'profile')}
+                    className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-full"
+                  >
+                    <Upload className="w-6 h-6 text-white" />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Name</label>
+                <input
+                  type="text"
+                  value={portfolioData.profile.name}
+                  onChange={(e) => updateProfileField('name', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Title</label>
+                <input
+                  type="text"
+                  value={portfolioData.profile.title}
+                  onChange={(e) => updateProfileField('title', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+
+              {/* Developer Specialization */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Specialization</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {specializationOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => updateProfileField('specialization', option.value)}
+                      className={`p-3 rounded-lg border-2 transition-all ${
+                        portfolioData.profile.specialization === option.value
+                          ? 'border-purple-500 bg-purple-50 text-purple-700'
+                          : 'border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      <div className="flex flex-col items-center space-y-1">
+                        {option.icon}
+                        <span className="text-xs font-medium">{option.label.split(' ')[0]}</span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="md:col-span-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={portfolioData.profile.description}
+                  onChange={(e) => updateProfileField('description', e.target.value)}
+                  rows={3}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              
+              {/* Contact Information */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  value={portfolioData.profile.location}
+                  onChange={(e) => updateProfileField('location', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                <input
+                  type="email"
+                  value={portfolioData.profile.email}
+                  onChange={(e) => updateProfileField('email', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
+                <input
+                  type="tel"
+                  value={portfolioData.profile.phone}
+                  onChange={(e) => updateProfileField('phone', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                <input
+                  type="url"
+                  value={portfolioData.profile.website}
+                  onChange={(e) => updateProfileField('website', e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">GitHub</label>
+                <input
+                  type="url"
+                  value={portfolioData.profile.github}
+                  onChange={(e) => updateProfileField('github', e.target.value)}
+                  placeholder="https://github.com/username"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn</label>
+                <input
+                  type="url"
+                  value={portfolioData.profile.linkedin}
+                  onChange={(e) => updateProfileField('linkedin', e.target.value)}
+                  placeholder="https://linkedin.com/in/username"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Tech Stack Section */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Code className="w-6 h-6 mr-2 text-purple-600" />
+              Technology Stack
+            </h2>
+
+            <div className="space-y-6">
+              {techStackCategories.map((category) => (
+                <div key={category.key} className="border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span className="text-purple-600 mr-2">{category.icon}</span>
+                    {category.name}
+                  </h3>
+                  
+                  <div className="flex flex-wrap gap-2">
+                    {portfolioData.techStack[category.key].map((tech, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 border border-purple-200"
+                      >
+                        {tech}
+                        <button
+                          onClick={() => {
+                            const newTechs = portfolioData.techStack[category.key].filter((_, i) => i !== index)
+                            updateTechStack(category.key, newTechs)
+                          }}
+                          className="ml-2 w-4 h-4 rounded-full bg-purple-200 hover:bg-purple-300 flex items-center justify-center"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                    
+                    <button
+                      onClick={() => {
+                        const newTech = prompt(`Add new ${category.name.toLowerCase()}:`)
+                        if (newTech) {
+                          updateTechStack(category.key, [...portfolioData.techStack[category.key], newTech])
+                        }
+                      }}
+                      className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium border-2 border-dashed border-purple-300 text-purple-600 hover:border-purple-400 hover:bg-purple-50"
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Projects Section */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Globe className="w-6 h-6 mr-2 text-purple-600" />
+                Projects Portfolio
+              </h2>
+              <button
+                onClick={addProject}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Project</span>
+              </button>
+            </div>
+
+            {/* Project Guide */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+              <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
+                <Code className="w-5 h-5 mr-2" />
+                How to Add Your Projects
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">1</div>
+                  <div>
+                    <p className="text-blue-800 font-medium">Deploy your project to a live URL</p>
+                    <p className="text-blue-600 text-sm">Use Vercel, Netlify, Heroku, or any hosting platform</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">2</div>
+                  <div>
+                    <p className="text-blue-800 font-medium">Upload code to GitHub</p>
+                    <p className="text-blue-600 text-sm">Make sure your repository is public for easy viewing</p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <div className="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">3</div>
+                  <div>
+                    <p className="text-blue-800 font-medium">Add project details below</p>
+                    <p className="text-blue-600 text-sm">Include live URL, GitHub link, and description</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {portfolioData.projects.map((project, index) => (
+                <div key={project.id} className="border border-gray-200 rounded-lg p-4">
+                  <div className="relative group mb-4">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={() => handleImageUpload('image', 'projects')}
+                      className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                    >
+                      <Upload className="w-6 h-6 text-white" />
+                    </button>
+                    <button
+                      onClick={() => removeProject(project.id)}
+                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      value={project.title}
+                      onChange={(e) => updateProject(project.id, 'title', e.target.value)}
+                      placeholder="Project Title"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <select
+                        value={project.category}
+                        onChange={(e) => updateProject(project.id, 'category', e.target.value)}
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      >
+                        <option value="frontend">Frontend</option>
+                        <option value="backend">Backend</option>
+                        <option value="fullstack">Full Stack</option>
+                        <option value="mobile">Mobile</option>
+                        <option value="api">API</option>
+                      </select>
+                      <input
+                        type="text"
+                        value={project.year}
+                        onChange={(e) => updateProject(project.id, 'year', e.target.value)}
+                        placeholder="Year"
+                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    
+                    <textarea
+                      value={project.description}
+                      onChange={(e) => updateProject(project.id, 'description', e.target.value)}
+                      placeholder="Project description..."
+                      rows={2}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    
+                    <div className="grid grid-cols-1 gap-2">
+                      <input
+                        type="url"
+                        value={project.liveUrl}
+                        onChange={(e) => updateProject(project.id, 'liveUrl', e.target.value)}
+                        placeholder="Live Demo URL (e.g., https://project-demo.com)"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                      <input
+                        type="url"
+                        value={project.githubUrl}
+                        onChange={(e) => updateProject(project.id, 'githubUrl', e.target.value)}
+                        placeholder="GitHub Repository URL"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Technologies Used</label>
+                      <input
+                        type="text"
+                        value={project.technologies.join(', ')}
+                        onChange={(e) => updateProject(project.id, 'technologies', e.target.value.split(', ').filter(t => t))}
+                        placeholder="React, Node.js, MongoDB, etc."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Key Features</label>
+                      <input
+                        type="text"
+                        value={project.features.join(', ')}
+                        onChange={(e) => updateProject(project.id, 'features', e.target.value.split(', ').filter(f => f))}
+                        placeholder="Authentication, Real-time chat, etc."
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Skills Section */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Database className="w-6 h-6 mr-2 text-purple-600" />
+                Skills & Proficiency
+              </h2>
+              <button
+                onClick={addSkill}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Skill</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {portfolioData.skills.map((skill, index) => (
+                <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
+                  <input
+                    type="text"
+                    value={skill.name}
+                    onChange={(e) => updateSkill(index, 'name', e.target.value)}
+                    placeholder="Technology name"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  <select
+                    value={skill.category}
+                    onChange={(e) => updateSkill(index, 'category', e.target.value)}
+                    className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="frontend">Frontend</option>
+                    <option value="backend">Backend</option>
+                    <option value="tools">Tools</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value={skill.level}
+                    onChange={(e) => updateSkill(index, 'level', parseInt(e.target.value))}
+                    className="w-20"
+                  />
+                  <span className="text-sm font-medium text-gray-600 w-10">{skill.level}%</span>
+                  <button
+                    onClick={() => removeSkill(index)}
+                    className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Services Section */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Monitor className="w-6 h-6 mr-2 text-purple-600" />
+                Services
+              </h2>
+              <button
+                onClick={addService}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Service</span>
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {portfolioData.services.map((service, index) => (
+                <div key={index} className="border border-gray-200 rounded-lg p-4">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="text-purple-600">
+                      {getServiceIcon(service.icon)}
+                    </div>
+                    <button
+                      onClick={() => removeService(index)}
+                      className="w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <div className="space-y-3">
+                    <select
+                      value={service.icon}
+                      onChange={(e) => updateService(index, 'icon', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    >
+                      <option value="Code">Code</option>
+                      <option value="Monitor">Monitor</option>
+                      <option value="Server">Server</option>
+                      <option value="Database">Database</option>
+                      <option value="Globe">Globe</option>
+                      <option value="Github">Github</option>
+                    </select>
+                    <input
+                      type="text"
+                      value={service.title}
+                      onChange={(e) => updateService(index, 'title', e.target.value)}
+                      placeholder="Service title"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <textarea
+                      value={service.description}
+                      onChange={(e) => updateService(index, 'description', e.target.value)}
+                      placeholder="Service description..."
+                      rows={3}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Footer Section - Same as video editor */}
+          <motion.div 
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+              <Globe className="w-6 h-6 mr-2 text-purple-600" />
+              Footer Settings
+            </h2>
+
+            <div className="space-y-8">
+              {/* Company Info */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Company Name</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.companyName}
+                      onChange={(e) => updateFooterField('companyName', e.target.value)}
+                      placeholder="Your Development Company"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Tagline</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.tagline}
+                      onChange={(e) => updateFooterField('tagline', e.target.value)}
+                      placeholder="Your professional tagline"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Copyright Text</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.copyright}
+                      onChange={(e) => updateFooterField('copyright', e.target.value)}
+                      placeholder="© 2024 Your Name. All rights reserved."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Stats */}
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Quick Stats</h3>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Projects</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.quickStats.projects}
+                      onChange={(e) => updateFooterStats('projects', e.target.value)}
+                      placeholder="25+"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Experience</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.quickStats.experience}
+                      onChange={(e) => updateFooterStats('experience', e.target.value)}
+                      placeholder="5+ years"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Clients</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.quickStats.clients}
+                      onChange={(e) => updateFooterStats('clients', e.target.value)}
+                      placeholder="40+"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Technologies</label>
+                    <input
+                      type="text"
+                      value={portfolioData.footer.quickStats.technologies}
+                      onChange={(e) => updateFooterStats('technologies', e.target.value)}
+                      placeholder="15+"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Social Links */}
+              <div>
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-semibold text-gray-800">Social Links</h3>
+                  <button
+                    onClick={addSocialLink}
+                    className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add Link</span>
+                  </button>
+                </div>
+
+                <div className="space-y-4">
+                  {portfolioData.footer.socialLinks.map((link, index) => (
+                    <div key={index} className="grid grid-cols-12 gap-3 items-end">
+                      <div className="col-span-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Platform</label>
+                        <input
+                          type="text"
+                          value={link.platform}
+                          onChange={(e) => updateSocialLink(index, 'platform', e.target.value)}
+                          placeholder="GitHub"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div className="col-span-5">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">URL</label>
+                        <input
+                          type="url"
+                          value={link.url}
+                          onChange={(e) => updateSocialLink(index, 'url', e.target.value)}
+                          placeholder="https://github.com/username"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                      </div>
+                      <div className="col-span-3">
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Icon</label>
+                        <select
+                          value={link.icon}
+                          onChange={(e) => updateSocialLink(index, 'icon', e.target.value)}
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        >
+                          <option value="Github">Github</option>
+                          <option value="Globe">Globe</option>
+                          <option value="Monitor">Monitor</option>
+                          <option value="Mail">Mail</option>
+                          <option value="Phone">Phone</option>
+                          <option value="Code">Code</option>
+                        </select>
+                      </div>
+                      <div className="col-span-1">
+                        <button
+                          onClick={() => removeSocialLink(index)}
+                          className="w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Upload Modal - Same as video editor */}
+      {showUploadModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-8 max-w-md w-full mx-4">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl font-bold text-gray-900">Upload Image</h3>
+              <button
+                onClick={() => setShowUploadModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                <ImageIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <p className="text-gray-600 mb-4">Choose an image file to upload</p>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Select File
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+export default WebDeveloperTemplateEditor
