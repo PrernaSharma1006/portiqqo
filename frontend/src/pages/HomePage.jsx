@@ -192,9 +192,9 @@ function HomePage() {
       <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 py-12 md:py-16">
         {/* Animated Background Elements */}
         <div className="absolute inset-0">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-violet-600/10 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-5 md:top-20 md:left-10 w-48 h-48 md:w-72 md:h-72 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-10 right-5 md:bottom-20 md:right-10 w-64 h-64 md:w-96 md:h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] bg-violet-600/10 rounded-full blur-3xl"></div>
         </div>
 
         {/* Grid Pattern Overlay */}
@@ -220,7 +220,7 @@ function HomePage() {
                 </motion.div>
 
                 <motion.h1 
-                  className="text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold leading-tight"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold leading-tight"
                   variants={fadeInUp}
                 >
                   <span className="text-white">Build Your</span>
@@ -233,7 +233,7 @@ function HomePage() {
                 </motion.h1>
                 
                 <motion.p 
-                  className="text-lg md:text-xl text-gray-300 leading-relaxed max-w-xl"
+                  className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed max-w-xl"
                   variants={fadeInUp}
                 >
                   Stunning templates, powerful customization, and your own domain. 
@@ -241,12 +241,12 @@ function HomePage() {
                 </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-4"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4"
                   variants={fadeInUp}
                 >
                   <Link 
                     to="/auth" 
-                    className="group px-8 py-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white rounded-xl font-bold text-lg shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center"
+                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white rounded-xl font-bold text-base sm:text-lg shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center"
                   >
                     Start Building Free
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -254,7 +254,7 @@ function HomePage() {
                   
                   <button 
                     onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-8 py-4 bg-white/5 hover:bg-white/10 text-white border-2 border-white/20 hover:border-white/40 rounded-xl font-bold text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                    className="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 hover:bg-white/10 text-white border-2 border-white/20 hover:border-white/40 rounded-xl font-bold text-base sm:text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
                   >
                     Explore Templates
                   </button>
@@ -266,10 +266,10 @@ function HomePage() {
                 className="relative hidden lg:block"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[450px]">
+                <div className="relative w-full h-[350px] lg:h-[450px]">
                   {/* Circular Text Effect - Larger radius, outside cards */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-[480px] h-[480px]">
+                    <div className="relative w-full max-w-[480px] aspect-square">
                       {/* Rotating Circle */}
                       <div className="absolute inset-0 animate-spin-slow">
                         <svg viewBox="0 0 480 480" className="w-full h-full">

@@ -37,13 +37,13 @@ function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 py-4 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
-      <div className="container-width px-8">
+    <header className="sticky top-0 z-50 py-3 md:py-4 bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950">
+      <div className="container-width px-4 sm:px-6 md:px-8">
         <div className="flex justify-between items-center">
           {/* Logo - Separate on Left */}
           <Link 
             to="/" 
-            className="text-4xl font-heading font-extrabold hover:opacity-80 transition-all duration-300 flex items-center group"
+            className="text-2xl sm:text-3xl md:text-4xl font-heading font-extrabold hover:opacity-80 transition-all duration-300 flex items-center group"
           >
             <span className="text-white group-hover:text-gray-200 transition-colors">porti</span>
             <span className="text-blue-400 inline-flex group-hover:text-blue-300 transition-colors">
@@ -53,8 +53,8 @@ function Header() {
             <span className="text-white group-hover:text-gray-200 transition-colors">o</span>
           </Link>
 
-          {/* Navigation Container - Pill Shaped */}
-          <div className="flex items-center gap-4">
+          {/* Navigation Container - Pill Shaped - Hidden on mobile */}
+          <div className="hidden lg:flex items-center gap-4">
             <nav className="flex items-center space-x-2 px-6 py-2 bg-white/10 backdrop-blur-xl rounded-full border border-white/20 shadow-lg">
               <button
                 onClick={() => {
@@ -179,13 +179,23 @@ function Header() {
             )}
           </div>
 
-            {/* Mobile Menu Button - hidden for now */}
+          {/* Mobile Navigation */}
+          <div className="flex lg:hidden items-center gap-2">
+            {!isAuthenticated && (
+              <Link
+                to="/auth"
+                className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-full font-semibold text-xs sm:text-sm shadow-lg shadow-blue-500/30 transition-all duration-300"
+              >
+                Get Started
+              </Link>
+            )}
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="hidden p-2 text-white hover:bg-white/10 rounded-full transition-all"
+              className="p-2 text-white hover:bg-white/10 rounded-full transition-all"
             >
               {showMobileMenu ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
+          </div>
         </div>
 
         {/* Mobile Menu */}

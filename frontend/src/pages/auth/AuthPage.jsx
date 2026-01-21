@@ -157,27 +157,27 @@ function AuthPage() {
         <meta name="description" content="Create your account or sign in to Portiqqo" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-blue-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 via-violet-50 to-blue-50 flex items-center justify-center p-3 sm:p-4 md:p-6">
+        <div className="w-full max-w-md px-2 sm:px-0">
           <AnimatePresence mode="wait">
             {/* Email Input Step */}
             {step === 'email' && (
               <motion.div
                 key="email"
-                className="card p-8"
+                className="card p-4 sm:p-6 md:p-8"
                 variants={fadeInUp}
                 initial="initial"
                 animate="animate"
                 exit="exit"
               >
-                <div className="text-center mb-8">
+                <div className="text-center mb-6 sm:mb-8">
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
                     <Mail className="w-8 h-8" />
                   </div>
-                  <h1 className="text-2xl font-heading font-bold text-secondary-900 mb-2">
+                  <h1 className="text-xl sm:text-2xl font-heading font-bold text-secondary-900 mb-2">
                     Welcome to Portiqqo
                   </h1>
-                  <p className="text-secondary-600">
+                  <p className="text-sm sm:text-base text-secondary-600">
                     Enter your email to get started
                   </p>
                 </div>

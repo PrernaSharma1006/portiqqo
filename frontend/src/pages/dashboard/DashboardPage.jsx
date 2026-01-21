@@ -13,11 +13,11 @@ function DashboardPage() {
 
       <div className="min-h-screen bg-lavender-50">
         <div className="container-width section-padding page-padding">
-          <div className="mb-8">
-            <h1 className="text-3xl font-heading font-bold text-gray-900 mb-2">
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-heading font-bold text-gray-900 mb-2">
               Welcome {isAuthenticated && user ? user.firstName : 'to Your Dashboard'}!
             </h1>
-            <p className="text-lg text-lavender-600">
+            <p className="text-base sm:text-lg text-lavender-600">
               Create and manage your professional portfolios
             </p>
             {isAuthenticated && user && (
@@ -30,34 +30,34 @@ function DashboardPage() {
           </div>
 
           {/* Dashboard content will be implemented later */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="card p-6">
-              <h3 className="text-xl font-semibold mb-4">My Portfolios</h3>
-              <p className="text-lavender-600 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="card p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">My Portfolios</h3>
+              <p className="text-sm sm:text-base text-lavender-600 mb-3 sm:mb-4">
                 Create and manage your portfolio websites
               </p>
-              <button className="btn-primary">
+              <button className="btn-primary w-full sm:w-auto">
                 Create Portfolio
               </button>
             </div>
 
-            <div className="card p-6">
-              <h3 className="text-xl font-semibold mb-4">Storage Usage</h3>
-              <p className="text-lavender-600 mb-4">
+            <div className="card p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Storage Usage</h3>
+              <p className="text-sm sm:text-base text-lavender-600 mb-3 sm:mb-4">
                 Monitor your storage and upgrade when needed
               </p>
               <div className="w-full bg-lavender-200 rounded-full h-2 mb-2">
                 <div className="bg-primary-600 h-2 rounded-full" style={{ width: '25%' }}></div>
               </div>
-              <p className="text-sm text-lavender-500">3.75 GB of 15 GB used</p>
+              <p className="text-xs sm:text-sm text-lavender-500">3.75 GB of 15 GB used</p>
             </div>
 
-            <div className="card p-6">
-              <h3 className="text-xl font-semibold mb-4">Account Settings</h3>
-              <p className="text-lavender-600 mb-4">
+            <div className="card p-4 sm:p-6">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4">Account Settings</h3>
+              <p className="text-sm sm:text-base text-lavender-600 mb-3 sm:mb-4">
                 Manage your profile and subscription
               </p>
-              <button className="btn-outline">
+              <button className="btn-outline w-full sm:w-auto">
                 View Settings
               </button>
             </div>
