@@ -26,6 +26,9 @@ const emailService = require('./services/emailService');
 
 const app = express();
 
+// Trust proxy - Required for nginx reverse proxy
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 
@@ -48,6 +51,8 @@ app.use(cors({
     if (!origin) return callback(null, true);
     
     if (allowedOrigins.indexOf(origin) === -1) {
+      console.warn(`🚫 CORS blocked origin: ${origin}`);
+      console.warn(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
       const msg = 'The CORS policy for this site does not allow access from the specified origin.';
       return callback(new Error(msg), false);
     }
