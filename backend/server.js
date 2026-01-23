@@ -6,7 +6,7 @@ const compression = require('compression');
 const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const session = require('express-session');
-// const passport = require('./config/passport'); // Temporarily disabled
+const passport = require('./config/passport');
 require('dotenv').config();
 
 // Import routes
@@ -79,9 +79,9 @@ app.use(session({
   }
 }));
 
-// Initialize passport - TEMPORARILY DISABLED
-// app.use(passport.initialize());
-// app.use(passport.session());
+// Initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Compression middleware
 app.use(compression());

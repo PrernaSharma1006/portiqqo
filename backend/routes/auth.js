@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-// const passport = require('../config/passport'); // Temporarily disabled
+const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 const { auth } = require('../middleware/auth');
 const {
@@ -70,8 +70,6 @@ router.put('/profile', auth, updateProfile);
 // @route   GET /api/auth/google
 // @desc    Initiate Google OAuth
 // @access  Public
-// TEMPORARILY DISABLED - Uncomment when Google OAuth credentials are configured
-/*
 router.get('/google', passport.authenticate('google', { 
   scope: ['profile', 'email'] 
 }));
@@ -122,6 +120,5 @@ router.get('/google/callback',
     }
   }
 );
-*/
 
 module.exports = router;
