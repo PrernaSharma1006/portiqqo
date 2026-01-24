@@ -263,13 +263,13 @@ function HomePage() {
 
               {/* Right Content - Visual Element */}
               <motion.div 
-                className="relative hidden lg:block"
+                className="relative"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[350px] lg:h-[450px]">
+                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px]">
                   {/* Circular Text Effect - Larger radius, outside cards */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-full max-w-[480px] aspect-square">
+                    <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[480px] aspect-square">
                       {/* Rotating Circle */}
                       <div className="absolute inset-0 animate-spin-slow">
                         <svg viewBox="0 0 480 480" className="w-full h-full">
@@ -279,7 +279,7 @@ function HomePage() {
                               d="M 240, 240 m -220, 0 a 220,220 0 1,1 440,0 a 220,220 0 1,1 -440,0"
                             />
                           </defs>
-                          <text className="text-[24px] font-bold fill-white/20 tracking-[0.3em]">
+                          <text className="text-[16px] sm:text-[20px] lg:text-[24px] font-bold fill-white/20 tracking-[0.3em]">
                             <textPath href="#circlePath">
                               PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK •
                             </textPath>
@@ -294,28 +294,28 @@ function HomePage() {
                     <div className="relative">
                       {/* Decorative Cards */}
                       <motion.div 
-                        className="absolute -top-20 -left-20 w-48 h-32 bg-gradient-to-br from-blue-500/90 to-violet-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-4 rotate-[-12deg]"
+                        className="absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-32 h-24 sm:w-40 sm:h-28 lg:w-48 lg:h-32 bg-gradient-to-br from-blue-500/90 to-violet-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[-12deg]"
                         animate={{ y: [0, -10, 0], rotate: [-12, -8, -12] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
-                        <div className="text-white/90 text-sm font-semibold mb-2">Web Developer</div>
-                        <div className="w-full h-2 bg-white/30 rounded-full mb-1"></div>
-                        <div className="w-3/4 h-2 bg-white/30 rounded-full"></div>
+                        <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Web Developer</div>
+                        <div className="w-full h-1.5 sm:h-2 bg-white/30 rounded-full mb-1"></div>
+                        <div className="w-3/4 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
                       </motion.div>
 
                       <motion.div 
-                        className="absolute -bottom-16 -right-16 w-44 h-28 bg-gradient-to-br from-purple-500/90 to-pink-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-4 rotate-[8deg]"
+                        className="absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-32 h-24 sm:w-38 sm:h-26 lg:w-44 lg:h-28 bg-gradient-to-br from-purple-500/90 to-pink-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[8deg]"
                         animate={{ y: [0, 10, 0], rotate: [8, 12, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
-                        <div className="text-white/90 text-sm font-semibold mb-2">Photographer</div>
-                        <div className="w-full h-2 bg-white/30 rounded-full mb-1"></div>
-                        <div className="w-2/3 h-2 bg-white/30 rounded-full"></div>
+                        <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Photographer</div>
+                        <div className="w-full h-1.5 sm:h-2 bg-white/30 rounded-full mb-1"></div>
+                        <div className="w-2/3 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
                       </motion.div>
 
                       {/* Center Icon */}
-                      <div className="w-32 h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-3xl flex items-center justify-center shadow-2xl">
-                        <Globe className="w-16 h-16 text-white" />
+                      <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-2xl">
+                        <Globe className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                       </div>
                     </div>
                   </div>
