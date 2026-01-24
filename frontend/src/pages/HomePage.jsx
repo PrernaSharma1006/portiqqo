@@ -266,27 +266,22 @@ function HomePage() {
                 className="relative"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px]">
-                  {/* Circular Text Effect - Larger radius, outside cards */}
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="relative w-full max-w-[320px] sm:max-w-[420px] lg:max-w-[480px] aspect-square">
-                      {/* Rotating Circle */}
-                      <div className="absolute inset-0 animate-spin-slow">
-                        <svg viewBox="0 0 480 480" className="w-full h-full">
-                          <defs>
-                            <path
-                              id="circlePath"
-                              d="M 240, 240 m -220, 0 a 220,220 0 1,1 440,0 a 220,220 0 1,1 -440,0"
-                            />
-                          </defs>
-                          <text className="text-[16px] sm:text-[20px] lg:text-[24px] font-bold fill-white/20 tracking-[0.3em]">
-                            <textPath href="#circlePath">
-                              PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK •
-                            </textPath>
-                          </text>
-                        </svg>
-                      </div>
-                    </div>
+                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center">
+                  {/* Rotating Circle - Aesthetic Version */}
+                  <div className="absolute" style={{width: '450px', height: '450px', animation: 'spin-slow 20s linear infinite'}}>
+                    <svg width="450" height="450" viewBox="0 0 450 450" style={{overflow: 'visible'}}>
+                      <defs>
+                        <path
+                          id="circlePath"
+                          d="M 225, 225 m -215, 0 a 215,215 0 1,1 430,0 a 215,215 0 1,1 -430,0"
+                        />
+                      </defs>
+                      <text fontSize="18" fontWeight="600" fill="#cbd5e1" opacity="0.35" letterSpacing="6">
+                        <textPath href="#circlePath">
+                          PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK
+                        </textPath>
+                      </text>
+                    </svg>
                   </div>
 
                   {/* Center Content - Cards and Icon */}
