@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import { triggerFeedbackModal, hasGivenFeedback } from '../../utils/feedbackHelper'
 import { 
   ArrowLeft, 
@@ -378,19 +379,27 @@ function WebDeveloperTemplateEditor() {
     }
   }
 
-  const savePortfolio = () => {
-    localStorage.setItem('webDeveloperPortfolio', JSON.stringify(portfolioData))
-    alert('Portfolio saved successfully!')
-    
-    // Trigger feedback modal if user hasn't given feedback yet
-    if (!hasGivenFeedback()) {
-      triggerFeedbackModal()
-      navigate('/')
-    }
+  const savePortfolio = async () => {
+    await savePortfolioToBackend(portfolioData, 'developer', () => {
+      // Trigger feedback modal if user hasn't given feedback yet
+      if (!hasGivenFeedback()) {
+        triggerFeedbackModal()
+      }
+    })
   }
 
-  const publishPortfolio = () => {
-    savePortfolio()
+  const publishPortfolio = async () => {
+    try {
+      // First save, then publish
+      await savePortfolioToBackend(portfolioData, 'developer')
+      await publishPortfolioToBackend('developer', () => {
+        // Navigate to dashboard after 2 seconds
+        setTimeout(() => navigate('/dashboard'), 2000)
+      })
+    } catch (error) {
+      // Error already handled in helper
+      console.error('Publish failed:', error)
+    }
   }
 
   if (isPreview) {
@@ -617,7 +626,7 @@ function WebDeveloperTemplateEditor() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/#templates')}
+              onClick={() => navigate('/dashboard')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

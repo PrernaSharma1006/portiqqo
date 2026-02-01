@@ -21,21 +21,29 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('authToken');
       if (token) {
         try {
-          // TODO: Verify token with backend
-          const response = await fetch('/api/auth/verify', {
-            headers: { Authorization: `Bearer ${token}` }
+          const response = await fetch('/api/auth/me', {
+            headers: { 
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
           });
           
           if (response.ok) {
-            const userData = await response.json();
-            setUser(userData);
+            const data = await response.json();
+            setUser(data.data.user || data.data);
             setIsAuthenticated(true);
           } else {
             localStorage.removeItem('authToken');
+            localStorage.removeItem('refreshToken');
+            setUser(null);
+            setIsAuthenticated(false);
           }
         } catch (error) {
           console.error('Auth verification error:', error);
           localStorage.removeItem('authToken');
+          localStorage.removeItem('refreshToken');
+          setUser(null);
+          setIsAuthenticated(false);
         }
       }
       setIsLoading(false);

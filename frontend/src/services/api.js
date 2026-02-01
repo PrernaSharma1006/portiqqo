@@ -128,4 +128,25 @@ export const apiRequest = {
   delete: (url, config = {}) => api.delete(url, config),
 }
 
+// Portfolio API methods
+export const portfolioAPI = {
+  // Save portfolio (create or update)
+  save: (portfolioData) => api.post('/portfolios/save', portfolioData),
+  
+  // Publish portfolio (make it publicly accessible)
+  publish: (portfolioId, profession) => api.post('/portfolios/publish', { portfolioId, profession }),
+  
+  // Get all user's portfolios
+  getMyPortfolios: () => api.get('/portfolios/my-portfolios'),
+  
+  // Get single portfolio by ID
+  getById: (id) => api.get(`/portfolios/${id}`),
+  
+  // Get public portfolio by subdomain
+  getPublic: (subdomain) => api.get(`/portfolios/public/${subdomain}`),
+  
+  // Delete portfolio
+  delete: (id) => api.delete(`/portfolios/${id}`)
+}
+
 export default api

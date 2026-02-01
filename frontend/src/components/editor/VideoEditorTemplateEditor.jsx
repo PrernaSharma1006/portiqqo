@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import { 
   ArrowLeft, 
   Save, 
@@ -375,16 +376,19 @@ function VideoEditorTemplateEditor() {
     }
   }
 
-  const savePortfolio = () => {
-    // Save portfolio data to localStorage or API
-    localStorage.setItem('videoEditorPortfolio', JSON.stringify(portfolioData))
-    alert('Portfolio saved successfully!')
+  const savePortfolio = async () => {
+    await savePortfolioToBackend(portfolioData, 'video-editor')
   }
 
-  const publishPortfolio = () => {
-    // Save and redirect to published portfolio
-    savePortfolio()
-    navigate('/portfolio/video-editor-published')
+  const publishPortfolio = async () => {
+    try {
+      await savePortfolioToBackend(portfolioData, 'video-editor')
+      await publishPortfolioToBackend('video-editor', () => {
+        setTimeout(() => navigate('/dashboard'), 2000)
+      })
+    } catch (error) {
+      console.error('Publish failed:', error)
+    }
   }
 
   if (isPreview) {
@@ -765,7 +769,7 @@ function VideoEditorTemplateEditor() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/#templates')}
+              onClick={() => navigate('/dashboard')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />

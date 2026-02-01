@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -7,7 +8,6 @@ const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('./config/passport');
-require('dotenv').config();
 
 // Import routes
 const authRoutes = require('./routes/auth');

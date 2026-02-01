@@ -40,7 +40,7 @@ const portfolioSchema = new mongoose.Schema({
   template: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Template',
-    required: true
+    required: false  // Made optional as we create templates dynamically
   },
   isPublished: {
     type: Boolean,

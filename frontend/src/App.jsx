@@ -35,6 +35,7 @@ import GeneralPortfolioTemplateEditor from './components/editor/GeneralPortfolio
 
 // Import portfolio display
 import PortfolioDisplay from './components/portfolio/PortfolioDisplay'
+import PublicPortfolioPage from './pages/PublicPortfolioPage'
 
 // Import preview page
 import TemplatePreview from './pages/TemplatePreview'
@@ -96,6 +97,9 @@ function App() {
             
             {/* Portfolio display route */}
             <Route path="/portfolio/:portfolioId" element={<PortfolioDisplay />} />
+            
+            {/* Public portfolio route - must come before catch-all */}
+            <Route path="/:subdomain" element={<PublicPortfolioPage />} />
             
             {/* Protected routes */}
             <Route 
