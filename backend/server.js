@@ -144,13 +144,13 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// API routes
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
-app.use('/api/portfolios', portfolioRoutes);
-app.use('/api/templates', templateRoutes);
-app.use('/api/subscriptions', subscriptionRoutes);
-app.use('/api/upload', uploadRoutes);
+// API routes (nginx strips /api prefix, so we mount without it)
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
+app.use('/portfolios', portfolioRoutes);
+app.use('/templates', templateRoutes);
+app.use('/subscriptions', subscriptionRoutes);
+app.use('/upload', uploadRoutes);
 
 // Serve static files for uploaded content
 app.use('/uploads', express.static('uploads'));
