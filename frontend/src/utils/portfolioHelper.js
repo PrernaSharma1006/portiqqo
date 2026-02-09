@@ -150,7 +150,11 @@ function extractSkills(portfolioData) {
     Object.entries(portfolioData.techStack).forEach(([category, skillList]) => {
       if (Array.isArray(skillList)) {
         skillList.forEach(skill => {
-          skills.push({ name: skill, category: 'technical' });
+          skills.push({ 
+            name: typeof skill === 'string' ? skill : skill.name || 'Unknown',
+            category: 'technical',
+            level: 'intermediate'
+          });
         });
       }
     });
@@ -160,9 +164,17 @@ function extractSkills(portfolioData) {
   if (Array.isArray(portfolioData.skills)) {
     portfolioData.skills.forEach(skill => {
       if (typeof skill === 'string') {
-        skills.push({ name: skill, category: 'technical' });
+        skills.push({ 
+          name: skill, 
+          category: 'technical',
+          level: 'intermediate'
+        });
       } else if (typeof skill === 'object' && skill.name) {
-        skills.push(skill);
+        skills.push({
+          name: skill.name,
+          category: mapCategory(skill.category),
+          level: mapLevel(skill.level)
+        });
       }
     });
   }
@@ -170,11 +182,62 @@ function extractSkills(portfolioData) {
   // Check for tools array
   if (Array.isArray(portfolioData.tools)) {
     portfolioData.tools.forEach(tool => {
-      skills.push({ name: tool, category: 'technical' });
+      skills.push({ 
+        name: typeof tool === 'string' ? tool : tool.name,
+        category: 'technical',
+        level: 'intermediate'
+      });
     });
   }
   
   return skills;
+}
+
+/**
+ * Map category to valid enum value
+ */
+function mapCategory(category) {
+  if (!category) return 'technical';
+  
+  const lowerCategory = category.toLowerCase();
+  
+  // Map common variations to valid values
+  const categoryMap = {
+    'frontend': 'technical',
+    'backend': 'technical',
+    'tools': 'technical',
+    'programming': 'technical',
+    'technical': 'technical',
+    'design': 'design',
+    'soft': 'soft',
+    'language': 'language',
+    'other': 'other'
+  };
+  
+  return categoryMap[lowerCategory] || 'technical';
+}
+
+/**
+ * Map level to valid enum value
+ */
+function mapLevel(level) {
+  if (!level) return 'intermediate';
+  
+  // If it's already a valid enum value
+  const validLevels = ['beginner', 'intermediate', 'advanced', 'expert'];
+  if (validLevels.includes(level)) return level;
+  
+  // Convert numeric levels to enum
+  if (typeof level === 'number' || !isNaN(level)) {
+    const numLevel = parseInt(level);
+    if (numLevel >= 90) return 'expert';
+    if (numLevel >= 75) return 'advanced';
+    if (numLevel >= 50) return 'intermediate';
+    return 'beginner';
+  }
+  
+  // Default
+  return 'intermediate';
 }
 
 /**
