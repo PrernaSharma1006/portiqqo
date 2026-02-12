@@ -76,6 +76,13 @@ export const savePortfolioToBackend = async (portfolioData, profession, onSucces
  */
 export const publishPortfolioToBackend = async (profession, onSuccess) => {
   try {
+    // Check if user is authenticated
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      toast.error('Please log in to publish your portfolio');
+      throw new Error('Not authenticated');
+    }
+    
     const toastId = toast.loading('Publishing portfolio...');
     
     // Get saved portfolio ID

@@ -60,10 +60,20 @@ api.interceptors.response.use(
       switch (status) {
         case 401:
           // Unauthorized - token invalid or expired
-          setAuthToken(null)
-          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          const currentPath = window.location.pathname
+          const isAuthPage = currentPath === '/login' || currentPath === '/register'
+          const isDashboard = currentPath.includes('/dashboard') || currentPath.includes('/editor')
+          
+          // Only redirect if we're on a protected page, not on auth pages
+          if (!isAuthPage && isDashboard) {
+            setAuthToken(null)
             toast.error('Your session has expired. Please log in again.')
-            window.location.href = '/login'
+            // Use a slight delay to allow any modals to close
+            setTimeout(() => {
+              window.location.href = '/login'
+            }, 500)
+          } else if (!isAuthPage) {
+            toast.error('Authentication required. Please log in.')
           }
           break
 
