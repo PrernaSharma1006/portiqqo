@@ -1,8 +1,10 @@
-import { X, Copy, ExternalLink, Check } from 'lucide-react';
+import { X, Copy, ExternalLink, Check, Home } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, subdomain }) {
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
   if (!isOpen) return null;
 
@@ -81,22 +83,35 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
             </ul>
           </div>
 
-          <div className="flex space-x-3">
+          <div className="space-y-3">
             <a
               href={portfolioUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
+              className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
             >
               <ExternalLink className="w-4 h-4" />
               <span className="font-medium">View Live Portfolio</span>
             </a>
-            <button
-              onClick={onClose}
-              className="px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700"
-            >
-              Done
-            </button>
+            
+            <div className="flex space-x-3">
+              <button
+                onClick={() => {
+                  onClose();
+                  navigate('/dashboard');
+                }}
+                className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+              >
+                <Home className="w-4 h-4" />
+                <span>Back to Dashboard</span>
+              </button>
+              <button
+                onClick={onClose}
+                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700"
+              >
+                Continue Editing
+              </button>
+            </div>
           </div>
         </div>
       </div>

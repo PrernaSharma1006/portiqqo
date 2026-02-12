@@ -1378,7 +1378,7 @@ function WebDeveloperTemplateEditor() {
         isOpen={showPublishModal}
         onClose={() => {
           setShowPublishModal(false)
-          navigate('/dashboard')
+          // Don't auto-navigate, let user stay on editor or manually go to dashboard
         }}
         portfolioUrl={publishedPortfolio?.publicUrl || ''}
         subdomain={publishedPortfolio?.subdomain || ''}
