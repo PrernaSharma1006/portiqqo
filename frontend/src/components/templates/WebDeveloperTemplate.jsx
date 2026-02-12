@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom'
 
 function WebDeveloperTemplate() {
   const [selectedProject, setSelectedProject] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
 
   // Sample data for the template

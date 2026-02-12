@@ -19,11 +19,14 @@ function PublicPortfolioPage() {
     const fetchPortfolio = async () => {
       try {
         setLoading(true);
+        console.log('Fetching portfolio for subdomain:', subdomain);
         const response = await portfolioAPI.getPublic(subdomain);
+        console.log('Portfolio response:', response.data);
         setPortfolio(response.data.portfolio);
         setError(null);
       } catch (err) {
         console.error('Error fetching portfolio:', err);
+        console.error('Error response:', err.response?.data);
         setError(err.response?.data?.message || 'Portfolio not found');
       } finally {
         setLoading(false);
@@ -73,6 +76,9 @@ function PublicPortfolioPage() {
     const templateData = portfolio.templateData || {};
     const profession = portfolio.profession;
 
+    console.log('Rendering template for profession:', profession);
+    console.log('Template data:', templateData);
+
     // Props common to all templates
     const commonProps = {
       portfolioData: templateData,
@@ -83,19 +89,39 @@ function PublicPortfolioPage() {
       isPublic: true
     };
 
-    switch (profession) {
-      case 'developer':
-        return <WebDeveloperTemplate {...commonProps} />;
-      case 'ui-ux-designer':
-        return <UIUXDesignerTemplate {...commonProps} />;
-      case 'video-editor':
-        return <VideoEditorTemplate {...commonProps} />;
-      case 'photographer':
-        return <PhotographerTemplate {...commonProps} />;
-      case 'general':
-        return <GeneralPortfolioTemplate {...commonProps} />;
-      default:
-        return <GeneralPortfolioTemplate {...commonProps} />;
+    try {
+      switch (profession) {
+        case 'web-developer':
+        case 'developer':
+          return <WebDeveloperTemplate {...commonProps} />;
+        case 'ui-ux-designer':
+          return <UIUXDesignerTemplate {...commonProps} />;
+        case 'video-editor':
+          return <VideoEditorTemplate {...commonProps} />;
+        case 'photographer':
+          return <PhotographerTemplate {...commonProps} />;
+        case 'general':
+          return <GeneralPortfolioTemplate {...commonProps} />;
+        default:
+          console.warn('Unknown profession:', profession, '- using general template');
+          return <GeneralPortfolioTemplate {...commonProps} />;
+      }
+    } catch (error) {
+      console.error('Error rendering template:', error);
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+          <div className="max-w-md w-full bg-white rounded-lg shadow-lg p-8 text-center">
+            <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Error Loading Portfolio</h1>
+            <p className="text-gray-600 mb-6">
+              There was an error rendering this portfolio. Please try again later.
+            </p>
+            <pre className="text-xs text-left bg-gray-100 p-4 rounded overflow-auto">
+              {error.message}
+            </pre>
+          </div>
+        </div>
+      );
     }
   };
 

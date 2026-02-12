@@ -99,12 +99,21 @@ export const publishPortfolioToBackend = async (profession, onSuccess) => {
     const publicUrl = response.data.portfolio.publicUrl;
     const subdomain = response.data.portfolio.subdomain;
     
-    toast.success('Portfolio published successfully! 🎉', { id: toastId });
+    toast.success(
+      `Portfolio published! 🎉\n${publicUrl}`, 
+      { 
+        id: toastId,
+        duration: 6000,
+        style: {
+          maxWidth: '500px',
+        }
+      }
+    );
     
     // Copy to clipboard automatically
     try {
       await navigator.clipboard.writeText(publicUrl);
-      toast.success('Link copied to clipboard!', { duration: 3000 });
+      toast.success('Link copied to clipboard! ✓', { duration: 3000 });
     } catch (err) {
       console.error('Failed to copy:', err);
     }

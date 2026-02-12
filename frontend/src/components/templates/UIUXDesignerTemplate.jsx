@@ -30,6 +30,7 @@ import { useNavigate } from 'react-router-dom'
 
 function UIUXDesignerTemplate() {
   const [selectedCase, setSelectedCase] = useState(null)
+  const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
 
   // Sample data for the template
