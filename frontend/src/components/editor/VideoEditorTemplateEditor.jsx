@@ -2,6 +2,7 @@ import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
+import PublishSuccessModal from '../modals/PublishSuccessModal'
 import { 
   ArrowLeft, 
   Save, 
@@ -27,6 +28,8 @@ function VideoEditorTemplateEditor() {
   const fileInputRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
+  const [showPublishModal, setShowPublishModal] = useState(false)
+  const [publishedPortfolio, setPublishedPortfolio] = useState(null)
 
   // Editable portfolio data
   const [portfolioData, setPortfolioData] = useState({
@@ -383,9 +386,11 @@ function VideoEditorTemplateEditor() {
   const publishPortfolio = async () => {
     try {
       await savePortfolioToBackend(portfolioData, 'video-editor')
-      await publishPortfolioToBackend('video-editor', () => {
-        setTimeout(() => navigate('/dashboard'), 2000)
-      })
+      const result = await publishPortfolioToBackend('video-editor')
+      if (result) {
+        setPublishedPortfolio(result)
+        setShowPublishModal(true)
+      }
     } catch (error) {
       console.error('Publish failed:', error)
     }
@@ -1520,6 +1525,14 @@ function VideoEditorTemplateEditor() {
           </div>
         </div>
       )}
+
+      {/* Publish Success Modal */}
+      <PublishSuccessModal 
+        isOpen={showPublishModal}
+        onClose={() => setShowPublishModal(false)}
+        portfolioUrl={publishedPortfolio?.publicUrl}
+        subdomain={publishedPortfolio?.subdomain}
+      />
     </div>
   )
 }
