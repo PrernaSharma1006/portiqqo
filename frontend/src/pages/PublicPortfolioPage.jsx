@@ -9,11 +9,24 @@ import PhotographerTemplate from '../components/templates/PhotographerTemplate';
 import GeneralPortfolioTemplate from '../components/templates/GeneralPortfolioTemplate';
 
 function PublicPortfolioPage() {
-  const { subdomain } = useParams();
+  const { subdomain: pathSubdomain } = useParams();
   const navigate = useNavigate();
   const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Get subdomain from URL hostname or path
+  const getSubdomain = () => {
+    const hostname = window.location.hostname;
+    // If it's a subdomain like "example.portiqqo.me"
+    if (hostname.endsWith('.portiqqo.me') && hostname !== 'portiqqo.me' && hostname !== 'www.portiqqo.me') {
+      return hostname.replace('.portiqqo.me', '');
+    }
+    // Fallback to path-based (for backward compatibility)
+    return pathSubdomain;
+  };
+
+  const subdomain = getSubdomain();
 
   useEffect(() => {
     const fetchPortfolio = async () => {

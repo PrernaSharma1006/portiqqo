@@ -5,10 +5,11 @@ import toast from 'react-hot-toast';
  * Save portfolio data to the backend
  * @param {Object} portfolioData - The portfolio data from the editor
  * @param {string} profession - The profession type (developer, ui-ux-designer, etc.)
+ * @param {string} subdomain - Optional custom subdomain
  * @param {Function} onSuccess - Optional callback on success
  * @returns {Promise<Object>} - The saved portfolio response
  */
-export const savePortfolioToBackend = async (portfolioData, profession, onSuccess) => {
+export const savePortfolioToBackend = async (portfolioData, profession, subdomain = null, onSuccess) => {
   try {
     const toastId = toast.loading('Saving portfolio...');
     
@@ -16,6 +17,7 @@ export const savePortfolioToBackend = async (portfolioData, profession, onSucces
     const portfolioPayload = {
       title: portfolioData.profile?.name ? portfolioData.profile.name + "'s Portfolio" : "My Portfolio",
       profession,
+      subdomain: subdomain || null, // Include custom subdomain if provided
       personalInfo: {
         firstName: portfolioData.profile?.name?.split(' ')[0] || '',
         lastName: portfolioData.profile?.name?.split(' ').slice(1).join(' ') || '',

@@ -61,14 +61,25 @@ exports.savePortfolio = async (req, res) => {
     } else {
       console.log('Creating new portfolio');
       // Create new portfolio
-      // Generate unique subdomain from user's name
+      // Use custom subdomain from request, or generate from user's name
       const user = await User.findById(userId);
-      let subdomain = `${user.firstName}-${user.lastName}`.toLowerCase()
-        .replace(/[^a-z0-9-]/g, '-')
-        .replace(/-+/g, '-')
-        .replace(/^-|-$/g, '');
+      let subdomain = portfolioData.subdomain;
       
-      console.log('Generated subdomain:', subdomain);
+      if (!subdomain) {
+        // Generate subdomain from user's name if not provided
+        subdomain = `${user.firstName}-${user.lastName}`.toLowerCase()
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+      } else {
+        // Validate and sanitize custom subdomain
+        subdomain = subdomain.toLowerCase()
+          .replace(/[^a-z0-9-]/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+      }
+      
+      console.log('Generated/Provided subdomain:', subdomain);
       
       // Ensure subdomain is unique
       subdomain = await Portfolio.findAvailableSubdomain(subdomain);
@@ -131,8 +142,8 @@ exports.publishPortfolio = async (req, res) => {
     portfolio.isPublished = true;
     await portfolio.save();
 
-    // Generate public URL
-    const publicUrl = `${process.env.FRONTEND_URL || 'https://portiqqo.me'}/${portfolio.subdomain}`;
+    // Generate public URL with subdomain
+    const publicUrl = `https://${portfolio.subdomain}.portiqqo.me`;
 
     res.status(200).json({
       success: true,

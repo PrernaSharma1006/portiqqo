@@ -133,6 +133,7 @@ function WebDeveloperTemplateEditor() {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadType, setUploadType] = useState('')
+  const [customSubdomain, setCustomSubdomain] = useState('')
 
   const categories = [
     { id: 'all', name: 'All Projects' },
@@ -383,7 +384,7 @@ function WebDeveloperTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'developer', () => {
+    await savePortfolioToBackend(portfolioData, 'developer', customSubdomain, () => {
       // Trigger feedback modal if user hasn't given feedback yet
       if (!hasGivenFeedback()) {
         triggerFeedbackModal()
@@ -393,8 +394,8 @@ function WebDeveloperTemplateEditor() {
 
   const publishPortfolio = async () => {
     try {
-      // First save, then publish
-      await savePortfolioToBackend(portfolioData, 'developer')
+      // First save with subdomain, then publish
+      await savePortfolioToBackend(portfolioData, 'developer', customSubdomain)
       const portfolio = await publishPortfolioToBackend('developer')
       
       // Show success modal with the published link
@@ -667,6 +668,34 @@ function WebDeveloperTemplateEditor() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Web Developer Portfolio Editor</h1>
           <p className="text-gray-600">Customize your developer portfolio with your projects, tech stack, and professional information.</p>
+        </div>
+
+        {/* Portfolio URL Section */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Portfolio URL</h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Choose your subdomain
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={customSubdomain}
+                  onChange={(e) => setCustomSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                  placeholder="your-name"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  pattern="[a-z0-9-]+"
+                />
+                <span className="px-4 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg text-gray-600 whitespace-nowrap">
+                  .portiqqo.me
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                Use lowercase letters, numbers, and hyphens only. Leave empty to auto-generate from your name.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-12">
