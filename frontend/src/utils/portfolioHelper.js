@@ -94,33 +94,12 @@ export const publishPortfolioToBackend = async (profession, onSuccess) => {
     
     toast.success('Portfolio published successfully! 🎉', { id: toastId });
     
-    // Show shareable link prominently
-    toast.success(
-      `Your portfolio is LIVE!\n\nShare this link:\n${publicUrl}\n\nAnyone can view your work at this link!`,
-      { 
-        duration: 15000,
-        style: {
-          maxWidth: '600px',
-          fontSize: '14px',
-          whiteSpace: 'pre-line'
-        }
-      }
-    );
-    
     // Copy to clipboard automatically
     try {
       await navigator.clipboard.writeText(publicUrl);
-      setTimeout(() => {
-        toast.success('📋 Link copied to clipboard!\n\nPaste it anywhere to share your portfolio!', {
-          duration: 5000,
-          style: {
-            whiteSpace: 'pre-line'
-          }
-        });
-      }, 1000);
+      toast.success('Link copied to clipboard!', { duration: 3000 });
     } catch (err) {
       console.error('Failed to copy:', err);
-      toast('Click the link in the notification to visit your portfolio', { duration: 5000 });
     }
     
     // Store the public URL

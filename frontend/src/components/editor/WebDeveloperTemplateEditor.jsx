@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import { triggerFeedbackModal, hasGivenFeedback } from '../../utils/feedbackHelper'
+import PublishSuccessModal from '../modals/PublishSuccessModal'
 import { 
   ArrowLeft, 
   Save, 
@@ -30,6 +31,8 @@ function WebDeveloperTemplateEditor() {
   const fileInputRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
+  const [showPublishModal, setShowPublishModal] = useState(false)
+  const [publishedPortfolio, setPublishedPortfolio] = useState(null)
 
   // Editable portfolio data
   const [portfolioData, setPortfolioData] = useState({
@@ -392,10 +395,11 @@ function WebDeveloperTemplateEditor() {
     try {
       // First save, then publish
       await savePortfolioToBackend(portfolioData, 'developer')
-      await publishPortfolioToBackend('developer', () => {
-        // Navigate to dashboard after 2 seconds
-        setTimeout(() => navigate('/dashboard'), 2000)
-      })
+      const portfolio = await publishPortfolioToBackend('developer')
+      
+      // Show success modal with the published link
+      setPublishedPortfolio(portfolio)
+      setShowPublishModal(true)
     } catch (error) {
       // Error already handled in helper
       console.error('Publish failed:', error)
@@ -1368,6 +1372,17 @@ function WebDeveloperTemplateEditor() {
           </div>
         </div>
       )}
+
+      {/* Publish Success Modal */}
+      <PublishSuccessModal
+        isOpen={showPublishModal}
+        onClose={() => {
+          setShowPublishModal(false)
+          navigate('/dashboard')
+        }}
+        portfolioUrl={publishedPortfolio?.publicUrl || ''}
+        subdomain={publishedPortfolio?.subdomain || ''}
+      />
     </div>
   )
 }
