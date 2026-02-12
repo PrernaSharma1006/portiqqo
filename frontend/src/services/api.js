@@ -64,9 +64,11 @@ api.interceptors.response.use(
           const isAuthPage = currentPath === '/login' || currentPath === '/register'
           const isDashboard = currentPath.includes('/dashboard') || currentPath.includes('/editor')
           
+          // Clear the invalid token
+          setAuthToken(null)
+          
           // Only redirect if we're on a protected page, not on auth pages
           if (!isAuthPage && isDashboard) {
-            setAuthToken(null)
             toast.error('Your session has expired. Please log in again.')
             // Use a slight delay to allow any modals to close
             setTimeout(() => {

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { setAuthToken } from '../services/api';
 
 const AuthContext = createContext({});
 
@@ -32,9 +33,11 @@ export const AuthProvider = ({ children }) => {
             const data = await response.json();
             setUser(data.data.user || data.data);
             setIsAuthenticated(true);
+            setAuthToken(token);
           } else {
             localStorage.removeItem('authToken');
             localStorage.removeItem('refreshToken');
+            setAuthToken(null);
             setUser(null);
             setIsAuthenticated(false);
           }
@@ -42,6 +45,7 @@ export const AuthProvider = ({ children }) => {
           console.error('Auth verification error:', error);
           localStorage.removeItem('authToken');
           localStorage.removeItem('refreshToken');
+          setAuthToken(null);
           setUser(null);
           setIsAuthenticated(false);
         }
@@ -73,8 +77,10 @@ export const AuthProvider = ({ children }) => {
         }
 
         // Store token and user data
-        localStorage.setItem('authToken', data.data.token);
+        const token = data.data.token;
+        localStorage.setItem('authToken', token);
         localStorage.setItem('refreshToken', data.data.refreshToken || '');
+        setAuthToken(token);
         setUser(data.data.user);
         setIsAuthenticated(true);
         
@@ -95,7 +101,9 @@ export const AuthProvider = ({ children }) => {
           throw new Error(data.message || 'Login failed');
         }
         
-        localStorage.setItem('authToken', data.token);
+        const token = data.token;
+        localStorage.setItem('authToken', token);
+        setAuthToken(token);
         setUser(data.user);
         setIsAuthenticated(true);
         
@@ -150,7 +158,9 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message || 'Registration failed');
       }
       
-      localStorage.setItem('authToken', data.data.token);
+      const token = data.data.token;
+      localStorage.setItem('authToken', token);
+      setAuthToken(token);
       setUser(data.data.user);
       setIsAuthenticated(true);
       
@@ -195,6 +205,8 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    setAuthToken(null);
     setUser(null);
     setIsAuthenticated(false);
   };
