@@ -56,7 +56,7 @@ export const savePortfolioToBackend = async (portfolioData, profession, subdomai
     localStorage.setItem('savedPortfolioId', response.data.portfolio.id);
     localStorage.setItem('savedPortfolioSubdomain', response.data.portfolio.subdomain);
     
-    toast.success('Portfolio saved successfully!', { id: toastId });
+    toast.dismiss(toastId); // Dismiss loading toast silently
     
     if (onSuccess) {
       onSuccess(response.data.portfolio);
@@ -101,21 +101,11 @@ export const publishPortfolioToBackend = async (profession, onSuccess) => {
     const publicUrl = response.data.portfolio.publicUrl;
     const subdomain = response.data.portfolio.subdomain;
     
-    toast.success(
-      `Portfolio published! 🎉\n${publicUrl}`, 
-      { 
-        id: toastId,
-        duration: 6000,
-        style: {
-          maxWidth: '500px',
-        }
-      }
-    );
+    toast.dismiss(toastId); // Dismiss loading toast
     
-    // Copy to clipboard automatically
+    // Copy to clipboard automatically (silently)
     try {
       await navigator.clipboard.writeText(publicUrl);
-      toast.success('Link copied to clipboard! ✓', { duration: 3000 });
     } catch (err) {
       console.error('Failed to copy:', err);
     }
