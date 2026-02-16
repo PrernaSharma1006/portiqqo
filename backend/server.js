@@ -50,13 +50,21 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
     
-    if (allowedOrigins.indexOf(origin) === -1) {
-      console.warn(`🚫 CORS blocked origin: ${origin}`);
-      console.warn(`✅ Allowed origins: ${allowedOrigins.join(', ')}`);
-      const msg = 'The CORS policy for this site does not allow access from the specified origin.';
-      return callback(new Error(msg), false);
+    // Check if origin is in allowed origins list
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      return callback(null, true);
     }
-    return callback(null, true);
+    
+    // Allow all subdomains of portiqqo.me (e.g., username.portiqqo.me)
+    const subdomainRegex = /^https?:\/\/[a-z0-9-]+\.portiqqo\.me$/;
+    if (subdomainRegex.test(origin)) {
+      return callback(null, true);
+    }
+    
+    console.warn(`🚫 CORS blocked origin: ${origin}`);
+    console.warn(`✅ Allowed origins: ${allowedOrigins.join(', ')} and *.portiqqo.me`);
+    const msg = 'The CORS policy for this site does not allow access from the specified origin.';
+    return callback(new Error(msg), false);
   },
   credentials: true,
 }));
