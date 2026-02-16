@@ -36,6 +36,7 @@ import GeneralPortfolioTemplateEditor from './components/editor/GeneralPortfolio
 // Import portfolio display
 import PortfolioDisplay from './components/portfolio/PortfolioDisplay'
 import PublicPortfolioPage from './pages/PublicPortfolioPage'
+import SubdomainRouter from './components/routing/SubdomainRouter'
 
 // Import preview page
 import TemplatePreview from './pages/TemplatePreview'
@@ -62,8 +63,8 @@ function App() {
       <AuthProvider>
         <div className="App">
           <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Layout><HomePage /></Layout>} />
+            {/* Public routes - SubdomainRouter handles both main domain and subdomains */}
+            <Route path="/" element={<SubdomainRouter />} />
             <Route path="/auth" element={<UnifiedAuthPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/register" element={<UnifiedAuthPage />} />
