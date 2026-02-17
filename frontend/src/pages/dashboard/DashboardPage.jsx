@@ -2,7 +2,10 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { portfolioAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 
 const templates = [
   {
@@ -76,8 +79,40 @@ const templates = [
 function DashboardPage() {
   const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
+  const [existingPortfolios, setExistingPortfolios] = useState([])
+  const [loadingPortfolios, setLoadingPortfolios] = useState(true)
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+
+  // Fetch user's existing portfolios on mount
+  useEffect(() => {
+    if (isAuthenticated && user) {
+      fetchPortfolios()
+    }
+  }, [isAuthenticated, user])
+
+  const fetchPortfolios = async () => {
+    try {
+      setLoadingPortfolios(true)
+      const response = await portfolioAPI.getMyPortfolios()
+      if (response.data.success) {
+        setExistingPortfolios(response.data.portfolios || [])
+      }
+    } catch (error) {
+      console.error('Error fetching portfolios:', error)
+    } finally {
+      setLoadingPortfolios(false)
+    }
+  }
 
   const handleTemplateSelect = (templateId) => {
+    // Check if user has existing portfolios and is trying to create a new one
+    if (existingPortfolios.length > 0) {
+      // For now, show upgrade prompt if they have 1 portfolio (free users)
+      // In future, check actual subscription status
+      setShowUpgradePrompt(true)
+      return
+    }
+
     // Route to the appropriate template editor
     const routeMap = {
       'web-developer': '/editor/web-developer',
@@ -90,6 +125,25 @@ function DashboardPage() {
     
     const route = routeMap[templateId] || '/builder/general'
     navigate(route)
+  }
+
+  const handleEditPortfolio = (portfolio) => {
+    // Map profession to editor route
+    const professionToRoute = {
+      'developer': '/editor/web-developer',
+      'ui-ux-designer': '/editor/ui-ux-designer',
+      'video-editor': '/editor/video-editor',
+      'photographer': '/editor/photographer',
+      'digital-marketer': '/editor/digital-marketer'
+    }
+    
+    const route = professionToRoute[portfolio.profession] || '/builder/general'
+    navigate(route, { state: { portfolioId: portfolio._id, existingPortfolio: portfolio } })
+  }
+
+  const handleViewPortfolio = (portfolio) => {
+    const url = `https://${portfolio.subdomain}.portiqqo.me`
+    window.open(url, '_blank')
   }
 
   const handleTemplatePreview = (templateId, event) => {
@@ -143,7 +197,98 @@ function DashboardPage() {
             )}
           </motion.div>
 
+          {/* Existing Portfolios Section */}
+          {!loadingPortfolios && existingPortfolios.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-16"
+            >
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-3xl font-bold text-slate-800">Your Portfolios</h2>
+                <span className="text-sm text-slate-500">
+                  {existingPortfolios.length} {existingPortfolios.length === 1 ? 'portfolio' : 'portfolios'}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+                {existingPortfolios.map((portfolio) => (
+                  <motion.div
+                    key={portfolio._id}
+                    whileHover={{ y: -4 }}
+                    className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div>
+                          <h3 className="text-xl font-bold text-slate-800 mb-1">{portfolio.title}</h3>
+                          <p className="text-sm text-slate-500 capitalize">
+                            {portfolio.profession?.replace(/-/g, ' ')}
+                          </p>
+                        </div>
+                        {portfolio.isPublished && (
+                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                            Published
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="flex items-center gap-2 mb-4">
+                        <ExternalLink className="w-4 h-4 text-slate-400" />
+                        <a 
+                          href={`https://${portfolio.subdomain}.portiqqo.me`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate"
+                        >
+                          {portfolio.subdomain}.portiqqo.me
+                        </a>
+                      </div>
+                      
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => handleEditPortfolio(portfolio)}
+                          className="flex-1 py-2.5 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2"
+                        >
+                          <Edit className="w-4 h-4" />
+                          Edit
+                        </button>
+                        {portfolio.isPublished && (
+                          <button
+                            onClick={() => handleViewPortfolio(portfolio)}
+                            className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-all duration-300"
+                          >
+                            <ExternalLink className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              
+              {/* Separator */}
+              <div className="mt-16 mb-12">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-slate-200"></div>
+                  </div>
+                  <div className="relative flex justify-center">
+                    <span className="px-4 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 text-slate-500 text-sm font-medium">
+                      {existingPortfolios.length >= 1 ? 'Upgrade to Premium to create more portfolios' : 'Or choose a new template'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
           {/* Templates Grid */}
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-slate-800 mb-6 text-center">
+              {existingPortfolios.length > 0 ? 'Create Another Portfolio' : 'Choose Your Template'}
+            </h2>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
             {templates.map((template, index) => {
               const Icon = template.icon
@@ -233,6 +378,85 @@ function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* Upgrade Prompt Modal */}
+      {showUpgradePrompt && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+          >
+            <button
+              onClick={() => setShowUpgradePrompt(false)}
+              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">Upgrade to Premium</h3>
+              <p className="text-slate-600">
+                Free users can create <strong>one portfolio</strong>. Upgrade to Premium to create unlimited portfolios!
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 mb-6">
+              <h4 className="font-semibold text-slate-800 mb-3">Premium Features:</h4>
+              <ul className="space-y-2">
+                <li className="flex items-center gap-3 text-sm text-slate-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Unlimited portfolios
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Custom domain support
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Advanced analytics
+                </li>
+                <li className="flex items-center gap-3 text-sm text-slate-700">
+                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  Priority support
+                </li>
+              </ul>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowUpgradePrompt(false)}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300"
+              >
+                Maybe Later
+              </button>
+              <button
+                onClick={() => {
+                  setShowUpgradePrompt(false)
+                  navigate('/subscription')
+                }}
+                className="flex-1 py-3 px-4 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Crown className="w-5 h-5" />
+                Upgrade Now
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </>
   )
 }

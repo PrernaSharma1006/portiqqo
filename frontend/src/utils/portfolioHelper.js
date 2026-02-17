@@ -65,7 +65,25 @@ export const savePortfolioToBackend = async (portfolioData, profession, subdomai
     return response.data.portfolio;
   } catch (error) {
     console.error('Save error:', error);
-    toast.error(error.response?.data?.message || 'Failed to save portfolio');
+    
+    // Check if error is due to portfolio limit
+    if (error.response?.data?.code === 'PORTFOLIO_LIMIT_REACHED') {
+      toast.error(
+        error.response.data.message,
+        {
+          duration: 5000,
+          icon: '👑',
+          style: {
+            borderRadius: '10px',
+            background: '#333',
+            color: '#fff',
+          }
+        }
+      );
+    } else {
+      toast.error(error.response?.data?.message || 'Failed to save portfolio');
+    }
+    
     throw error;
   }
 };

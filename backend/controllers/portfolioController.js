@@ -1,6 +1,24 @@
 const Portfolio = require('../models/Portfolio');
 const User = require('../models/User');
 const Template = require('../models/Template');
+const Subscription = require('../models/Subscription');
+
+// Helper function to check if user has premium subscription
+const checkUserPremiumStatus = async (userId) => {
+  const subscription = await Subscription.findOne({ 
+    user: userId, 
+    status: 'active' 
+  });
+  
+  if (!subscription) {
+    return { isPremium: false, portfolioLimit: 1 };
+  }
+  
+  return {
+    isPremium: subscription.type === 'premium',
+    portfolioLimit: subscription.type === 'premium' ? 999 : subscription.usage.portfolioLimit || 1
+  };
+};
 
 // @desc    Create or update portfolio
 // @route   POST /api/portfolio/save
@@ -39,7 +57,7 @@ exports.savePortfolio = async (req, res) => {
       }
     }
 
-    // Check if user already has a portfolio for this template
+    // Check if user already has a portfolio for this template/profession
     let portfolio = await Portfolio.findOne({ 
       user: userId, 
       profession: portfolioData.profession 
@@ -59,6 +77,25 @@ exports.savePortfolio = async (req, res) => {
         { new: true, runValidators: true }
       );
     } else {
+      // Check portfolio limit before creating new portfolio
+      const existingPortfoliosCount = await Portfolio.countDocuments({ user: userId });
+      const { isPremium, portfolioLimit } = await checkUserPremiumStatus(userId);
+      
+      console.log(`User has ${existingPortfoliosCount} portfolios. Limit: ${portfolioLimit}. Premium: ${isPremium}`);
+      
+      if (existingPortfoliosCount >= portfolioLimit) {
+        return res.status(403).json({
+          success: false,
+          message: isPremium 
+            ? 'You have reached your portfolio limit' 
+            : 'Free users can only create one portfolio. Upgrade to Premium to create more portfolios.',
+          code: 'PORTFOLIO_LIMIT_REACHED',
+          existingPortfoliosCount,
+          portfolioLimit,
+          isPremium
+        });
+      }
+      
       console.log('Creating new portfolio');
       // Create new portfolio
       // Use custom subdomain from request, or generate from user's name
