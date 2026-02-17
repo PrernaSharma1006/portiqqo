@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-function WebDeveloperTemplate() {
+function WebDeveloperTemplate({ isPublic = false }) {
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
@@ -220,28 +220,30 @@ function WebDeveloperTemplate() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Templates</span>
-            </button>
-            
-            <button
-              onClick={() => navigate('/editor/web-developer')}
-              className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Code className="w-4 h-4" />
-              <span>Use This Template</span>
-            </button>
+      {/* Header - Only show navigation when not in public view */}
+      {!isPublic && (
+        <header className="bg-white shadow-sm sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <button
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Templates</span>
+              </button>
+              
+              <button
+                onClick={() => navigate('/editor/web-developer')}
+                className="flex items-center space-x-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              >
+                <Code className="w-4 h-4" />
+                <span>Use This Template</span>
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Banner Section */}
       <section className="relative h-96 overflow-hidden">
