@@ -249,10 +249,11 @@ function UIUXDesignerTemplate({ isPublic = false }) {
               >
                 <Palette className="w-4 h-4" />
                 <span>Use This Template</span>
-            </button>
+              </button>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
       {/* Banner Section */}
       <section className="relative h-96 overflow-hidden">
