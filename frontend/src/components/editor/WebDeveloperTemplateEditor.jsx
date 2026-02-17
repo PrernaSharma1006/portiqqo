@@ -436,9 +436,19 @@ function WebDeveloperTemplateEditor() {
 
   const publishPortfolio = async () => {
     try {
+      console.log('Starting publish process...')
+      console.log('Custom subdomain:', customSubdomain)
+      
       // First save with subdomain, then publish
-      await savePortfolioToBackend(portfolioData, 'developer', customSubdomain)
+      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'developer', customSubdomain)
+      console.log('Portfolio saved:', savedPortfolio)
+      
       const portfolio = await publishPortfolioToBackend('developer')
+      console.log('Portfolio published:', portfolio)
+      
+      if (!portfolio || !portfolio.publicUrl) {
+        throw new Error('Failed to get portfolio URL')
+      }
       
       // Show success modal with the published link
       setPublishedPortfolio(portfolio)
@@ -446,6 +456,7 @@ function WebDeveloperTemplateEditor() {
     } catch (error) {
       // Error already handled in helper
       console.error('Publish failed:', error)
+      toast.error('Failed to publish portfolio. Please try again.')
     }
   }
 
@@ -727,7 +738,7 @@ function WebDeveloperTemplateEditor() {
                   onChange={(e) => setCustomSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
                   placeholder="your-name"
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  pattern="[a-z0-9-]+"
+                  pattern="[a-z0-9\-]+"
                 />
                 <span className="px-4 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg text-gray-600 whitespace-nowrap">
                   .portiqqo.me
