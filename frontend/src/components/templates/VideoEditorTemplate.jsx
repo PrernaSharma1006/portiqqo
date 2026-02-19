@@ -46,7 +46,7 @@ function VideoEditorTemplate({
     website: "www.alexchen.video"
   }
 
-  const workData = [
+  const demoWorkData = [
     {
       id: 1,
       title: "Nike Commercial Campaign",
