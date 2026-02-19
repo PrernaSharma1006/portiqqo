@@ -28,7 +28,14 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-function UIUXDesignerTemplate({ isPublic = false }) {
+function UIUXDesignerTemplate({ 
+  isPublic = false, 
+  portfolioData = {}, 
+  personalInfo = {}, 
+  socialLinks = {}, 
+  skills = [], 
+  projects = [] 
+}) {
   const [selectedCase, setSelectedCase] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
@@ -202,13 +209,23 @@ function UIUXDesignerTemplate({ isPublic = false }) {
     { id: 'systems', name: 'Design Systems' }
   ]
 
-  const workData = profileData.caseStudies.map(caseStudy => ({
+  // Use passed projects if in public mode and projects exist, otherwise use demo data
+  const projectsToDisplay = isPublic && projects.length > 0 
+    ? projects 
+    : profileData.caseStudies;
+
+  // Map projects to ensure they have proper structure and category
+  const workData = projectsToDisplay.map((caseStudy, index) => ({
     ...caseStudy,
-    category: caseStudy.category.toLowerCase().includes('mobile') ? 'mobile' :
-              caseStudy.category.toLowerCase().includes('web') ? 'web' :
-              caseStudy.category.toLowerCase().includes('research') ? 'research' :
-              caseStudy.category.toLowerCase().includes('system') ? 'systems' : 'web'
-  }))
+    id: caseStudy.id || caseStudy._id || index,
+    image: caseStudy.images?.[0]?.url || caseStudy.image || 'https://via.placeholder.com/800',
+    category: caseStudy.category ? 
+      (caseStudy.category.toLowerCase().includes('mobile') ? 'mobile' :
+       caseStudy.category.toLowerCase().includes('web') ? 'web' :
+       caseStudy.category.toLowerCase().includes('research') ? 'research' :
+       caseStudy.category.toLowerCase().includes('system') ? 'systems' : 'web') 
+      : 'web'
+  }));
 
   const filteredWork = selectedCategory === 'all' 
     ? workData 

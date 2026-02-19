@@ -24,7 +24,14 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-function WebDeveloperTemplate({ isPublic = false }) {
+function WebDeveloperTemplate({ 
+  isPublic = false, 
+  portfolioData = {}, 
+  personalInfo = {}, 
+  socialLinks = {}, 
+  skills = [], 
+  projects = [] 
+}) {
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
@@ -195,10 +202,21 @@ function WebDeveloperTemplate({ isPublic = false }) {
     { id: 'tools', name: 'Tools' }
   ]
 
-  const workData = profileData.projects.map(project => ({
+  // Use passed projects if in public mode and projects exist, otherwise use demo data
+  const projectsToDisplay = isPublic && projects.length > 0 
+    ? projects 
+    : profileData.projects;
+
+  // Map projects to ensure they have proper structure and category
+  const workData = projectsToDisplay.map((project, index) => ({
     ...project,
-    category: project.id <= 2 ? 'fullstack' : project.id <= 4 ? 'frontend' : project.id === 5 ? 'backend' : 'tools'
-  }))
+    id: project.id || project._id || index,
+    image: project.images?.[0]?.url || project.image || 'https://via.placeholder.com/600x400',
+    category: project.category || 'fullstack',
+    technologies: project.technologies || [],
+    liveUrl: project.links?.live || project.liveUrl,
+    githubUrl: project.links?.github || project.githubUrl
+  }));
 
   const filteredWork = selectedCategory === 'all' 
     ? workData 

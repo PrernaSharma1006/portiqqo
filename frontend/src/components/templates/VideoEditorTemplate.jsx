@@ -22,7 +22,14 @@ import {
   Monitor
 } from 'lucide-react'
 
-function VideoEditorTemplate({ isPublic = false }) {
+function VideoEditorTemplate({ 
+  isPublic = false, 
+  portfolioData = {}, 
+  personalInfo = {}, 
+  socialLinks = {}, 
+  skills = [], 
+  projects = [] 
+}) {
   const navigate = useNavigate()
   const [selectedCategory, setSelectedCategory] = useState('all')
 
@@ -154,6 +161,19 @@ function VideoEditorTemplate({ isPublic = false }) {
     { id: 'personal', name: 'Personal' },
     { id: 'content', name: 'Content' }
   ]
+
+  // Use passed projects if in public mode and projects exist, otherwise use demo data
+  const projectsToDisplay = isPublic && projects.length > 0 
+    ? projects 
+    : demoWorkData;
+
+  // Map projects to ensure they have proper structure and category
+  const workData = projectsToDisplay.map((work, index) => ({
+    ...work,
+    id: work.id || work._id || index,
+    thumbnail: work.images?.[0]?.url || work.thumbnail || 'https://via.placeholder.com/600x400',
+    category: work.category || 'content'
+  }));
 
   const filteredWork = selectedCategory === 'all' 
     ? workData 
