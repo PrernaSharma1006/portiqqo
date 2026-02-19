@@ -224,7 +224,8 @@ function UIUXDesignerTemplate({
        caseStudy.category.toLowerCase().includes('web') ? 'web' :
        caseStudy.category.toLowerCase().includes('research') ? 'research' :
        caseStudy.category.toLowerCase().includes('system') ? 'systems' : 'web') 
-      : 'web'
+      : 'web',
+    tools: caseStudy.tools || caseStudy.technologies || []
   }));
 
   const filteredWork = selectedCategory === 'all' 
@@ -382,16 +383,18 @@ function UIUXDesignerTemplate({
                       </div>
                     </div>
                     
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {caseStudy.tools.map((tool, index) => (
-                        <span
-                          key={index}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
-                        >
-                          {tool}
-                        </span>
-                      ))}
-                    </div>
+                    {caseStudy.tools && caseStudy.tools.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {caseStudy.tools.map((tool, index) => (
+                          <span
+                            key={index}
+                            className="px-2 py-1 bg-gray-100 text-gray-700 text-xs rounded"
+                          >
+                            {tool}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                     
                     {caseStudy.testimonial && (
                       <div className="bg-purple-50 p-4 rounded-lg">

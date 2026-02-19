@@ -215,7 +215,8 @@ function WebDeveloperTemplate({
     category: project.category || 'fullstack',
     technologies: project.technologies || [],
     liveUrl: project.links?.live || project.liveUrl,
-    githubUrl: project.links?.github || project.githubUrl
+    githubUrl: project.links?.github || project.githubUrl,
+    stats: project.stats || { stars: 0, forks: 0, commits: 0 }
   }));
 
   const filteredWork = selectedCategory === 'all' 
@@ -432,18 +433,24 @@ function WebDeveloperTemplate({
                     )}
                   </div>
                   
-                  <div className="flex justify-between items-center text-sm text-gray-500">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex items-center">
-                        <Star className="w-4 h-4 mr-1" />
-                        {project.stats.stars}
-                      </div>
-                      <div className="flex items-center">
-                        <Code className="w-4 h-4 mr-1" />
-                        {project.stats.commits}
+                  {project.stats && (project.stats.stars > 0 || project.stats.commits > 0) && (
+                    <div className="flex justify-between items-center text-sm text-gray-500">
+                      <div className="flex items-center space-x-4">
+                        {project.stats.stars > 0 && (
+                          <div className="flex items-center">
+                            <Star className="w-4 h-4 mr-1" />
+                            {project.stats.stars}
+                          </div>
+                        )}
+                        {project.stats.commits > 0 && (
+                          <div className="flex items-center">
+                            <Code className="w-4 h-4 mr-1" />
+                            {project.stats.commits}
+                          </div>
+                        )}
                       </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </motion.div>
             ))}

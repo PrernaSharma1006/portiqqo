@@ -172,7 +172,8 @@ function VideoEditorTemplate({
     ...work,
     id: work.id || work._id || index,
     thumbnail: work.images?.[0]?.url || work.thumbnail || 'https://via.placeholder.com/600x400',
-    category: work.category || 'content'
+    category: work.category || 'content',
+    duration: work.duration || null
   }));
 
   const filteredWork = selectedCategory === 'all' 
@@ -346,9 +347,11 @@ function VideoEditorTemplate({
                       <Play className="w-8 h-8 ml-1" />
                     </button>
                   </div>
-                  <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-sm rounded">
-                    {work.duration}
-                  </div>
+                  {work.duration && (
+                    <div className="absolute bottom-2 right-2 px-2 py-1 bg-black/70 text-white text-sm rounded">
+                      {work.duration}
+                    </div>
+                  )}
                 </div>
                 
                 <div className="p-6">
