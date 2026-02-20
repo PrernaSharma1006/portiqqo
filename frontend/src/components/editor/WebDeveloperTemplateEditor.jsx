@@ -82,6 +82,12 @@ function WebDeveloperTemplateEditor() {
           linkedin: portfolio.socialLinks?.linkedin || '',
           twitter: portfolio.socialLinks?.twitter || ''
         },
+        techStack: {
+          frontend: [],
+          backend: [],
+          tools: [],
+          other: []
+        },
         skills: Array.isArray(portfolio.skills) 
           ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
           : [],
