@@ -58,6 +58,10 @@ function UIUXDesignerTemplateEditor() {
     } else {
       console.warn('⚠️ No templateData found for UIUX, reconstructing from portfolio fields');
       // Reconstruct portfolioData from portfolio fields
+      const allSkills = Array.isArray(portfolio.skills) 
+        ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
+        : [];
+      
       const reconstructedData = {
         profile: {
           name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'Sarah Johnson',
@@ -74,12 +78,12 @@ function UIUXDesignerTemplateEditor() {
           behance: portfolio.socialLinks?.behance || ''
         },
         designTools: {
-          design: portfolio.skills?.filter(s => s.category === 'design').map(s => s.name) || [],
+          design: allSkills,
           prototype: [],
           research: [],
           other: []
         },
-        caseStudies: portfolio.projects || [],
+        caseStudies: Array.isArray(portfolio.projects) ? portfolio.projects : [],
         experience: [],
         education: [],
         awards: [],

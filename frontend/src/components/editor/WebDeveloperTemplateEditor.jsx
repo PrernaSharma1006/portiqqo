@@ -82,8 +82,10 @@ function WebDeveloperTemplateEditor() {
           linkedin: portfolio.socialLinks?.linkedin || '',
           twitter: portfolio.socialLinks?.twitter || ''
         },
-        skills: portfolio.skills?.map(skill => skill.name) || [],
-        projects: portfolio.projects || [],
+        skills: Array.isArray(portfolio.skills) 
+          ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
+          : [],
+        projects: Array.isArray(portfolio.projects) ? portfolio.projects : [],
         services: [],
         experience: [],
         education: [],

@@ -73,8 +73,10 @@ function VideoEditorTemplateEditor() {
           youtube: portfolio.socialLinks?.youtube || '',
           instagram: portfolio.socialLinks?.instagram || ''
         },
-        tools: portfolio.skills?.map(s => s.name) || [],
-        work: portfolio.projects || [],
+        tools: Array.isArray(portfolio.skills) 
+          ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
+          : [],
+        work: Array.isArray(portfolio.projects) ? portfolio.projects : [],
         services: [],
         experience: [],
         testimonials: [],
