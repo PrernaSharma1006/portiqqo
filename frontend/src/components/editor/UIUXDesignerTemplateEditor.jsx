@@ -62,6 +62,16 @@ function UIUXDesignerTemplateEditor() {
         ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
         : [];
       
+      const reconstructedCaseStudies = Array.isArray(portfolio.projects)
+        ? portfolio.projects.map(project => ({
+            ...project,
+            tools: Array.isArray(project.technologies) ? project.technologies : (Array.isArray(project.tools) ? project.tools : []),
+            category: project.category || 'mobile',
+            image: project.images?.[0]?.url || project.image || '',
+            behanceUrl: project.links?.behance || project.behanceUrl || ''
+          }))
+        : [];
+      
       const reconstructedData = {
         profile: {
           name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'Sarah Johnson',
@@ -83,7 +93,7 @@ function UIUXDesignerTemplateEditor() {
           research: [],
           other: []
         },
-        caseStudies: Array.isArray(portfolio.projects) ? portfolio.projects : [],
+        caseStudies: reconstructedCaseStudies,
         experience: [],
         education: [],
         awards: [],

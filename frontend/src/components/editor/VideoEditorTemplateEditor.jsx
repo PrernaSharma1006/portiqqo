@@ -58,6 +58,18 @@ function VideoEditorTemplateEditor() {
     } else {
       console.warn('⚠️ No templateData found for Video Editor, reconstructing from portfolio fields');
       // Reconstruct portfolioData from portfolio fields
+      const reconstructedWork = Array.isArray(portfolio.projects)
+        ? portfolio.projects.map(project => ({
+            ...project,
+            software: Array.isArray(project.technologies) ? project.technologies : (Array.isArray(project.software) ? project.software : []),
+            category: project.category || 'commercial',
+            thumbnail: project.images?.[0]?.url || project.thumbnail || project.image || '',
+            videoUrl: project.videos?.[0]?.url || project.videoUrl || '',
+            client: project.client || '',
+            description: project.description || ''
+          }))
+        : [];
+      
       const reconstructedData = {
         profile: {
           name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'Alex Thompson',
@@ -76,7 +88,7 @@ function VideoEditorTemplateEditor() {
         tools: Array.isArray(portfolio.skills) 
           ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
           : [],
-        work: Array.isArray(portfolio.projects) ? portfolio.projects : [],
+        work: reconstructedWork,
         services: [],
         experience: [],
         testimonials: [],

@@ -66,6 +66,18 @@ function WebDeveloperTemplateEditor() {
     } else {
       console.warn('⚠️ No templateData found, reconstructing from portfolio fields');
       // Reconstruct portfolioData from portfolio fields for backwards compatibility
+      const reconstructedProjects = Array.isArray(portfolio.projects) 
+        ? portfolio.projects.map(project => ({
+            ...project,
+            technologies: Array.isArray(project.technologies) ? project.technologies : [],
+            features: Array.isArray(project.features) ? project.features : [],
+            category: project.category || 'fullstack',
+            image: project.images?.[0]?.url || project.image || '',
+            liveUrl: project.links?.live || project.liveUrl || '',
+            githubUrl: project.links?.github || project.githubUrl || ''
+          }))
+        : [];
+      
       const reconstructedData = {
         profile: {
           name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'John Smith',
@@ -91,7 +103,7 @@ function WebDeveloperTemplateEditor() {
         skills: Array.isArray(portfolio.skills) 
           ? portfolio.skills.map(skill => typeof skill === 'string' ? skill : skill?.name || skill)
           : [],
-        projects: Array.isArray(portfolio.projects) ? portfolio.projects : [],
+        projects: reconstructedProjects,
         services: [],
         experience: [],
         education: [],
