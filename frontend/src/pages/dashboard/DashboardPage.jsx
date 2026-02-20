@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit, Trash2 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
@@ -128,6 +128,12 @@ function DashboardPage() {
   }
 
   const handleEditPortfolio = (portfolio) => {
+    console.log('=== EDIT PORTFOLIO DEBUG ===');
+    console.log('Portfolio data:', portfolio);
+    console.log('Portfolio ID:', portfolio._id);
+    console.log('Portfolio profession:', portfolio.profession);
+    console.log('Portfolio templateData:', portfolio.templateData);
+    
     // Map profession to editor route
     const professionToRoute = {
       'developer': '/editor/web-developer',
@@ -138,12 +144,46 @@ function DashboardPage() {
     }
     
     const route = professionToRoute[portfolio.profession] || '/builder/general'
+    console.log('Navigating to:', route);
+    console.log('With state:', { portfolioId: portfolio._id, existingPortfolio: portfolio });
     navigate(route, { state: { portfolioId: portfolio._id, existingPortfolio: portfolio } })
   }
 
   const handleViewPortfolio = (portfolio) => {
     const url = `https://${portfolio.subdomain}.portiqqo.me`
     window.open(url, '_blank')
+  }
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [portfolioToDelete, setPortfolioToDelete] = useState(null)
+
+  const handleDeleteClick = (portfolio) => {
+    setPortfolioToDelete(portfolio)
+    setShowDeleteModal(true)
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!portfolioToDelete) return
+    
+    try {
+      await portfolioAPI.delete(portfolioToDelete._id)
+      toast.success('Portfolio deleted successfully!')
+      
+      // Refresh portfolios list
+      fetchPortfolios()
+      
+      // Close modal
+      setShowDeleteModal(false)
+      setPortfolioToDelete(null)
+    } catch (error) {
+      console.error('Delete portfolio error:', error)
+      toast.error(error.response?.data?.message || 'Failed to delete portfolio')
+    }
+  }
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false)
+    setPortfolioToDelete(null)
   }
 
   const handleTemplatePreview = (templateId, event) => {
@@ -257,10 +297,18 @@ function DashboardPage() {
                           <button
                             onClick={() => handleViewPortfolio(portfolio)}
                             className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-all duration-300"
+                            title="View Portfolio"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </button>
                         )}
+                        <button
+                          onClick={() => handleDeleteClick(portfolio)}
+                          className="py-2.5 px-4 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg font-medium transition-all duration-300"
+                          title="Delete Portfolio"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
                     </div>
                   </motion.div>
@@ -452,6 +500,53 @@ function DashboardPage() {
               >
                 <Crown className="w-5 h-5" />
                 Upgrade Now
+              </button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && portfolioToDelete && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+          >
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-red-600" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">Delete Portfolio?</h3>
+              <p className="text-slate-600 mb-2">
+                Are you sure you want to delete <strong>{portfolioToDelete.title}</strong>?
+              </p>
+              <p className="text-sm text-slate-500">
+                This will permanently delete your portfolio at{' '}
+                <span className="font-medium">{portfolioToDelete.subdomain}.portiqqo.me</span>
+              </p>
+            </div>
+
+            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+              <p className="text-sm text-red-800 text-center">
+                ⚠️ This action cannot be undone
+              </p>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={handleCancelDelete}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <Trash2 className="w-5 h-5" />
+                Delete Portfolio
               </button>
             </div>
           </motion.div>

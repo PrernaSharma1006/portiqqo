@@ -1,7 +1,9 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
+import { portfolioAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
 import { 
   ArrowLeft, 
@@ -25,11 +27,74 @@ import {
 
 function UIUXDesignerTemplateEditor() {
   const navigate = useNavigate()
+  const location = useLocation()
   const fileInputRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
+  const [loadingPortfolio, setLoadingPortfolio] = useState(false)
+  const [portfolioId, setPortfolioId] = useState(null)
+  const [customSubdomain, setCustomSubdomain] = useState('')
+
+  // Load existing portfolio data if editing
+  useEffect(() => {
+    console.log('=== UIUX EDITOR LOAD DEBUG ===');
+    console.log('location.state:', location.state);
+    
+    const existingPortfolio = location.state?.existingPortfolio
+    const portfolioIdParam = location.state?.portfolioId
+    
+    console.log('existingPortfolio:', existingPortfolio);
+    console.log('portfolioIdParam:', portfolioIdParam);
+    
+    if (existingPortfolio) {
+      console.log('Loading from existingPortfolio');
+      loadPortfolioData(existingPortfolio)
+    } else if (portfolioIdParam) {
+      console.log('Fetching by portfolioId:', portfolioIdParam);
+      fetchPortfolioById(portfolioIdParam)
+    } else {
+      console.log('No portfolio data found in location.state');
+    }
+  }, [location.state])
+
+  const loadPortfolioData = (portfolio) => {
+    console.log('=== LOADING UIUX PORTFOLIO DATA ===');
+    console.log('Full portfolio object:', portfolio);
+    console.log('templateData:', portfolio.templateData);
+    console.log('subdomain:', portfolio.subdomain);
+    console.log('_id:', portfolio._id);
+    
+    if (portfolio.templateData) {
+      console.log('Setting portfolioData to:', portfolio.templateData);
+      setPortfolioData(portfolio.templateData)
+    } else {
+      console.warn('No templateData found in portfolio');
+    }
+    if (portfolio.subdomain) {
+      const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
+      console.log('Setting customSubdomain to:', subdomain);
+      setCustomSubdomain(subdomain)
+    }
+    console.log('Setting portfolioId to:', portfolio._id);
+    setPortfolioId(portfolio._id)
+  }
+
+  const fetchPortfolioById = async (id) => {
+    try {
+      setLoadingPortfolio(true)
+      const response = await portfolioAPI.getById(id)
+      if (response.data.success) {
+        loadPortfolioData(response.data.portfolio)
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio:', error)
+      toast.error('Failed to load portfolio data')
+    } finally {
+      setLoadingPortfolio(false)
+    }
+  }
 
   // Editable portfolio data
   const [portfolioData, setPortfolioData] = useState({

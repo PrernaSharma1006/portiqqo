@@ -41,23 +41,45 @@ function WebDeveloperTemplateEditor() {
 
   // Load existing portfolio data if editing
   useEffect(() => {
+    console.log('=== EDITOR LOAD DEBUG ===');
+    console.log('location.state:', location.state);
+    
     const existingPortfolio = location.state?.existingPortfolio
     const portfolioIdParam = location.state?.portfolioId
     
+    console.log('existingPortfolio:', existingPortfolio);
+    console.log('portfolioIdParam:', portfolioIdParam);
+    
     if (existingPortfolio) {
+      console.log('Loading from existingPortfolio');
       loadPortfolioData(existingPortfolio)
     } else if (portfolioIdParam) {
+      console.log('Fetching by portfolioId:', portfolioIdParam);
       fetchPortfolioById(portfolioIdParam)
+    } else {
+      console.log('No portfolio data found in location.state');
     }
   }, [location.state])
 
   const loadPortfolioData = (portfolio) => {
+    console.log('=== LOADING PORTFOLIO DATA ===');
+    console.log('Full portfolio object:', portfolio);
+    console.log('templateData:', portfolio.templateData);
+    console.log('subdomain:', portfolio.subdomain);
+    console.log('_id:', portfolio._id);
+    
     if (portfolio.templateData) {
+      console.log('Setting portfolioData to:', portfolio.templateData);
       setPortfolioData(portfolio.templateData)
+    } else {
+      console.warn('No templateData found in portfolio');
     }
     if (portfolio.subdomain) {
-      setCustomSubdomain(portfolio.subdomain.replace('.portiqqo.me', ''))
+      const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
+      console.log('Setting customSubdomain to:', subdomain);
+      setCustomSubdomain(subdomain)
     }
+    console.log('Setting portfolioId to:', portfolio._id);
     setPortfolioId(portfolio._id)
   }
 
