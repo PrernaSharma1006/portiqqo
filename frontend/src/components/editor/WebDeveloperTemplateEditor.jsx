@@ -60,12 +60,44 @@ function WebDeveloperTemplateEditor() {
     console.log('subdomain:', portfolio.subdomain);
     console.log('_id:', portfolio._id);
     
-    if (portfolio.templateData) {
-      console.log('Setting portfolioData to:', portfolio.templateData);
+    if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
+      console.log('✅ Using templateData from portfolio');
       setPortfolioData(portfolio.templateData)
     } else {
-      console.warn('No templateData found in portfolio');
+      console.warn('⚠️ No templateData found, reconstructing from portfolio fields');
+      // Reconstruct portfolioData from portfolio fields for backwards compatibility
+      const reconstructedData = {
+        profile: {
+          name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'John Smith',
+          title: portfolio.personalInfo?.tagline || 'Full Stack Developer',
+          specialization: 'fullstack',
+          description: portfolio.personalInfo?.bio || '',
+          profileImage: portfolio.personalInfo?.profileImage?.url || '',
+          bannerImage: '',
+          location: portfolio.personalInfo?.location || '',
+          email: portfolio.personalInfo?.email || '',
+          phone: portfolio.personalInfo?.phone || '',
+          website: portfolio.personalInfo?.website || '',
+          github: portfolio.socialLinks?.github || '',
+          linkedin: portfolio.socialLinks?.linkedin || '',
+          twitter: portfolio.socialLinks?.twitter || ''
+        },
+        skills: portfolio.skills?.map(skill => skill.name) || [],
+        projects: portfolio.projects || [],
+        services: [],
+        experience: [],
+        education: [],
+        testimonials: [],
+        footer: {
+          tagline: 'Let\'s work together',
+          email: portfolio.personalInfo?.email || '',
+          socialLinks: []
+        }
+      };
+      console.log('Reconstructed data:', reconstructedData);
+      setPortfolioData(reconstructedData);
     }
+    
     if (portfolio.subdomain) {
       const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
       console.log('Setting customSubdomain to:', subdomain);

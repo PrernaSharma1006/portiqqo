@@ -52,9 +52,40 @@ function VideoEditorTemplateEditor() {
   }, [location.state])
 
   const loadPortfolioData = (portfolio) => {
-    if (portfolio.templateData) {
-      console.log('✅ Video editor portfolio data loaded successfully');
+    if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
+      console.log('✅ Video editor portfolio data loaded from templateData');
       setPortfolioData(portfolio.templateData)
+    } else {
+      console.warn('⚠️ No templateData found for Video Editor, reconstructing from portfolio fields');
+      // Reconstruct portfolioData from portfolio fields
+      const reconstructedData = {
+        profile: {
+          name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'Alex Thompson',
+          title: portfolio.personalInfo?.tagline || 'Video Editor',
+          specialization: 'video-editing',
+          description: portfolio.personalInfo?.bio || '',
+          profileImage: portfolio.personalInfo?.profileImage?.url || '',
+          bannerImage: '',
+          location: portfolio.personalInfo?.location || '',
+          email: portfolio.personalInfo?.email || '',
+          phone: portfolio.personalInfo?.phone || '',
+          website: portfolio.personalInfo?.website || '',
+          youtube: portfolio.socialLinks?.youtube || '',
+          instagram: portfolio.socialLinks?.instagram || ''
+        },
+        tools: portfolio.skills?.map(s => s.name) || [],
+        work: portfolio.projects || [],
+        services: [],
+        experience: [],
+        testimonials: [],
+        stats: {
+          projectsCompleted: '0',
+          happyClients: '0',
+          awardsWon: '0',
+          yearsExperience: '0'
+        }
+      };
+      setPortfolioData(reconstructedData);
     }
     if (portfolio.subdomain) {
       const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');

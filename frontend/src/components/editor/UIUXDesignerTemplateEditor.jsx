@@ -52,9 +52,40 @@ function UIUXDesignerTemplateEditor() {
   }, [location.state])
 
   const loadPortfolioData = (portfolio) => {
-    if (portfolio.templateData) {
-      console.log('✅ UIUX portfolio data loaded successfully');
+    if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
+      console.log('✅ UIUX portfolio data loaded from templateData');
       setPortfolioData(portfolio.templateData)
+    } else {
+      console.warn('⚠️ No templateData found for UIUX, reconstructing from portfolio fields');
+      // Reconstruct portfolioData from portfolio fields
+      const reconstructedData = {
+        profile: {
+          name: `${portfolio.personalInfo?.firstName || ''} ${portfolio.personalInfo?.lastName || ''}`.trim() || 'Sarah Johnson',
+          title: portfolio.personalInfo?.tagline || 'UI/UX Designer',
+          specialization: 'ui-ux',
+          description: portfolio.personalInfo?.bio || '',
+          profileImage: portfolio.personalInfo?.profileImage?.url || '',
+          bannerImage: '',
+          location: portfolio.personalInfo?.location || '',
+          email: portfolio.personalInfo?.email || '',
+          phone: portfolio.personalInfo?.phone || '',
+          website: portfolio.personalInfo?.website || '',
+          dribbble: portfolio.socialLinks?.dribbble || '',
+          behance: portfolio.socialLinks?.behance || ''
+        },
+        designTools: {
+          design: portfolio.skills?.filter(s => s.category === 'design').map(s => s.name) || [],
+          prototype: [],
+          research: [],
+          other: []
+        },
+        caseStudies: portfolio.projects || [],
+        experience: [],
+        education: [],
+        awards: [],
+        testimonials: []
+      };
+      setPortfolioData(reconstructedData);
     }
     if (portfolio.subdomain) {
       const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
