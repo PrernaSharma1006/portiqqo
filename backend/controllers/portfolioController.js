@@ -57,23 +57,41 @@ exports.savePortfolio = async (req, res) => {
       }
     }
 
-    // Check if user already has a portfolio for this template/profession
-    let portfolio = await Portfolio.findOne({ 
-      user: userId, 
-      profession: portfolioData.profession 
-    });
+    // Check if portfolio ID is provided for update
+    let portfolio = null;
+    if (portfolioData.id) {
+      portfolio = await Portfolio.findOne({ 
+        _id: portfolioData.id,
+        user: userId
+      });
+    }
+    
+    // If no ID provided, check if user already has a portfolio for this profession
+    if (!portfolio) {
+      portfolio = await Portfolio.findOne({ 
+        user: userId, 
+        profession: portfolioData.profession 
+      });
+    }
 
     if (portfolio) {
       console.log('Updating existing portfolio:', portfolio._id);
-      // Update existing portfolio
+      // Update existing portfolio while preserving isPublished status
+      const updateData = { 
+        ...portfolioData, 
+        user: userId, 
+        template: template?._id
+      };
+      
+      // Only set isPublished to false if it's explicitly false in the payload
+      // Otherwise, preserve the existing value
+      if (portfolioData.isPublished !== undefined) {
+        updateData.isPublished = portfolioData.isPublished;
+      }
+      
       portfolio = await Portfolio.findByIdAndUpdate(
         portfolio._id,
-        { 
-          ...portfolioData, 
-          user: userId, 
-          template: template?._id,
-          isPublished: false 
-        },
+        updateData,
         { new: true, runValidators: true }
       );
     } else {

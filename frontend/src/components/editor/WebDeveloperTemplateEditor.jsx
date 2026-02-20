@@ -445,7 +445,7 @@ function WebDeveloperTemplateEditor() {
       if (!hasGivenFeedback()) {
         triggerFeedbackModal()
       }
-    })
+    }, portfolioId)
   }
 
   const publishPortfolio = async () => {
@@ -454,7 +454,7 @@ function WebDeveloperTemplateEditor() {
       console.log('Custom subdomain:', customSubdomain)
       
       // First save with subdomain, then publish
-      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'developer', customSubdomain)
+      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'developer', customSubdomain, null, portfolioId)
       console.log('Portfolio saved:', savedPortfolio)
       
       const portfolio = await publishPortfolioToBackend('developer')

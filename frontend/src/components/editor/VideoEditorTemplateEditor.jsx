@@ -427,12 +427,12 @@ function VideoEditorTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'video-editor')
+    await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'video-editor')
+      await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
       const result = await publishPortfolioToBackend('video-editor')
       if (result) {
         setPublishedPortfolio(result)

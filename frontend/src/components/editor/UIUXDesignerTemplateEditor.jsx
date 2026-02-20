@@ -440,12 +440,12 @@ function UIUXDesignerTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'ui-ux-designer')
+    await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'ui-ux-designer')
+      await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
       const result = await publishPortfolioToBackend('ui-ux-designer')
       if (result) {
         setPublishedPortfolio(result)
