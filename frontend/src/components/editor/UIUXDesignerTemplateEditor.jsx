@@ -39,45 +39,27 @@ function UIUXDesignerTemplateEditor() {
 
   // Load existing portfolio data if editing
   useEffect(() => {
-    console.log('=== UIUX EDITOR LOAD DEBUG ===');
-    console.log('location.state:', location.state);
-    
     const existingPortfolio = location.state?.existingPortfolio
     const portfolioIdParam = location.state?.portfolioId
     
-    console.log('existingPortfolio:', existingPortfolio);
-    console.log('portfolioIdParam:', portfolioIdParam);
-    
     if (existingPortfolio) {
-      console.log('Loading from existingPortfolio');
+      console.log('📝 Loading existing UIUX portfolio for edit');
       loadPortfolioData(existingPortfolio)
     } else if (portfolioIdParam) {
-      console.log('Fetching by portfolioId:', portfolioIdParam);
+      console.log('📝 Fetching UIUX portfolio by ID:', portfolioIdParam);
       fetchPortfolioById(portfolioIdParam)
-    } else {
-      console.log('No portfolio data found in location.state');
     }
   }, [location.state])
 
   const loadPortfolioData = (portfolio) => {
-    console.log('=== LOADING UIUX PORTFOLIO DATA ===');
-    console.log('Full portfolio object:', portfolio);
-    console.log('templateData:', portfolio.templateData);
-    console.log('subdomain:', portfolio.subdomain);
-    console.log('_id:', portfolio._id);
-    
     if (portfolio.templateData) {
-      console.log('Setting portfolioData to:', portfolio.templateData);
+      console.log('✅ UIUX portfolio data loaded successfully');
       setPortfolioData(portfolio.templateData)
-    } else {
-      console.warn('No templateData found in portfolio');
     }
     if (portfolio.subdomain) {
       const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
-      console.log('Setting customSubdomain to:', subdomain);
       setCustomSubdomain(subdomain)
     }
-    console.log('Setting portfolioId to:', portfolio._id);
     setPortfolioId(portfolio._id)
   }
 

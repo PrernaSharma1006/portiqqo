@@ -128,12 +128,6 @@ function DashboardPage() {
   }
 
   const handleEditPortfolio = (portfolio) => {
-    console.log('=== EDIT PORTFOLIO DEBUG ===');
-    console.log('Portfolio data:', portfolio);
-    console.log('Portfolio ID:', portfolio._id);
-    console.log('Portfolio profession:', portfolio.profession);
-    console.log('Portfolio templateData:', portfolio.templateData);
-    
     // Map profession to editor route
     const professionToRoute = {
       'developer': '/editor/web-developer',
@@ -144,8 +138,6 @@ function DashboardPage() {
     }
     
     const route = professionToRoute[portfolio.profession] || '/builder/general'
-    console.log('Navigating to:', route);
-    console.log('With state:', { portfolioId: portfolio._id, existingPortfolio: portfolio });
     navigate(route, { state: { portfolioId: portfolio._id, existingPortfolio: portfolio } })
   }
 

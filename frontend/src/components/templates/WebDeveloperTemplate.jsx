@@ -207,39 +207,21 @@ function WebDeveloperTemplate({
     ? projects 
     : profileData.projects;
 
-  console.log('=== WEB DEVELOPER TEMPLATE DEBUG ===');
-  console.log('isPublic:', isPublic);
-  console.log('projects prop:', projects);
-  console.log('projects.length:', projects?.length);
-  console.log('profileData.projects:', profileData.projects);
-  console.log('projectsToDisplay:', projectsToDisplay);
-
   // Map projects to ensure they have proper structure and category
-  const workData = projectsToDisplay.map((project, index) => {
-    const mapped = {
-      ...project,
-      id: project.id || project._id || index,
-      image: project.images?.[0]?.url || project.image || 'https://via.placeholder.com/600x400',
-      category: project.category || 'fullstack',
-      technologies: project.technologies || [],
-      liveUrl: project.links?.live || project.liveUrl,
-      githubUrl: project.links?.github || project.githubUrl,
-      stats: project.stats || { stars: 0, forks: 0, commits: 0 }
-    };
-    console.log(`Mapped project ${index}:`, mapped);
-    console.log(`  - category: ${mapped.category}`);
-    return mapped;
-  });
-
-  console.log('workData array:', workData);
-  console.log('selectedCategory:', selectedCategory);
+  const workData = projectsToDisplay.map((project, index) => ({
+    ...project,
+    id: project.id || project._id || index,
+    image: project.images?.[0]?.url || project.image || 'https://placehold.co/600x400/e2e8f0/475569?text=Project+Image',
+    category: project.category || 'fullstack',
+    technologies: project.technologies || [],
+    liveUrl: project.links?.live || project.liveUrl,
+    githubUrl: project.links?.github || project.githubUrl,
+    stats: project.stats || { stars: 0, forks: 0, commits: 0 }
+  }));
 
   const filteredWork = selectedCategory === 'all' 
     ? workData 
     : workData.filter(work => work.category === selectedCategory)
-
-  console.log('filteredWork:', filteredWork);
-  console.log('filteredWork.length:', filteredWork.length);
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },

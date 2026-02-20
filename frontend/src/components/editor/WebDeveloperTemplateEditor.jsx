@@ -41,23 +41,15 @@ function WebDeveloperTemplateEditor() {
 
   // Load existing portfolio data if editing
   useEffect(() => {
-    console.log('=== EDITOR LOAD DEBUG ===');
-    console.log('location.state:', location.state);
-    
     const existingPortfolio = location.state?.existingPortfolio
     const portfolioIdParam = location.state?.portfolioId
     
-    console.log('existingPortfolio:', existingPortfolio);
-    console.log('portfolioIdParam:', portfolioIdParam);
-    
     if (existingPortfolio) {
-      console.log('Loading from existingPortfolio');
+      console.log('📝 Loading existing portfolio for edit');
       loadPortfolioData(existingPortfolio)
     } else if (portfolioIdParam) {
-      console.log('Fetching by portfolioId:', portfolioIdParam);
+      console.log('📝 Fetching portfolio by ID:', portfolioIdParam);
       fetchPortfolioById(portfolioIdParam)
-    } else {
-      console.log('No portfolio data found in location.state');
     }
   }, [location.state])
 
