@@ -440,12 +440,25 @@ function UIUXDesignerTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
+    const savedPortfolio = await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
+    
+    // Update portfolioId with the saved portfolio's ID
+    if (savedPortfolio && savedPortfolio.id) {
+      console.log('✅ UIUX Portfolio saved, updating portfolioId:', savedPortfolio.id);
+      setPortfolioId(savedPortfolio.id)
+    }
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
+      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
+      
+      // Update portfolioId if we just saved
+      if (savedPortfolio && savedPortfolio.id) {
+        setPortfolioId(savedPortfolio.id)
+        localStorage.setItem('savedPortfolioId', savedPortfolio.id)
+      }
+      
       const result = await publishPortfolioToBackend('ui-ux-designer')
       if (result) {
         setPublishedPortfolio(result)

@@ -440,22 +440,36 @@ function WebDeveloperTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'developer', customSubdomain, () => {
+    const savedPortfolio = await savePortfolioToBackend(portfolioData, 'developer', customSubdomain, () => {
       // Trigger feedback modal if user hasn't given feedback yet
       if (!hasGivenFeedback()) {
         triggerFeedbackModal()
       }
     }, portfolioId)
+    
+    // Update portfolioId with the saved portfolio's ID
+    if (savedPortfolio && savedPortfolio.id) {
+      console.log('✅ Portfolio saved, updating portfolioId:', savedPortfolio.id);
+      setPortfolioId(savedPortfolio.id)
+    }
   }
 
   const publishPortfolio = async () => {
     try {
       console.log('Starting publish process...')
+      console.log('Portfolio ID:', portfolioId)
       console.log('Custom subdomain:', customSubdomain)
       
       // First save with subdomain, then publish
       const savedPortfolio = await savePortfolioToBackend(portfolioData, 'developer', customSubdomain, null, portfolioId)
       console.log('Portfolio saved:', savedPortfolio)
+      
+      // Update portfolioId if we just saved
+      if (savedPortfolio && savedPortfolio.id) {
+        setPortfolioId(savedPortfolio.id)
+        // Also ensure localStorage has the latest ID
+        localStorage.setItem('savedPortfolioId', savedPortfolio.id)
+      }
       
       const portfolio = await publishPortfolioToBackend('developer')
       console.log('Portfolio published:', portfolio)

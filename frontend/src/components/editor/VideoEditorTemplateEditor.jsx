@@ -427,12 +427,25 @@ function VideoEditorTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
+    const savedPortfolio = await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
+    
+    // Update portfolioId with the saved portfolio's ID
+    if (savedPortfolio && savedPortfolio.id) {
+      console.log('✅ Video Editor portfolio saved, updating portfolioId:', savedPortfolio.id);
+      setPortfolioId(savedPortfolio.id)
+    }
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
+      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'video-editor', customSubdomain, null, portfolioId)
+      
+      // Update portfolioId if we just saved
+      if (savedPortfolio && savedPortfolio.id) {
+        setPortfolioId(savedPortfolio.id)
+        localStorage.setItem('savedPortfolioId', savedPortfolio.id)
+      }
+      
       const result = await publishPortfolioToBackend('video-editor')
       if (result) {
         setPublishedPortfolio(result)
