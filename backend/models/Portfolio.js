@@ -400,7 +400,13 @@ const portfolioSchema = new mongoose.Schema({
       type: Number,
       default: 0
     }
-  }]
+  }],
+  
+  // Template-specific data (stores full editor state for each template)
+  templateData: {
+    type: mongoose.Schema.Types.Mixed,
+    default: {}
+  }
 }, {
   timestamps: true
 });
