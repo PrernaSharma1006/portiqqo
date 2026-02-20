@@ -216,9 +216,11 @@ function VideoEditorTemplateEditor() {
     { id: 'content', name: 'Content' }
   ]
 
-  const filteredWork = selectedCategory === 'all' 
-    ? portfolioData.work 
-    : portfolioData.work.filter(work => work.category === selectedCategory)
+  const filteredWork = portfolioData && portfolioData.work
+    ? (selectedCategory === 'all' 
+        ? portfolioData.work 
+        : portfolioData.work.filter(work => work.category === selectedCategory))
+    : []
 
   // Function to extract YouTube video ID from URL
   const getYouTubeVideoId = (url) => {

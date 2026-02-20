@@ -265,9 +265,11 @@ function WebDeveloperTemplateEditor() {
     { key: 'other', name: 'Other Skills', icon: <Code className="w-5 h-5" /> }
   ]
 
-  const filteredProjects = selectedCategory === 'all' 
-    ? portfolioData.projects 
-    : portfolioData.projects.filter(project => project.category === selectedCategory)
+  const filteredProjects = portfolioData && portfolioData.projects
+    ? (selectedCategory === 'all' 
+        ? portfolioData.projects 
+        : portfolioData.projects.filter(project => project.category === selectedCategory))
+    : []
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },

@@ -254,9 +254,11 @@ function UIUXDesignerTemplateEditor() {
     { key: 'other', name: 'Other Tools', icon: <Target className="w-5 h-5" /> }
   ]
 
-  const filteredCaseStudies = selectedCategory === 'all' 
-    ? portfolioData.caseStudies 
-    : portfolioData.caseStudies.filter(study => study.category === selectedCategory)
+  const filteredCaseStudies = portfolioData && portfolioData.caseStudies
+    ? (selectedCategory === 'all' 
+        ? portfolioData.caseStudies 
+        : portfolioData.caseStudies.filter(study => study.category === selectedCategory))
+    : []
 
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
