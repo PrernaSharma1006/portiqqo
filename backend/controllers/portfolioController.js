@@ -76,7 +76,7 @@ exports.savePortfolio = async (req, res) => {
 
     if (portfolio) {
       console.log('Updating existing portfolio:', portfolio._id);
-      // Update existing portfolio while preserving isPublished status
+      // Update existing portfolio while preserving isPublished status and subdomain
       const updateData = { 
         ...portfolioData, 
         user: userId, 
@@ -87,6 +87,11 @@ exports.savePortfolio = async (req, res) => {
       // Otherwise, preserve the existing value
       if (portfolioData.isPublished !== undefined) {
         updateData.isPublished = portfolioData.isPublished;
+      }
+      
+      // Preserve existing subdomain if not provided in update
+      if (!portfolioData.subdomain) {
+        updateData.subdomain = portfolio.subdomain;
       }
       
       portfolio = await Portfolio.findByIdAndUpdate(
@@ -140,8 +145,11 @@ exports.savePortfolio = async (req, res) => {
       subdomain = await Portfolio.findAvailableSubdomain(subdomain);
       console.log('Final subdomain:', subdomain);
 
+      // Remove id field if present (it might be invalid for new creation)
+      const { id, _id, ...portfolioDataWithoutId } = portfolioData;
+
       portfolio = await Portfolio.create({
-        ...portfolioData,
+        ...portfolioDataWithoutId,
         user: userId,
         template: template?._id,
         subdomain,
