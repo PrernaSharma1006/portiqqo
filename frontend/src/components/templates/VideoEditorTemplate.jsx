@@ -34,7 +34,7 @@ function VideoEditorTemplate({
   const [selectedCategory, setSelectedCategory] = useState('all')
 
   // Sample data for the template
-  const profileData = {
+  const demoProfile = {
     name: "Alex Chen",
     title: "Professional Video Editor",
     description: "Creating cinematic stories through the art of video editing. Specializing in commercials, music videos, and documentary filmmaking with 8+ years of experience.",
@@ -45,6 +45,18 @@ function VideoEditorTemplate({
     phone: "+1 (555) 123-4567",
     website: "www.alexchen.video"
   }
+
+  const profileData = isPublic ? {
+    name: portfolioData.profile?.name || `${personalInfo.firstName || ''} ${personalInfo.lastName || ''}`.trim() || demoProfile.name,
+    title: portfolioData.profile?.title || portfolioData.profile?.tagline || personalInfo.tagline || demoProfile.title,
+    description: portfolioData.profile?.description || portfolioData.profile?.bio || personalInfo.bio || demoProfile.description,
+    profileImage: portfolioData.profile?.profileImage || portfolioData.profile?.image || personalInfo.profileImage?.url || demoProfile.profileImage,
+    bannerImage: portfolioData.profile?.bannerImage || demoProfile.bannerImage,
+    location: portfolioData.profile?.location || personalInfo.location || demoProfile.location,
+    email: portfolioData.profile?.email || personalInfo.email || demoProfile.email,
+    phone: portfolioData.profile?.phone || personalInfo.phone || demoProfile.phone,
+    website: portfolioData.profile?.website || personalInfo.website || demoProfile.website
+  } : demoProfile
 
   const demoWorkData = [
     {
@@ -109,7 +121,9 @@ function VideoEditorTemplate({
     }
   ]
 
-  const skillsData = [
+  const skillsData = isPublic && (portfolioData.skills?.length > 0 || skills.length > 0)
+    ? (portfolioData.skills || skills).map(s => typeof s === 'string' ? { name: s, level: 80 } : { name: s.name || s, level: s.level || 80 })
+    : [
     { name: "Adobe Premiere Pro", level: 95 },
     { name: "After Effects", level: 90 },
     { name: "DaVinci Resolve", level: 85 },

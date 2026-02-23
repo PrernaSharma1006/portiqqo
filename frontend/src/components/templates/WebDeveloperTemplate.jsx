@@ -36,8 +36,8 @@ function WebDeveloperTemplate({
   const [selectedCategory, setSelectedCategory] = useState('all')
   const navigate = useNavigate()
 
-  // Sample data for the template
-  const profileData = {
+  // Use real data when public, sample data for preview
+  const demoProfile = {
     name: "Alex Johnson",
     title: "Full Stack Developer",
     description: "Passionate full-stack developer with 5+ years of experience building scalable web applications. Specializing in React, Node.js, and cloud technologies with a focus on creating efficient, user-friendly solutions.",
@@ -149,7 +149,29 @@ function WebDeveloperTemplate({
     ]
   }
 
-  const skillsData = [
+  const profileData = isPublic ? {
+    name: portfolioData.profile?.name || `${personalInfo.firstName || ''} ${personalInfo.lastName || ''}`.trim() || demoProfile.name,
+    title: portfolioData.profile?.title || personalInfo.tagline || demoProfile.title,
+    description: portfolioData.profile?.description || personalInfo.bio || demoProfile.description,
+    profileImage: portfolioData.profile?.profileImage || personalInfo.profileImage?.url || demoProfile.profileImage,
+    bannerImage: portfolioData.profile?.bannerImage || demoProfile.bannerImage,
+    location: portfolioData.profile?.location || personalInfo.location || demoProfile.location,
+    email: portfolioData.profile?.email || personalInfo.email || demoProfile.email,
+    phone: portfolioData.profile?.phone || personalInfo.phone || demoProfile.phone,
+    website: portfolioData.profile?.website || personalInfo.website || demoProfile.website,
+    resumeUrl: portfolioData.profile?.resumeUrl || '',
+    social: {
+      github: portfolioData.profile?.github || socialLinks.github || '',
+      linkedin: portfolioData.profile?.linkedin || socialLinks.linkedin || '',
+      website: portfolioData.profile?.website || personalInfo.website || ''
+    },
+    projects: [],
+    experience: portfolioData.experience || []
+  } : demoProfile
+
+  const skillsData = isPublic && (portfolioData.skills?.length > 0 || skills.length > 0)
+    ? (portfolioData.skills || skills).map(s => typeof s === 'string' ? { name: s, level: 80 } : { name: s.name || s, level: s.level || 80 })
+    : [
     { name: "React", level: 95 },
     { name: "TypeScript", level: 90 },
     { name: "Node.js", level: 88 },

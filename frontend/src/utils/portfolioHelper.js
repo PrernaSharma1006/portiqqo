@@ -58,7 +58,7 @@ export const savePortfolioToBackend = async (portfolioData, profession, subdomai
     localStorage.setItem('savedPortfolioId', response.data.portfolio.id);
     localStorage.setItem('savedPortfolioSubdomain', response.data.portfolio.subdomain);
     
-    toast.dismiss(toastId); // Dismiss loading toast silently
+    toast.success('Portfolio saved successfully!', { id: toastId, duration: 3000 });
     
     if (onSuccess) {
       onSuccess(response.data.portfolio);

@@ -41,7 +41,7 @@ function UIUXDesignerTemplate({
   const navigate = useNavigate()
 
   // Sample data for the template
-  const profileData = {
+  const demoProfile = {
     name: "Jessica Chen",
     title: "UI/UX Designer",
     description: "Passionate UI/UX designer with 6+ years of experience creating user-centered digital experiences. Specializing in mobile apps, web platforms, and design systems that delight users and drive business results.",
@@ -157,7 +157,29 @@ function UIUXDesignerTemplate({
     ]
   }
 
-  const skillsData = [
+  const profileData = isPublic ? {
+    name: portfolioData.profile?.name || `${personalInfo.firstName || ''} ${personalInfo.lastName || ''}`.trim() || demoProfile.name,
+    title: portfolioData.profile?.title || portfolioData.profile?.tagline || personalInfo.tagline || demoProfile.title,
+    description: portfolioData.profile?.description || portfolioData.profile?.bio || personalInfo.bio || demoProfile.description,
+    profileImage: portfolioData.profile?.profileImage || portfolioData.profile?.image || personalInfo.profileImage?.url || demoProfile.profileImage,
+    bannerImage: portfolioData.profile?.bannerImage || demoProfile.bannerImage,
+    location: portfolioData.profile?.location || personalInfo.location || demoProfile.location,
+    email: portfolioData.profile?.email || personalInfo.email || demoProfile.email,
+    phone: portfolioData.profile?.phone || personalInfo.phone || demoProfile.phone,
+    website: portfolioData.profile?.website || personalInfo.website || demoProfile.website,
+    social: {
+      dribbble: portfolioData.profile?.dribbble || socialLinks.dribbble || '',
+      behance: portfolioData.profile?.behance || socialLinks.behance || '',
+      linkedin: portfolioData.profile?.linkedin || socialLinks.linkedin || ''
+    },
+    caseStudies: demoProfile.caseStudies,
+    awards: portfolioData.awards || demoProfile.awards,
+    experience: portfolioData.experience || demoProfile.experience
+  } : demoProfile
+
+  const skillsData = isPublic && (portfolioData.skills?.length > 0 || skills.length > 0)
+    ? (portfolioData.skills || skills).map(s => typeof s === 'string' ? { name: s, level: 80 } : { name: s.name || s, level: s.level || 80 })
+    : [
     { name: "User Research", level: 95 },
     { name: "Wireframing", level: 92 },
     { name: "Prototyping", level: 90 },
@@ -212,7 +234,7 @@ function UIUXDesignerTemplate({
   // Use passed projects if in public mode and projects exist, otherwise use demo data
   const projectsToDisplay = isPublic && projects.length > 0 
     ? projects 
-    : profileData.caseStudies;
+    : demoProfile.caseStudies;
 
   // Map projects to ensure they have proper structure and category
   const workData = projectsToDisplay.map((caseStudy, index) => ({
