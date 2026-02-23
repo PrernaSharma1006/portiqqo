@@ -125,6 +125,11 @@ function WebDeveloperTemplateEditor() {
     }
     console.log('Setting portfolioId to:', portfolio._id);
     setPortfolioId(portfolio._id)
+    // Store in localStorage for publish function
+    localStorage.setItem('savedPortfolioId', portfolio._id)
+    if (portfolio.subdomain) {
+      localStorage.setItem('savedPortfolioSubdomain', portfolio.subdomain)
+    }
   }
 
   const fetchPortfolioById = async (id) => {

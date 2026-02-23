@@ -147,15 +147,24 @@ exports.savePortfolio = async (req, res) => {
 
       // Remove id field if present (it might be invalid for new creation)
       const { id, _id, ...portfolioDataWithoutId } = portfolioData;
+      
+      // Clean up any invalid IDs in nested objects (like projects, skills, etc.)
+      const cleanedData = JSON.parse(JSON.stringify(portfolioDataWithoutId, (key, value) => {
+        // Remove _id and id fields from nested objects
+        if (key === '_id' || key === 'id') {
+          return undefined;
+        }
+        return value;
+      }));
 
       portfolio = await Portfolio.create({
-        ...portfolioDataWithoutId,
+        ...cleanedData,
         user: userId,
         template: template?._id,
         subdomain,
         isPublished: false
       });
-      console.log('Portfolio created:', portfolio._id);
+      console.log('Portfolio created successfully:', portfolio._id);
     }
 
     res.status(200).json({
