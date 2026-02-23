@@ -24,7 +24,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-function PhotographerTemplate() {
+function PhotographerTemplate({ isPublic = false, portfolioData = {} }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [lightboxImage, setLightboxImage] = useState(null)
   const navigate = useNavigate()
@@ -241,20 +241,24 @@ function PhotographerTemplate() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
-            </button>
-            <div className="flex items-center space-x-4">
+            {!isPublic && (
               <button
-                onClick={() => navigate('/editor/photographer')}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2 text-gray-400 hover:text-white transition-colors"
               >
-                <span>Use This Template</span>
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Home</span>
               </button>
+            )}
+            <div className="flex items-center space-x-4">
+              {!isPublic && (
+                <button
+                  onClick={() => navigate('/editor/photographer')}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                >
+                  <span>Use This Template</span>
+                </button>
+              )}
               <img
                 src={profileData.profileImage}
                 alt={profileData.name}

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Paintbrush, ExternalLink, Star, Calendar, MapPin, Mail, Phone, Download, ArrowRight, Heart, Eye, Palette, Award } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
-function IllustratorTemplate() {
+function IllustratorTemplate({ isPublic = false, portfolioData = {} }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [lightboxImage, setLightboxImage] = useState(null)
   const navigate = useNavigate()
@@ -188,20 +189,24 @@ function IllustratorTemplate() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Back to Home</span>
-            </button>
-            <div className="flex items-center space-x-4">
+            {!isPublic && (
               <button
-                onClick={() => navigate('/editor/illustrator')}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                onClick={() => navigate('/')}
+                className="flex items-center space-x-2 text-gray-600 hover:text-purple-600 transition-colors"
               >
-                <span>Use This Template</span>
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Home</span>
               </button>
+            )}
+            <div className="flex items-center space-x-4">
+              {!isPublic && (
+                <button
+                  onClick={() => navigate('/editor/illustrator')}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors"
+                >
+                  <span>Use This Template</span>
+                </button>
+              )}
               <img
                 src={illustratorData.avatar}
                 alt={illustratorData.name}
