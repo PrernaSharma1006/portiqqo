@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
 import { 
@@ -25,11 +25,15 @@ import {
 
 function PhotographerTemplateEditor() {
   const navigate = useNavigate()
+  const location = useLocation()
   const fileInputRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
+  const [loadingPortfolio, setLoadingPortfolio] = useState(false)
+  const [portfolioId, setPortfolioId] = useState(null)
+  const [customSubdomain, setCustomSubdomain] = useState('')
 
   // Editable portfolio data
   const [portfolioData, setPortfolioData] = useState({
@@ -183,6 +187,31 @@ function PhotographerTemplateEditor() {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadType, setUploadType] = useState('')
   const [selectedGallery, setSelectedGallery] = useState(null)
+
+  // Load existing portfolio data if editing
+  useEffect(() => {
+    const existingPortfolio = location.state?.existingPortfolio
+    
+    if (existingPortfolio) {
+      console.log('📝 Loading existing portfolio for edit');
+      loadPortfolioData(existingPortfolio)
+    }
+  }, [location.state])
+
+  const loadPortfolioData = (portfolio) => {
+    if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
+      setPortfolioData(portfolio.templateData)
+    }
+    if (portfolio.subdomain) {
+      const subdomain = portfolio.subdomain.replace('.portiqqo.me', '');
+      setCustomSubdomain(subdomain)
+    }
+    setPortfolioId(portfolio._id)
+    localStorage.setItem('savedPortfolioId', portfolio._id)
+    if (portfolio.subdomain) {
+      localStorage.setItem('savedPortfolioSubdomain', portfolio.subdomain)
+    }
+  }
 
   const categories = [
     { id: 'all', name: 'All Work' },
@@ -504,12 +533,19 @@ function PhotographerTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'photographer')
+    const savedPortfolio = await savePortfolioToBackend(portfolioData, 'photographer', customSubdomain, null, portfolioId)
+    if (savedPortfolio && savedPortfolio.id) {
+      setPortfolioId(savedPortfolio.id)
+    }
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'photographer')
+      const savedPortfolio = await savePortfolioToBackend(portfolioData, 'photographer', customSubdomain, null, portfolioId)
+      if (savedPortfolio && savedPortfolio.id) {
+        setPortfolioId(savedPortfolio.id)
+        localStorage.setItem('savedPortfolioId', savedPortfolio.id)
+      }
       const result = await publishPortfolioToBackend('photographer')
       if (result) {
         setPublishedPortfolio(result)
@@ -757,6 +793,34 @@ function PhotographerTemplateEditor() {
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Photographer Portfolio Editor</h1>
           <p className="text-gray-600">Create your stunning photography portfolio with galleries, equipment showcase, and client testimonials.</p>
+        </div>
+
+        {/* Portfolio URL Section */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Portfolio URL</h2>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Choose your subdomain
+              </label>
+              <div className="flex items-center">
+                <input
+                  type="text"
+                  value={customSubdomain}
+                  onChange={(e) => setCustomSubdomain(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ''))}
+                  placeholder="your-name"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  pattern="[a-z0-9\-]+"
+                />
+                <span className="px-4 py-2 bg-gray-100 border border-l-0 border-gray-300 rounded-r-lg text-gray-600 whitespace-nowrap">
+                  .portiqqo.me
+                </span>
+              </div>
+              <p className="mt-2 text-sm text-gray-500">
+                Use lowercase letters, numbers, and hyphens only. Leave empty to auto-generate from your name.
+              </p>
+            </div>
+          </div>
         </div>
 
         <div className="space-y-12">
