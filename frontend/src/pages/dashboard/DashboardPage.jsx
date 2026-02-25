@@ -134,7 +134,8 @@ function DashboardPage() {
       'ui-ux-designer': '/editor/ui-ux-designer',
       'video-editor': '/editor/video-editor',
       'photographer': '/editor/photographer',
-      'digital-marketer': '/editor/digital-marketer'
+      'digital-marketer': '/editor/digital-marketer',
+      'general': '/editor/general-portfolio'
     }
     
     const route = professionToRoute[portfolio.profession] || '/builder/general'

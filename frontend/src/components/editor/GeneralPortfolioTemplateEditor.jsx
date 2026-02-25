@@ -1,7 +1,9 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
+import { portfolioAPI } from '../../services/api'
+import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
 import { 
   ArrowLeft, 
@@ -24,11 +26,55 @@ import {
 
 function GeneralPortfolioTemplateEditor() {
   const navigate = useNavigate()
+  const location = useLocation()
   const fileInputRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
+  const [loadingPortfolio, setLoadingPortfolio] = useState(false)
+  const [portfolioId, setPortfolioId] = useState(null)
+  const [customSubdomain, setCustomSubdomain] = useState('')
+
+  // Load existing portfolio when editing from dashboard
+  useEffect(() => {
+    const existingPortfolio = location.state?.existingPortfolio
+    const portfolioIdParam = location.state?.portfolioId
+    if (existingPortfolio) {
+      loadPortfolioData(existingPortfolio)
+    } else if (portfolioIdParam) {
+      fetchPortfolioById(portfolioIdParam)
+    }
+  }, [location.state])
+
+  const loadPortfolioData = (portfolio) => {
+    if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
+      setPortfolioData(portfolio.templateData)
+    }
+    if (portfolio.subdomain) {
+      setCustomSubdomain(portfolio.subdomain.replace('.portiqqo.me', ''))
+    }
+    setPortfolioId(portfolio._id)
+    localStorage.setItem('savedPortfolioId', portfolio._id)
+    if (portfolio.subdomain) {
+      localStorage.setItem('savedPortfolioSubdomain', portfolio.subdomain)
+    }
+  }
+
+  const fetchPortfolioById = async (id) => {
+    try {
+      setLoadingPortfolio(true)
+      const response = await portfolioAPI.getById(id)
+      if (response.data.success) {
+        loadPortfolioData(response.data.portfolio)
+      }
+    } catch (error) {
+      console.error('Error fetching portfolio:', error)
+      toast.error('Failed to load portfolio data')
+    } finally {
+      setLoadingPortfolio(false)
+    }
+  }
 
   // Editable portfolio data
   const [portfolioData, setPortfolioData] = useState({
@@ -468,12 +514,18 @@ function GeneralPortfolioTemplateEditor() {
   }
 
   const savePortfolio = async () => {
-    await savePortfolioToBackend(portfolioData, 'general')
+    const saved = await savePortfolioToBackend(portfolioData, 'general', customSubdomain, null, portfolioId)
+    if (saved?._id || saved?.id) {
+      setPortfolioId(saved._id || saved.id)
+    }
   }
 
   const publishPortfolio = async () => {
     try {
-      await savePortfolioToBackend(portfolioData, 'general')
+      const saved = await savePortfolioToBackend(portfolioData, 'general', customSubdomain, null, portfolioId)
+      if (saved?._id || saved?.id) {
+        setPortfolioId(saved._id || saved.id)
+      }
       const result = await publishPortfolioToBackend('general')
       if (result) {
         setPublishedPortfolio(result)
