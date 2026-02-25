@@ -9,6 +9,7 @@ import {
   ArrowLeft, 
   Save, 
   Eye, 
+  EyeOff,
   Upload, 
   Edit3, 
   X, 
@@ -97,7 +98,8 @@ function UIUXDesignerTemplateEditor() {
         experience: [],
         education: [],
         awards: [],
-        testimonials: []
+        testimonials: [],
+        hiddenSections: portfolio.templateData?.hiddenSections || []
       };
       setPortfolioData(reconstructedData);
     }
@@ -229,7 +231,8 @@ function UIUXDesignerTemplateEditor() {
         { platform: "LinkedIn", url: "https://linkedin.com/in/sarahjohnson", icon: "Globe" }
       ],
       copyright: "© 2024 Sarah Johnson. All rights reserved."
-    }
+    },
+    hiddenSections: []
   })
 
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -478,6 +481,21 @@ function UIUXDesignerTemplateEditor() {
       }
     }))
   }
+
+  const toggleSection = (sectionName) => {
+    setPortfolioData(prev => {
+      const hidden = prev.hiddenSections || []
+      const isHidden = hidden.includes(sectionName)
+      return {
+        ...prev,
+        hiddenSections: isHidden
+          ? hidden.filter(s => s !== sectionName)
+          : [...hidden, sectionName]
+      }
+    })
+  }
+
+  const isSectionHidden = (sectionName) => (portfolioData.hiddenSections || []).includes(sectionName)
 
   const getServiceIcon = (iconName) => {
     switch (iconName) {
@@ -808,12 +826,24 @@ function UIUXDesignerTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Palette className="w-6 h-6 mr-2 text-purple-600" />
-              Design Tools & Software
-            </h2>
-
-            <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Palette className="w-6 h-6 mr-2 text-purple-600" />
+                Design Tools & Software
+              </h2>
+              <button
+                onClick={() => toggleSection('designTools')}
+                title={isSectionHidden('designTools') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('designTools') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('designTools') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('designTools') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('designTools') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-6 ${isSectionHidden('designTools') ? 'hidden' : ''}`}>
               {toolCategories.map((category) => (
                 <div key={category.key} className="border border-gray-200 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -868,17 +898,30 @@ function UIUXDesignerTemplateEditor() {
                 <Layers className="w-6 h-6 mr-2 text-purple-600" />
                 Case Studies & Projects
               </h2>
-              <button
-                onClick={addCaseStudy}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Case Study</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('caseStudies')}
+                  title={isSectionHidden('caseStudies') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('caseStudies') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('caseStudies') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('caseStudies') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addCaseStudy}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Case Study</span>
+                </button>
+              </div>
             </div>
+            {isSectionHidden('caseStudies') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
 
             {/* Case Study Guide */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div className={`bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 ${isSectionHidden('caseStudies') ? 'hidden' : ''}`}>
               <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
                 <Layers className="w-5 h-5 mr-2" />
                 How to Create Effective Case Studies
@@ -915,7 +958,7 @@ function UIUXDesignerTemplateEditor() {
               </div>
             </div>
 
-            <div className="space-y-8">
+            <div className={`space-y-8 ${isSectionHidden('caseStudies') ? 'hidden' : ''}`}>
               {portfolioData.caseStudies.map((study, index) => (
                 <div key={study.id} className="border border-gray-200 rounded-lg p-6">
                   <div className="relative group mb-4">
@@ -1093,16 +1136,28 @@ function UIUXDesignerTemplateEditor() {
                 <Target className="w-6 h-6 mr-2 text-purple-600" />
                 Skills & Expertise
               </h2>
-              <button
-                onClick={addSkill}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Skill</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('skills')}
+                  title={isSectionHidden('skills') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('skills') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('skills') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('skills') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addSkill}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Skill</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {isSectionHidden('skills') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isSectionHidden('skills') ? 'hidden' : ''}`}>
               {portfolioData.skills.map((skill, index) => (
                 <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                   <input
@@ -1151,16 +1206,28 @@ function UIUXDesignerTemplateEditor() {
                 <Users className="w-6 h-6 mr-2 text-purple-600" />
                 Services
               </h2>
-              <button
-                onClick={addService}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Service</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('services')}
+                  title={isSectionHidden('services') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('services') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('services') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('services') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addService}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Service</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isSectionHidden('services') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${isSectionHidden('services') ? 'hidden' : ''}`}>
               {portfolioData.services.map((service, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-4">
@@ -1213,12 +1280,24 @@ function UIUXDesignerTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Globe className="w-6 h-6 mr-2 text-purple-600" />
-              Footer Settings
-            </h2>
-
-            <div className="space-y-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Globe className="w-6 h-6 mr-2 text-purple-600" />
+                Footer Settings
+              </h2>
+              <button
+                onClick={() => toggleSection('footer')}
+                title={isSectionHidden('footer') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('footer') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('footer') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('footer') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('footer') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-8 ${isSectionHidden('footer') ? 'hidden' : ''}`}>
               {/* Company Info */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Information</h3>

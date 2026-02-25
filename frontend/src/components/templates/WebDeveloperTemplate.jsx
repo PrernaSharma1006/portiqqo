@@ -224,6 +224,9 @@ function WebDeveloperTemplate({
     { id: 'tools', name: 'Tools' }
   ]
 
+  // Helper to check if a section is hidden in public view
+  const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
+
   // Use passed projects if in public mode and projects exist, otherwise use demo data
   const projectsToDisplay = isPublic && projects.length > 0 
     ? projects 
@@ -343,7 +346,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Work Showcase Section */}
-      <section id="work" className="py-20 bg-white">
+      <section id="work" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -481,7 +484,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 bg-gray-50">
+      <section id="skills" className={`py-20 bg-gray-50 ${isHidden('skills') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -528,7 +531,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className={`py-20 bg-white ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -623,7 +626,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Contact Info */}
@@ -680,19 +683,19 @@ function WebDeveloperTemplate({
             <div>
               <h3 className="text-xl font-bold mb-4">About</h3>
               <p className="text-gray-300 mb-4">
-                Full-stack developer passionate about creating scalable web applications and innovative digital solutions.
+                {portfolioData.footer?.tagline || 'Full-stack developer passionate about creating scalable web applications and innovative digital solutions.'}
               </p>
               <div className="flex space-x-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">5+</div>
+                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.experience || '5+'}</div>
                   <div className="text-sm text-gray-400">Years Experience</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">50+</div>
+                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.projects || '50+'}</div>
                   <div className="text-sm text-gray-400">Projects Done</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">25+</div>
+                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.clients || '25+'}</div>
                   <div className="text-sm text-gray-400">Happy Clients</div>
                 </div>
               </div>
@@ -702,7 +705,7 @@ function WebDeveloperTemplate({
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 mb-4 md:mb-0">
-                © 2025 {profileData.name}. All rights reserved.
+                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. All rights reserved.`}
               </p>
               <div className="flex items-center space-x-4">
                 <span className="text-gray-400 text-sm">Built with</span>

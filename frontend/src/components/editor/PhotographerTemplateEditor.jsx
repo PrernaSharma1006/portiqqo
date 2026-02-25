@@ -7,6 +7,7 @@ import {
   ArrowLeft, 
   Save, 
   Eye, 
+  EyeOff,
   Upload, 
   Edit3, 
   X, 
@@ -180,7 +181,8 @@ function PhotographerTemplateEditor() {
         { platform: "Website", url: "https://alexmartinez.photo", icon: "Globe" }
       ],
       copyright: "© 2024 Alex Martinez Photography. All rights reserved."
-    }
+    },
+    hiddenSections: []
   })
 
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -531,6 +533,21 @@ function PhotographerTemplateEditor() {
       default: return <Camera className="w-8 h-8" />
     }
   }
+
+  const toggleSection = (sectionName) => {
+    setPortfolioData(prev => {
+      const hidden = prev.hiddenSections || []
+      const isHidden = hidden.includes(sectionName)
+      return {
+        ...prev,
+        hiddenSections: isHidden
+          ? hidden.filter(s => s !== sectionName)
+          : [...hidden, sectionName]
+      }
+    })
+  }
+
+  const isSectionHidden = (sectionName) => (portfolioData.hiddenSections || []).includes(sectionName)
 
   const savePortfolio = async () => {
     const savedPortfolio = await savePortfolioToBackend(portfolioData, 'photographer', customSubdomain, null, portfolioId)
@@ -988,12 +1005,24 @@ function PhotographerTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Camera className="w-6 h-6 mr-2 text-purple-600" />
-              Photography Equipment
-            </h2>
-
-            <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Camera className="w-6 h-6 mr-2 text-purple-600" />
+                Photography Equipment
+              </h2>
+              <button
+                onClick={() => toggleSection('equipment')}
+                title={isSectionHidden('equipment') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('equipment') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('equipment') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('equipment') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('equipment') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-6 ${isSectionHidden('equipment') ? 'hidden' : ''}`}>
               {equipmentCategories.map((category) => (
                 <div key={category.key} className="border border-gray-200 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -1048,16 +1077,29 @@ function PhotographerTemplateEditor() {
                 <ImageIcon className="w-6 h-6 mr-2 text-purple-600" />
                 Photo Galleries & Collections
               </h2>
-              <button
-                onClick={addGallery}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Gallery</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('galleries')}
+                  title={isSectionHidden('galleries') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('galleries') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('galleries') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('galleries') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addGallery}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Gallery</span>
+                </button>
+              </div>
             </div>
+            {isSectionHidden('galleries') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
 
-            <div className="space-y-8">
+            <div className={`space-y-8 ${isSectionHidden('galleries') ? 'hidden' : ''}`}>
               {portfolioData.galleries.map((gallery) => (
                 <div key={gallery.id} className="border border-gray-200 rounded-lg p-6">
                   <div className="relative group mb-4">
@@ -1185,16 +1227,28 @@ function PhotographerTemplateEditor() {
                 <Award className="w-6 h-6 mr-2 text-purple-600" />
                 Services & Pricing
               </h2>
-              <button
-                onClick={addService}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Service</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('services')}
+                  title={isSectionHidden('services') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('services') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('services') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('services') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addService}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Service</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isSectionHidden('services') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${isSectionHidden('services') ? 'hidden' : ''}`}>
               {portfolioData.services.map((service, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-4">
@@ -1259,16 +1313,28 @@ function PhotographerTemplateEditor() {
                 <Award className="w-6 h-6 mr-2 text-purple-600" />
                 Client Testimonials
               </h2>
-              <button
-                onClick={addTestimonial}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Testimonial</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('testimonials')}
+                  title={isSectionHidden('testimonials') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('testimonials') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('testimonials') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('testimonials') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addTestimonial}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Testimonial</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isSectionHidden('testimonials') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${isSectionHidden('testimonials') ? 'hidden' : ''}`}>
               {portfolioData.testimonials.map((testimonial) => (
                 <div key={testimonial.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-3">
@@ -1330,12 +1396,24 @@ function PhotographerTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Globe className="w-6 h-6 mr-2 text-purple-600" />
-              Footer Settings
-            </h2>
-
-            <div className="space-y-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Globe className="w-6 h-6 mr-2 text-purple-600" />
+                Footer Settings
+              </h2>
+              <button
+                onClick={() => toggleSection('footer')}
+                title={isSectionHidden('footer') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('footer') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('footer') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('footer') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('footer') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-8 ${isSectionHidden('footer') ? 'hidden' : ''}`}>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

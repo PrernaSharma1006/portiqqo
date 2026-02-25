@@ -216,6 +216,8 @@ function PhotographerTemplate({ isPublic = false, portfolioData = {} }) {
     ? workData 
     : workData.filter(photo => photo.category === selectedCategory)
 
+  const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
+
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -334,7 +336,7 @@ function PhotographerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Portfolio Section */}
-      <section id="portfolio" className="py-20">
+      <section id="portfolio" className={`py-20 ${isHidden('galleries') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -413,7 +415,7 @@ function PhotographerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-gray-900">
+      <section id="services" className={`py-20 bg-gray-900 ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -589,14 +591,14 @@ function PhotographerTemplate({ isPublic = false, portfolioData = {} }) {
       )}
 
       {/* Footer */}
-      <footer className="bg-black text-white py-12">
+      <footer className={`bg-black text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Photographer Info */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Emma Rodriguez</h3>
+              <h3 className="text-xl font-bold mb-4">{profileData.name}</h3>
               <p className="text-gray-400 mb-4">
-                © 2025 Emma Rodriguez. Capturing moments, creating memories.
+                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. ${portfolioData.footer?.tagline || 'Capturing moments, creating memories.'}`}
               </p>
               <div className="flex items-center space-x-2 text-gray-400">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

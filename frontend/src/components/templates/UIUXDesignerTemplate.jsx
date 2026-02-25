@@ -236,6 +236,9 @@ function UIUXDesignerTemplate({
     ? projects 
     : demoProfile.caseStudies;
 
+  // Helper to check if a section is hidden in public view
+  const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
+
   // Map projects to ensure they have proper structure and category
   const workData = projectsToDisplay.map((caseStudy, index) => ({
     ...caseStudy,
@@ -352,7 +355,7 @@ function UIUXDesignerTemplate({
       </section>
 
       {/* Featured Case Studies */}
-      <section id="work" className="py-20">
+      <section id="work" className={`py-20 ${isHidden('caseStudies') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -470,7 +473,7 @@ function UIUXDesignerTemplate({
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 bg-gray-50">
+      <section id="skills" className={`py-20 bg-gray-50 ${isHidden('skills') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -517,7 +520,7 @@ function UIUXDesignerTemplate({
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className={`py-20 bg-white ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -695,14 +698,14 @@ function UIUXDesignerTemplate({
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Designer Info */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Sarah Kim</h3>
+              <h3 className="text-xl font-bold mb-4">{profileData.name}</h3>
               <p className="text-gray-400 mb-4">
-                © 2025 Sarah Kim. UI/UX Designer crafting digital experiences.
+                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. ${profileData.title || 'UI/UX Designer'} crafting digital experiences.`}
               </p>
               <div className="flex items-center space-x-2 text-gray-400">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

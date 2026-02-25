@@ -194,6 +194,9 @@ function VideoEditorTemplate({
     ? workData 
     : workData.filter(work => work.category === selectedCategory)
 
+  // Helper to check if a section is hidden in public view
+  const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
+
   const fadeInUp = {
     initial: { opacity: 0, y: 20 },
     animate: { opacity: 1, y: 0 },
@@ -292,7 +295,7 @@ function VideoEditorTemplate({
       </section>
 
       {/* Work Showcase Section */}
-      <section id="work" className="py-20 bg-white">
+      <section id="work" className={`py-20 bg-white ${isHidden('work') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -388,7 +391,7 @@ function VideoEditorTemplate({
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className="py-20 bg-gray-50">
+      <section id="skills" className={`py-20 bg-gray-50 ${isHidden('skills') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -435,7 +438,7 @@ function VideoEditorTemplate({
       </section>
 
       {/* Services Section */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className={`py-20 bg-white ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -477,7 +480,7 @@ function VideoEditorTemplate({
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Contact Info */}
@@ -534,19 +537,19 @@ function VideoEditorTemplate({
             <div>
               <h3 className="text-xl font-bold mb-4">About</h3>
               <p className="text-gray-300 mb-4">
-                Professional video editor passionate about bringing stories to life through compelling visual narratives.
+                {portfolioData.footer?.tagline || 'Professional video editor passionate about bringing stories to life through compelling visual narratives.'}
               </p>
               <div className="flex space-x-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">8+</div>
+                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.experience || '8+'}</div>
                   <div className="text-sm text-gray-400">Years Experience</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">500+</div>
+                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.projects || '500+'}</div>
                   <div className="text-sm text-gray-400">Projects Done</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">50+</div>
+                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.clients || '50+'}</div>
                   <div className="text-sm text-gray-400">Happy Clients</div>
                 </div>
               </div>
@@ -556,7 +559,7 @@ function VideoEditorTemplate({
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <div className="flex flex-col md:flex-row justify-between items-center">
               <p className="text-gray-400 mb-4 md:mb-0">
-                © 2025 {profileData.name}. All rights reserved.
+                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. All rights reserved.`}
               </p>
               <div className="flex items-center space-x-4">
                 <span className="text-gray-400 text-sm">Built with</span>

@@ -10,6 +10,7 @@ import {
   ArrowLeft, 
   Save, 
   Eye, 
+  EyeOff,
   Upload, 
   Edit3, 
   X, 
@@ -112,7 +113,8 @@ function WebDeveloperTemplateEditor() {
           tagline: 'Let\'s work together',
           email: portfolio.personalInfo?.email || '',
           socialLinks: []
-        }
+        },
+        hiddenSections: portfolio.templateData?.hiddenSections || []
       };
       console.log('Reconstructed data:', reconstructedData);
       setPortfolioData(reconstructedData);
@@ -240,7 +242,8 @@ function WebDeveloperTemplateEditor() {
         { platform: "Portfolio", url: "https://johnsmith.dev", icon: "Monitor" }
       ],
       copyright: "© 2024 John Smith. All rights reserved."
-    }
+    },
+    hiddenSections: []
   })
 
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -485,6 +488,21 @@ function WebDeveloperTemplateEditor() {
       }
     }))
   }
+
+  const toggleSection = (sectionName) => {
+    setPortfolioData(prev => {
+      const hidden = prev.hiddenSections || []
+      const isHidden = hidden.includes(sectionName)
+      return {
+        ...prev,
+        hiddenSections: isHidden
+          ? hidden.filter(s => s !== sectionName)
+          : [...hidden, sectionName]
+      }
+    })
+  }
+
+  const isSectionHidden = (sectionName) => (portfolioData.hiddenSections || []).includes(sectionName)
 
   const getServiceIcon = (iconName) => {
     switch (iconName) {
@@ -1011,12 +1029,24 @@ function WebDeveloperTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Code className="w-6 h-6 mr-2 text-purple-600" />
-              Technology Stack
-            </h2>
-
-            <div className="space-y-6">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Code className="w-6 h-6 mr-2 text-purple-600" />
+                Technology Stack
+              </h2>
+              <button
+                onClick={() => toggleSection('techStack')}
+                title={isSectionHidden('techStack') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('techStack') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('techStack') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('techStack') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('techStack') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-6 ${isSectionHidden('techStack') ? 'hidden' : ''}`}>
               {techStackCategories.map((category) => (
                 <div key={category.key} className="border border-gray-200 rounded-lg p-6">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -1071,17 +1101,30 @@ function WebDeveloperTemplateEditor() {
                 <Globe className="w-6 h-6 mr-2 text-purple-600" />
                 Projects Portfolio
               </h2>
-              <button
-                onClick={addProject}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Project</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('projects')}
+                  title={isSectionHidden('projects') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('projects') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('projects') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('projects') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addProject}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Project</span>
+                </button>
+              </div>
             </div>
+            {isSectionHidden('projects') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
 
             {/* Project Guide */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+            <div className={`bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 ${isSectionHidden('projects') ? 'hidden' : ''}`}>
               <h3 className="text-lg font-semibold text-blue-900 mb-4 flex items-center">
                 <Code className="w-5 h-5 mr-2" />
                 How to Add Your Projects
@@ -1111,7 +1154,7 @@ function WebDeveloperTemplateEditor() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${isSectionHidden('projects') ? 'hidden' : ''}`}>
               {portfolioData.projects.map((project, index) => (
                 <div key={project.id} className="border border-gray-200 rounded-lg p-4">
                   <div className="relative group mb-4">
@@ -1226,16 +1269,28 @@ function WebDeveloperTemplateEditor() {
                 <Database className="w-6 h-6 mr-2 text-purple-600" />
                 Skills & Proficiency
               </h2>
-              <button
-                onClick={addSkill}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Skill</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('skills')}
+                  title={isSectionHidden('skills') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('skills') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('skills') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('skills') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addSkill}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Skill</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {isSectionHidden('skills') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isSectionHidden('skills') ? 'hidden' : ''}`}>
               {portfolioData.skills.map((skill, index) => (
                 <div key={index} className="flex items-center space-x-4 p-4 border border-gray-200 rounded-lg">
                   <input
@@ -1285,16 +1340,28 @@ function WebDeveloperTemplateEditor() {
                 <Monitor className="w-6 h-6 mr-2 text-purple-600" />
                 Services
               </h2>
-              <button
-                onClick={addService}
-                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-                <span>Add Service</span>
-              </button>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => toggleSection('services')}
+                  title={isSectionHidden('services') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                  className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('services') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  {isSectionHidden('services') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  <span>{isSectionHidden('services') ? 'Hidden' : 'Visible'}</span>
+                </button>
+                <button
+                  onClick={addService}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Service</span>
+                </button>
+              </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {isSectionHidden('services') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`grid grid-cols-1 md:grid-cols-2 gap-6 ${isSectionHidden('services') ? 'hidden' : ''}`}>
               {portfolioData.services.map((service, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-start mb-4">
@@ -1347,12 +1414,24 @@ function WebDeveloperTemplateEditor() {
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
           >
-            <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-              <Globe className="w-6 h-6 mr-2 text-purple-600" />
-              Footer Settings
-            </h2>
-
-            <div className="space-y-8">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Globe className="w-6 h-6 mr-2 text-purple-600" />
+                Footer Settings
+              </h2>
+              <button
+                onClick={() => toggleSection('footer')}
+                title={isSectionHidden('footer') ? 'Click to show on portfolio' : 'Click to hide from portfolio'}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${isSectionHidden('footer') ? 'bg-red-100 text-red-600 hover:bg-red-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+              >
+                {isSectionHidden('footer') ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span>{isSectionHidden('footer') ? 'Hidden' : 'Visible'}</span>
+              </button>
+            </div>
+            {isSectionHidden('footer') && (
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+            )}
+            <div className={`space-y-8 ${isSectionHidden('footer') ? 'hidden' : ''}`}>
               {/* Company Info */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Company Information</h3>
