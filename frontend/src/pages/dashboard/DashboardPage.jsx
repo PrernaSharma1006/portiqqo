@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit, Trash2 } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit, Trash2, Copy, Check } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
@@ -82,6 +82,7 @@ function DashboardPage() {
   const [existingPortfolios, setExistingPortfolios] = useState([])
   const [loadingPortfolios, setLoadingPortfolios] = useState(true)
   const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
+  const [copiedId, setCopiedId] = useState(null)
 
   // Fetch user's existing portfolios on mount
   useEffect(() => {
@@ -143,8 +144,22 @@ function DashboardPage() {
   }
 
   const handleViewPortfolio = (portfolio) => {
-    const url = `https://${portfolio.subdomain}.portiqqo.me`
+    const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
+    const url = `https://${sub}.portiqqo.me`
     window.open(url, '_blank')
+  }
+
+  const handleCopyLink = (portfolio) => {
+    const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
+    const url = `https://${sub}.portiqqo.me`
+    navigator.clipboard.writeText(url)
+    setCopiedId(portfolio._id)
+    setTimeout(() => setCopiedId(null), 2000)
+  }
+
+  const getPortfolioUrl = (portfolio) => {
+    const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
+    return sub ? `${sub}.portiqqo.me` : null
   }
 
   const [showDeleteModal, setShowDeleteModal] = useState(false)
@@ -266,16 +281,31 @@ function DashboardPage() {
                         )}
                       </div>
                       
-                      <div className="flex items-center gap-2 mb-4">
-                        <ExternalLink className="w-4 h-4 text-slate-400" />
-                        <a 
-                          href={`https://${portfolio.subdomain}.portiqqo.me`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate"
-                        >
-                          {portfolio.subdomain}.portiqqo.me
-                        </a>
+                      <div className="flex items-center gap-2 mb-4 min-h-[24px]">
+                        {getPortfolioUrl(portfolio) ? (
+                          <>
+                            <ExternalLink className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                            <a 
+                              href={`https://${getPortfolioUrl(portfolio)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate flex-1"
+                            >
+                              {getPortfolioUrl(portfolio)}
+                            </a>
+                            <button
+                              onClick={() => handleCopyLink(portfolio)}
+                              className="flex-shrink-0 p-1 rounded hover:bg-slate-100 transition-colors"
+                              title="Copy link"
+                            >
+                              {copiedId === portfolio._id
+                                ? <Check className="w-4 h-4 text-green-500" />
+                                : <Copy className="w-4 h-4 text-slate-400" />}
+                            </button>
+                          </>
+                        ) : (
+                          <span className="text-sm text-slate-400 italic">Save portfolio to generate your link</span>
+                        )}
                       </div>
                       
                       <div className="flex gap-3">
@@ -286,7 +316,7 @@ function DashboardPage() {
                           <Edit className="w-4 h-4" />
                           Edit
                         </button>
-                        {portfolio.isPublished && (
+                        {getPortfolioUrl(portfolio) && (
                           <button
                             onClick={() => handleViewPortfolio(portfolio)}
                             className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-all duration-300"
