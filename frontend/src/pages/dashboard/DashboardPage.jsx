@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Crown, Edit, Trash2, Copy, Check } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
@@ -81,8 +81,9 @@ function DashboardPage() {
   const navigate = useNavigate()
   const [existingPortfolios, setExistingPortfolios] = useState([])
   const [loadingPortfolios, setLoadingPortfolios] = useState(true)
-  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false)
   const [copiedId, setCopiedId] = useState(null)
+  const [pendingTemplate, setPendingTemplate] = useState(null)
+  const [switchingPortfolio, setSwitchingPortfolio] = useState(false)
 
   // Fetch user's existing portfolios on mount
   useEffect(() => {
@@ -103,29 +104,45 @@ function DashboardPage() {
     } finally {
       setLoadingPortfolios(false)
     }
+    // Clear old localStorage step-builder portfolios
+    ;['generalPortfolio', 'developerPortfolio', 'photographerPortfolio',
+      'videoEditorPortfolio', 'uiuxPortfolio', 'portfolios'].forEach(k => localStorage.removeItem(k))
+  }
+
+  const routeMap = {
+    'web-developer': '/editor/web-developer',
+    'uiux-designer': '/editor/ui-ux-designer',
+    'video-editor': '/editor/video-editor',
+    'photographer': '/editor/photographer',
+    'digital-marketer': '/editor/digital-marketer',
+    'general': '/editor/general-portfolio'
   }
 
   const handleTemplateSelect = (templateId) => {
-    // Check if user has existing portfolios and is trying to create a new one
     if (existingPortfolios.length > 0) {
-      // For now, show upgrade prompt if they have 1 portfolio (free users)
-      // In future, check actual subscription status
-      setShowUpgradePrompt(true)
+      // Ask user if they want to replace their existing portfolio
+      setPendingTemplate(templateId)
       return
     }
+    navigate(routeMap[templateId] || '/editor/general-portfolio')
+  }
 
-    // Route to the appropriate template editor
-    const routeMap = {
-      'web-developer': '/editor/web-developer',
-      'uiux-designer': '/editor/ui-ux-designer',
-      'video-editor': '/editor/video-editor',
-      'photographer': '/editor/photographer',
-      'digital-marketer': '/editor/digital-marketer',
-      'general': '/builder/general'
+  const handleConfirmSwitch = async () => {
+    if (!pendingTemplate || existingPortfolios.length === 0) return
+    try {
+      setSwitchingPortfolio(true)
+      // Delete all existing portfolios
+      await Promise.all(existingPortfolios.map(p => portfolioAPI.delete(p._id)))
+      setExistingPortfolios([])
+      toast.success('Previous portfolio deleted. Starting fresh!')
+      navigate(routeMap[pendingTemplate] || '/editor/general-portfolio')
+    } catch (error) {
+      console.error('Error switching portfolio:', error)
+      toast.error('Failed to delete existing portfolio')
+    } finally {
+      setSwitchingPortfolio(false)
+      setPendingTemplate(null)
     }
-    
-    const route = routeMap[templateId] || '/builder/general'
-    navigate(route)
   }
 
   const handleEditPortfolio = (portfolio) => {
@@ -346,7 +363,7 @@ function DashboardPage() {
                   </div>
                   <div className="relative flex justify-center">
                     <span className="px-4 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 text-slate-500 text-sm font-medium">
-                      {existingPortfolios.length >= 1 ? 'Upgrade to Premium to create more portfolios' : 'Or choose a new template'}
+                      Want to switch to a different template?
                     </span>
                   </div>
                 </div>
@@ -357,7 +374,7 @@ function DashboardPage() {
           {/* Templates Grid */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-slate-800 mb-6 text-center">
-              {existingPortfolios.length > 0 ? 'Create Another Portfolio' : 'Choose Your Template'}
+              {existingPortfolios.length > 0 ? 'Switch Your Template' : 'Choose Your Template'}
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
@@ -450,8 +467,8 @@ function DashboardPage() {
         </div>
       </div>
 
-      {/* Upgrade Prompt Modal */}
-      {showUpgradePrompt && (
+      {/* Switch Template Confirmation Modal */}
+      {pendingTemplate && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -459,7 +476,7 @@ function DashboardPage() {
             className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
           >
             <button
-              onClick={() => setShowUpgradePrompt(false)}
+              onClick={() => setPendingTemplate(null)}
               className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -468,61 +485,42 @@ function DashboardPage() {
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-8 h-8 text-white" />
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-orange-500" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Upgrade to Premium</h3>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">Switch Template?</h3>
               <p className="text-slate-600">
-                Free users can create <strong>one portfolio</strong>. Upgrade to Premium to create unlimited portfolios!
+                You already have a portfolio. Switching will <strong>permanently delete</strong> your existing portfolio and start a new one.
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-xl p-6 mb-6">
-              <h4 className="font-semibold text-slate-800 mb-3">Premium Features:</h4>
-              <ul className="space-y-2">
-                <li className="flex items-center gap-3 text-sm text-slate-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Unlimited portfolios
-                </li>
-                <li className="flex items-center gap-3 text-sm text-slate-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Custom domain support
-                </li>
-                <li className="flex items-center gap-3 text-sm text-slate-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Advanced analytics
-                </li>
-                <li className="flex items-center gap-3 text-sm text-slate-700">
-                  <svg className="w-5 h-5 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                  </svg>
-                  Priority support
-                </li>
-              </ul>
-            </div>
+            {existingPortfolios[0] && (
+              <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+                <p className="text-sm text-red-800 font-medium text-center">
+                  ⚠️ This will delete: <span className="font-bold">{existingPortfolios[0].title}</span>
+                </p>
+                {getPortfolioUrl(existingPortfolios[0]) && (
+                  <p className="text-xs text-red-600 text-center mt-1">
+                    {getPortfolioUrl(existingPortfolios[0])}
+                  </p>
+                )}
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button
-                onClick={() => setShowUpgradePrompt(false)}
-                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300"
+                onClick={() => setPendingTemplate(null)}
+                disabled={switchingPortfolio}
+                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
               >
-                Maybe Later
+                Cancel
               </button>
               <button
-                onClick={() => {
-                  setShowUpgradePrompt(false)
-                  navigate('/subscription')
-                }}
-                className="flex-1 py-3 px-4 bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+                onClick={handleConfirmSwitch}
+                disabled={switchingPortfolio}
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <Crown className="w-5 h-5" />
-                Upgrade Now
+                {switchingPortfolio ? 'Deleting...' : 'Yes, Switch Template'}
               </button>
             </div>
           </motion.div>

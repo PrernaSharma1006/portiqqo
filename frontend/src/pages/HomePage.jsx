@@ -25,7 +25,6 @@ const staggerChildren = {
 function HomePage() {
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
-  const [savedPortfolios, setSavedPortfolios] = useState({})
   const [testimonials, setTestimonials] = useState([
     {
       name: "Sarah Johnson",
@@ -52,10 +51,6 @@ function HomePage() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Load saved portfolios from localStorage
-    const portfolios = JSON.parse(localStorage.getItem('portfolios') || '{}')
-    setSavedPortfolios(portfolios)
-
     // Load testimonials from localStorage
     const savedTestimonials = JSON.parse(localStorage.getItem('testimonials') || '[]')
     if (savedTestimonials.length > 0) {
@@ -320,98 +315,6 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* My Portfolios Section - Only show if user has created portfolios */}
-      {Object.keys(savedPortfolios).length > 0 && (
-        <section className="py-16 bg-gradient-to-r from-purple-50 to-blue-50">
-          <div className="container-width section-padding">
-            <motion.div 
-              className="text-center mb-12"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              variants={staggerChildren}
-            >
-              <motion.h2 
-                className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4"
-                variants={fadeInUp}
-              >
-                Your Portfolios
-              </motion.h2>
-              <motion.p 
-                className="text-xl text-gray-600 max-w-2xl mx-auto"
-                variants={fadeInUp}
-              >
-                View and manage your created portfolios
-              </motion.p>
-            </motion.div>
-
-            <motion.div 
-              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto"
-              initial="initial"
-              whileInView="animate"
-              viewport={{ once: true }}
-              variants={staggerChildren}
-            >
-              {Object.entries(savedPortfolios).map(([portfolioId, portfolioData]) => (
-                <motion.div 
-                  key={portfolioId}
-                  className="bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden group"
-                  variants={fadeInUp}
-                >
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-1">
-                          {portfolioData.personalInfo.name}
-                        </h3>
-                        <p className="text-gray-600 text-sm">
-                          {portfolioData.personalInfo.title}
-                        </p>
-                      </div>
-                      {portfolioData.personalInfo.avatar && (
-                        <img
-                          src={portfolioData.personalInfo.avatar}
-                          alt={portfolioData.personalInfo.name}
-                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
-                        />
-                      )}
-                    </div>
-                    
-                    <div className="mb-4">
-                      <div className="text-sm text-gray-500 mb-2">
-                        Portfolio Type: <span className="font-medium text-gray-700">{portfolioData.portfolioType}</span>
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Projects: <span className="font-medium text-gray-700">{portfolioData.projects?.length || 0}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center space-x-3">
-                      <button
-                        onClick={() => navigate(`/portfolio/${portfolioId}`)}
-                        className="flex-1 flex items-center justify-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                      >
-                        <Eye className="w-4 h-4" />
-                        <span>View</span>
-                      </button>
-                      <button
-                        onClick={() => {
-                          navigator.clipboard.writeText(`${window.location.origin}/portfolio/${portfolioId}`)
-                          alert('Portfolio URL copied to clipboard!')
-                        }}
-                        className="flex items-center justify-center px-3 py-2 border-2 border-gray-300 text-gray-600 rounded-lg hover:border-gray-400 hover:text-gray-700 transition-colors"
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          </div>
-        </section>
-      )}
 
       {/* Features Section */}
       <section id="features" className="py-20 bg-purple-50">
