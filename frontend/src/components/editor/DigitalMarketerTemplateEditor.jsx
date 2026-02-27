@@ -333,7 +333,7 @@ function DigitalMarketerTemplateEditor() {
             </div>
           </div>
         </header>
-        <DigitalMarketerTemplate isPublic={false} portfolioData={portfolioData} />
+        <DigitalMarketerTemplate isPublic={true} portfolioData={portfolioData} />
       </div>
     )
   }
@@ -412,10 +412,20 @@ function DigitalMarketerTemplateEditor() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-              {[['name', 'Full Name'], ['title', 'Professional Title'], ['location', 'Location'], ['email', 'Email'], ['phone', 'Phone'], ['website', 'Website'], ['linkedin', 'LinkedIn URL']].map(([field, label]) => (
+              {[['name', 'Full Name', false], ['title', 'Professional Title', false], ['location', 'Location', true], ['email', 'Email', false], ['phone', 'Phone', true], ['website', 'Website', true], ['linkedin', 'LinkedIn URL', true]].map(([field, label, optional]) => (
                 <div key={field}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-                  <input type="text" value={portfolioData.profile[field]} onChange={(e) => updateProfile(field, e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {label}
+                    {optional && <span className="ml-1 text-xs text-gray-400">(optional)</span>}
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <input type="text" value={portfolioData.profile[field] || ''} onChange={(e) => updateProfile(field, e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent" />
+                    {optional && portfolioData.profile[field] && (
+                      <button onClick={() => updateProfile(field, '')} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors" title={`Clear ${label}`}>
+                        <X className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -722,12 +732,12 @@ function DigitalMarketerTemplateEditor() {
         </div>
       </div>
 
-      {showPublishModal && publishedPortfolio && (
-        <PublishSuccessModal
-          portfolio={publishedPortfolio}
-          onClose={() => setShowPublishModal(false)}
-        />
-      )}
+      <PublishSuccessModal
+        isOpen={showPublishModal}
+        onClose={() => setShowPublishModal(false)}
+        portfolioUrl={publishedPortfolio?.publicUrl || ''}
+        subdomain={publishedPortfolio?.subdomain || ''}
+      />
     </div>
   )
 }
