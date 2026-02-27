@@ -285,6 +285,12 @@ function DigitalMarketerTemplateEditor() {
   }
 
   const publishPortfolio = async () => {
+    if (!customSubdomain || customSubdomain.trim() === '') {
+      toast.error('Please set your Portfolio URL before publishing')
+      // Scroll to the URL input
+      document.querySelector('input[placeholder="your-name"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      return
+    }
     try {
       const saved = await savePortfolioToBackend(portfolioData, 'digital-marketer', customSubdomain, null, portfolioId)
       if (saved?._id || saved?.id) setPortfolioId(saved._id || saved.id)

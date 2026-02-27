@@ -7,6 +7,7 @@ import UIUXDesignerTemplate from '../components/templates/UIUXDesignerTemplate';
 import VideoEditorTemplate from '../components/templates/VideoEditorTemplate';
 import PhotographerTemplate from '../components/templates/PhotographerTemplate';
 import GeneralPortfolioTemplate from '../components/templates/GeneralPortfolioTemplate';
+import DigitalMarketerTemplate from '../components/templates/DigitalMarketerTemplate';
 
 function PublicPortfolioPage() {
   const { subdomain: pathSubdomain } = useParams();
@@ -113,6 +114,8 @@ function PublicPortfolioPage() {
           return <VideoEditorTemplate {...commonProps} />;
         case 'photographer':
           return <PhotographerTemplate {...commonProps} />;
+        case 'digital-marketer':
+          return <DigitalMarketerTemplate {...commonProps} />;
         case 'general':
           return <GeneralPortfolioTemplate {...commonProps} />;
         default:
