@@ -31,9 +31,11 @@ const portfolioSchema = new mongoose.Schema({
       'video-editor',
       'writer',
       'marketer',
+      'digital-marketer',
       'architect',
       'illustrator',
       'musician',
+      'general',
       'other'
     ]
   },

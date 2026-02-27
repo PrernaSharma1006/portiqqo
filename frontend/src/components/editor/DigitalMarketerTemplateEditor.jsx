@@ -5,6 +5,7 @@ import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/p
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import DigitalMarketerTemplate from '../templates/DigitalMarketerTemplate'
 import {
   ArrowLeft, Save, Eye, EyeOff, Upload, X, Plus,
   TrendingUp, Target, Users, BarChart3, Award, Mail, Phone,
@@ -308,6 +309,33 @@ function DigitalMarketerTemplateEditor() {
 
   if (loadingPortfolio) {
     return <div className="min-h-screen flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div></div>
+  }
+
+  if (isPreview) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <header className="bg-white shadow-sm sticky top-0 z-40">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <button onClick={() => setIsPreview(false)} className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+                <ArrowLeft className="w-5 h-5" />
+                <span>Back to Editor</span>
+              </button>
+              <div className="flex space-x-3">
+                <button onClick={savePortfolio} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  <Save className="w-4 h-4" />
+                  <span>Save</span>
+                </button>
+                <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                  <span>Publish Portfolio</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+        <DigitalMarketerTemplate isPublic={false} portfolioData={portfolioData} />
+      </div>
+    )
   }
 
   return (
