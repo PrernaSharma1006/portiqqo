@@ -8,35 +8,66 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
   const navigate = useNavigate()
 
   const marketerData = {
-    name: "Sofia Rodriguez",
-    title: "Digital Marketing Strategist",
-    specialties: ["PPC Advertising", "Social Media", "SEO", "Content Marketing"],
-    location: "Miami, FL",
-    email: "sofia.rodriguez@email.com",
-    phone: "+1 (555) 567-8901",
-    avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b647?w=300",
-    bio: "Results-driven digital marketing strategist with 8+ years of experience driving growth for brands across industries. Specialized in data-driven campaigns that deliver measurable ROI.",
-    website: "https://sofiarodriguez.marketing",
+    name: portfolioData.profile?.name || "Sofia Rodriguez",
+    title: portfolioData.profile?.title || "Digital Marketing Strategist",
+    specialties: portfolioData.profile?.specialties || ["PPC Advertising", "Social Media", "SEO", "Content Marketing"],
+    location: portfolioData.profile?.location || "Miami, FL",
+    email: portfolioData.profile?.email || "sofia.rodriguez@email.com",
+    phone: portfolioData.profile?.phone || "+1 (555) 567-8901",
+    avatar: portfolioData.profile?.avatar || "https://images.unsplash.com/photo-1494790108755-2616b612b647?w=300",
+    bio: portfolioData.profile?.bio || "Results-driven digital marketing strategist with 8+ years of experience driving growth for brands.",
+    website: portfolioData.profile?.website || "https://sofiarodriguez.marketing",
     social: {
-      linkedin: "https://linkedin.com/in/sofiarodriguez",
-      twitter: "https://twitter.com/sofiamarketing",
-      website: "https://sofiarodriguez.marketing"
+      linkedin: portfolioData.profile?.linkedin || "#",
+      website: portfolioData.profile?.website || "#"
     },
-    certifications: [
-      "Google Ads Certified",
-      "Facebook Blueprint Certified",
-      "HubSpot Inbound Certified",
-      "Google Analytics IQ",
-      "Salesforce Marketing Cloud"
-    ],
+    certifications: portfolioData.certifications?.length > 0
+      ? portfolioData.certifications
+      : ["Google Ads Certified", "Facebook Blueprint Certified", "HubSpot Inbound Certified", "Google Analytics IQ", "Salesforce Marketing Cloud"],
     metrics: {
       overview: {
-        totalBudgetManaged: "$2.5M+",
-        avgROI: "340%",
-        campaignsLaunched: "150+",
-        clientsServed: "45+"
+        totalBudgetManaged: portfolioData.metrics?.budgetManaged || "$2.5M+",
+        avgROI: portfolioData.metrics?.avgROI || "340%",
+        campaignsLaunched: portfolioData.metrics?.campaignsLaunched || "150+",
+        clientsServed: portfolioData.metrics?.clientsServed || "45+"
       }
     },
+    campaigns: portfolioData.campaigns?.length > 0
+      ? portfolioData.campaigns.map(c => ({
+          id: c.id,
+          title: c.title,
+          client: c.client,
+          category: c.category,
+          duration: c.duration,
+          budget: c.budget,
+          results: { roi: c.roi, ...({}) },
+          channels: c.channels || [],
+          image: c.image,
+          description: c.description,
+          featured: c.featured,
+          testimonial: c.testimonial ? { text: c.testimonial, author: c.testimonialAuthor } : null
+        }))
+      : [
+          { id: 1, title: 'E-commerce Growth Campaign', client: 'FashionForward Inc.', category: 'E-commerce', duration: '6 months', budget: '$125,000', results: { roi: '450%', revenueGenerated: '$562,500', leadIncrease: '280%', cpaReduction: '65%' }, channels: ['Google Ads', 'Facebook Ads', 'Email Marketing', 'SEO'], image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600', description: 'Complete digital transformation driving record-breaking revenue growth.', featured: true, testimonial: { text: "Sofia's strategy increased our online revenue by 450%.", author: 'John Smith, CEO FashionForward' } },
+          { id: 2, title: 'SaaS Lead Generation', client: 'TechSolutions Pro', category: 'B2B SaaS', duration: '12 months', budget: '$200,000', results: { roi: '380%', mqls: '1,250', salesQualified: '340', cplReduction: '45%' }, channels: ['LinkedIn Ads', 'Content Marketing', 'Marketing Automation'], image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600', description: 'Sophisticated B2B lead generation targeting enterprise clients.', featured: true, testimonial: { text: 'Our lead quality improved dramatically.', author: 'Lisa Chen, CMO TechSolutions' } },
+        ],
+    services: portfolioData.services?.length > 0
+      ? portfolioData.services
+      : [
+          { id: 1, name: 'PPC Management', price: 'Starting at $2,500/mo', description: 'Google Ads, Facebook Ads, and multi-platform campaign management', deliverables: ['Campaign Setup', 'Ongoing Optimization', 'Monthly Reports', 'A/B Testing'] },
+          { id: 2, name: 'SEO Strategy', price: 'Starting at $1,800/mo', description: 'Complete SEO audit, strategy, and implementation', deliverables: ['Technical Audit', 'Content Strategy', 'Link Building', 'Performance Tracking'] },
+          { id: 3, name: 'Social Media Marketing', price: 'Starting at $1,200/mo', description: 'Social media strategy, content creation, and community management', deliverables: ['Content Calendar', 'Community Management', 'Influencer Outreach', 'Analytics'] },
+          { id: 4, name: 'Marketing Automation', price: 'Starting at $2,000/mo', description: 'Email marketing, lead nurturing, and customer journey optimization', deliverables: ['Automation Setup', 'Email Campaigns', 'Lead Scoring', 'CRM Integration'] },
+        ],
+    tools: portfolioData.tools || {
+      analytics: ['Google Analytics', 'Google Tag Manager', 'Hotjar', 'Mixpanel', 'Tableau'],
+      advertising: ['Google Ads', 'Facebook Ads Manager', 'LinkedIn Campaign Manager', 'Microsoft Advertising'],
+      automation: ['HubSpot', 'Marketo', 'Mailchimp', 'Klaviyo', 'Zapier'],
+      seo: ['SEMrush', 'Ahrefs', 'Screaming Frog', 'Google Search Console', 'Moz']
+    }
+  }
+
+  const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
     campaigns: [
       {
         id: 1,
@@ -292,7 +323,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
             
             {/* Key Metrics */}
             <motion.div 
-              className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8"
+              className={`grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 ${isHidden('metrics') ? 'hidden' : ''}`}
               variants={fadeInUp}
             >
               <div className="text-center">
@@ -338,7 +369,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Featured Campaigns */}
-      <section id="campaigns" className="py-20">
+      <section id="campaigns" className={`py-20 ${isHidden('campaigns') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -452,7 +483,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-20 bg-white">
+      <section id="services" className={`py-20 bg-white ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -501,7 +532,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Tools & Certifications */}
-      <section id="tools" className="py-20 bg-gray-50">
+      <section id="tools" className={`py-20 bg-gray-50 ${isHidden('tools') || (isHidden('certifications')) ? '' : ''} ${isHidden('tools') && isHidden('certifications') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -517,7 +548,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
               {/* Tools */}
-              <div>
+              <div className={isHidden('tools') ? 'hidden' : ''}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Marketing Tools</h3>
                 <div className="grid grid-cols-2 gap-6">
                   {Object.entries(marketerData.tools).map(([category, tools]) => (
@@ -539,7 +570,7 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
               </div>
 
               {/* Certifications */}
-              <motion.div variants={fadeInUp}>
+              <motion.div variants={fadeInUp} className={isHidden('certifications') ? 'hidden' : ''}>
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">Certifications</h3>
                 <div className="space-y-3">
                   {marketerData.certifications.map((cert, index) => (
@@ -629,14 +660,14 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
+      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             {/* Marketer Info */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Sofia Rodriguez</h3>
+              <h3 className="text-xl font-bold mb-4">{marketerData.name}</h3>
               <p className="text-gray-400 mb-4">
-                © 2025 Sofia Rodriguez. Driving growth through data-driven marketing.
+                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${marketerData.name}. ${portfolioData.footer?.tagline || 'Driving growth through data-driven marketing.'}`}
               </p>
               <div className="flex items-center space-x-2 text-gray-400">
                 <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

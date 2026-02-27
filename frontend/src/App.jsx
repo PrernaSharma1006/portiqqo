@@ -32,6 +32,7 @@ import WebDeveloperTemplateEditor from './components/editor/WebDeveloperTemplate
 import UIUXDesignerTemplateEditor from './components/editor/UIUXDesignerTemplateEditor'
 import PhotographerTemplateEditor from './components/editor/PhotographerTemplateEditor'
 import GeneralPortfolioTemplateEditor from './components/editor/GeneralPortfolioTemplateEditor'
+import DigitalMarketerTemplateEditor from './components/editor/DigitalMarketerTemplateEditor'
 
 // Import portfolio display
 import PortfolioDisplay from './components/portfolio/PortfolioDisplay'
@@ -95,6 +96,7 @@ function App() {
             <Route path="/editor/ui-ux-designer" element={<UIUXDesignerTemplateEditor />} />
             <Route path="/editor/photographer" element={<PhotographerTemplateEditor />} />
             <Route path="/editor/general-portfolio" element={<GeneralPortfolioTemplateEditor />} />
+            <Route path="/editor/digital-marketer" element={<DigitalMarketerTemplateEditor />} />
             
             {/* Portfolio display route */}
             <Route path="/portfolio/:portfolioId" element={<PortfolioDisplay />} />
