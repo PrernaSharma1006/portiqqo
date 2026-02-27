@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { setUser, setIsAuthenticated } = useAuth();
+  const { loginWithToken } = useAuth();
 
   useEffect(() => {
     const handleCallback = async () => {
@@ -34,44 +34,20 @@ export default function AuthCallbackPage() {
       }
 
       try {
-        // Store the token
-        localStorage.setItem('authToken', token);
+        // Store token and fetch user via context
+        await loginWithToken(token);
 
-        // Fetch user data
-        const apiUrl = import.meta.env.VITE_API_URL || '/api';
-        const response = await fetch(`${apiUrl}/auth/me`, {
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
-
-        if (response.ok) {
-          const userData = await response.json();
-          
-          // Validate user data
-          if (!userData.data || !userData.data.email) {
-            throw new Error('Invalid user data received');
-          }
-          
-          setUser(userData.data);
-          setIsAuthenticated(true);
-
-          // Check if there's a redirect path stored
-          const redirectPath = localStorage.getItem('redirectAfterAuth');
-          if (redirectPath) {
-            localStorage.removeItem('redirectAfterAuth');
-            // Validate redirect path (prevent open redirect)
-            if (redirectPath.startsWith('/') && !redirectPath.startsWith('//')) {
-              navigate(redirectPath);
-            } else {
-              navigate('/dashboard');
-            }
+        // Check if there's a redirect path stored
+        const redirectPath = localStorage.getItem('redirectAfterAuth');
+        if (redirectPath) {
+          localStorage.removeItem('redirectAfterAuth');
+          if (redirectPath.startsWith('/') && !redirectPath.startsWith('//')) {
+            navigate(redirectPath);
           } else {
             navigate('/dashboard');
           }
         } else {
-          throw new Error('Failed to fetch user data');
+          navigate('/dashboard');
         }
       } catch (error) {
         console.error('Callback error:', error);
@@ -81,7 +57,7 @@ export default function AuthCallbackPage() {
     };
 
     handleCallback();
-  }, [searchParams, navigate, setUser, setIsAuthenticated]);
+  }, [searchParams, navigate, loginWithToken]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-50 via-blue-50 to-pink-50">

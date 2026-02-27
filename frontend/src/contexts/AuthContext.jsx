@@ -291,6 +291,20 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const loginWithToken = async (token) => {
+    localStorage.setItem('authToken', token);
+    setAuthToken(token);
+    const response = await fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
+    });
+    if (!response.ok) throw new Error('Failed to fetch user data');
+    const data = await response.json();
+    const userData = data.data?.user || data.data;
+    setUser(userData);
+    setIsAuthenticated(true);
+    return userData;
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -303,7 +317,8 @@ export const AuthProvider = ({ children }) => {
     verifyOTP,
     checkEmailExists,
     updateProfile,
-    getCurrentUser
+    getCurrentUser,
+    loginWithToken
   };
 
   return (
