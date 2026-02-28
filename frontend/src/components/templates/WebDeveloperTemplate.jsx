@@ -631,7 +631,7 @@ function WebDeveloperTemplate({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Contact Info */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Get In Touch</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Get In Touch</h3>
               <div className="space-y-3">
                 <a 
                   href={`mailto:${profileData.email}`}
@@ -665,7 +665,7 @@ function WebDeveloperTemplate({
 
             {/* Quick Links */}
             <div>
-              <h3 className="text-xl font-bold mb-4">Quick Links</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
               <div className="space-y-3">
                 <a href="#work" className="block text-gray-300 hover:text-white transition-colors">
                   My Work
@@ -681,22 +681,22 @@ function WebDeveloperTemplate({
 
             {/* About */}
             <div>
-              <h3 className="text-xl font-bold mb-4">About</h3>
+              <h3 className="text-xl font-bold text-white mb-4">About</h3>
               <p className="text-gray-300 mb-4">
                 {portfolioData.footer?.tagline || 'Full-stack developer passionate about creating scalable web applications and innovative digital solutions.'}
               </p>
               <div className="flex space-x-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.experience || '5+'}</div>
-                  <div className="text-sm text-gray-400">Years Experience</div>
+                  <div className="text-sm text-gray-300">Years Experience</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.projects || '50+'}</div>
-                  <div className="text-sm text-gray-400">Projects Done</div>
+                  <div className="text-sm text-gray-300">Projects Done</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.clients || '25+'}</div>
-                  <div className="text-sm text-gray-400">Happy Clients</div>
+                  <div className="text-sm text-gray-300">Happy Clients</div>
                 </div>
               </div>
             </div>
@@ -704,11 +704,11 @@ function WebDeveloperTemplate({
 
           <div className="border-t border-gray-800 mt-8 pt-8 text-center">
             <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-400 mb-4 md:mb-0">
+              <p className="text-gray-300 mb-4 md:mb-0">
                 {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. All rights reserved.`}
               </p>
               <div className="flex items-center space-x-4">
-                <span className="text-gray-400 text-sm">Built with</span>
+                <span className="text-gray-300 text-sm">Built with</span>
                 <a 
                   href="mailto:portfolio.builder659@gmail.com"
                   className="text-blue-400 hover:text-blue-300 transition-colors text-sm"
