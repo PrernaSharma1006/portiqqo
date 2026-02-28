@@ -2,7 +2,7 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check, Crown, Clock } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
@@ -179,6 +179,15 @@ function DashboardPage() {
     return sub ? `${sub}.portiqqo.me` : null
   }
 
+  const getTrialInfo = (portfolio) => {
+    if (!portfolio.freeTrialEndsAt) return null
+    const now = new Date()
+    const trialEnd = new Date(portfolio.freeTrialEndsAt)
+    const msLeft = trialEnd - now
+    const daysLeft = Math.ceil(msLeft / (1000 * 60 * 60 * 24))
+    return { expired: daysLeft <= 0, daysLeft: Math.max(0, daysLeft) }
+  }
+
   const [showDeleteModal, setShowDeleteModal] = useState(false)
   const [portfolioToDelete, setPortfolioToDelete] = useState(null)
 
@@ -291,11 +300,35 @@ function DashboardPage() {
                             {portfolio.profession?.replace(/-/g, ' ')}
                           </p>
                         </div>
-                        {portfolio.isPublished && (
-                          <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                            Published
-                          </span>
-                        )}
+                        <div className="flex flex-col items-end gap-1">
+                          {portfolio.isPublished && (
+                            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                              Published
+                            </span>
+                          )}
+                          {(() => {
+                            const trial = getTrialInfo(portfolio)
+                            if (!trial) return null
+                            if (trial.expired) return (
+                              <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                Trial Expired
+                              </span>
+                            )
+                            if (trial.daysLeft <= 3) return (
+                              <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {trial.daysLeft}d left
+                              </span>
+                            )
+                            return (
+                              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                Free: {trial.daysLeft}d left
+                              </span>
+                            )
+                          })()}
+                        </div>
                       </div>
                       
                       <div className="flex items-center gap-2 mb-4 min-h-[24px]">
@@ -485,28 +518,53 @@ function DashboardPage() {
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-8 h-8 text-orange-500" />
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-purple-500" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Switch Template?</h3>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">Want Another Portfolio?</h3>
               <p className="text-slate-600">
-                You already have a portfolio. Switching will <strong>permanently delete</strong> your existing portfolio and start a new one.
+                Free accounts are limited to <strong>1 portfolio</strong>. To create a new one you can either upgrade to Premium or delete your existing portfolio.
               </p>
             </div>
 
             {existingPortfolios[0] && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-                <p className="text-sm text-red-800 font-medium text-center">
-                  ⚠️ This will delete: <span className="font-bold">{existingPortfolios[0].title}</span>
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
+                <p className="text-sm text-slate-700 font-medium text-center">
+                  Current portfolio: <span className="font-bold">{existingPortfolios[0].title}</span>
                 </p>
                 {getPortfolioUrl(existingPortfolios[0]) && (
-                  <p className="text-xs text-red-600 text-center mt-1">
+                  <p className="text-xs text-slate-500 text-center mt-1">
                     {getPortfolioUrl(existingPortfolios[0])}
                   </p>
                 )}
               </div>
             )}
 
+            {/* Upgrade option */}
+            <button
+              onClick={() => { setPendingTemplate(null); navigate('/pricing') }}
+              className="w-full mb-3 py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
+            >
+              <Crown className="w-5 h-5" />
+              Upgrade to Premium — Unlock Unlimited Portfolios
+            </button>
+
+            {/* Divider */}
+            <div className="relative my-4">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-200"></div>
+              </div>
+              <div className="relative flex justify-center">
+                <span className="px-3 bg-white text-slate-400 text-xs">or</span>
+              </div>
+            </div>
+
+            {/* Delete & switch option */}
+            <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
+              <p className="text-xs text-red-700 text-center">
+                ⚠️ Deleting is permanent and cannot be undone
+              </p>
+            </div>
             <div className="flex gap-3">
               <button
                 onClick={() => setPendingTemplate(null)}
@@ -520,7 +578,8 @@ function DashboardPage() {
                 disabled={switchingPortfolio}
                 className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                {switchingPortfolio ? 'Deleting...' : 'Yes, Switch Template'}
+                <Trash2 className="w-4 h-4" />
+                {switchingPortfolio ? 'Deleting...' : 'Delete & Switch'}
               </button>
             </div>
           </motion.div>

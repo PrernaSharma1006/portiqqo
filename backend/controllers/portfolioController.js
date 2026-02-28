@@ -309,6 +309,25 @@ exports.getPublicPortfolio = async (req, res) => {
       });
     }
 
+    // Check if free trial has expired
+    const now = new Date();
+    if (portfolio.freeTrialEndsAt && portfolio.freeTrialEndsAt < now) {
+      const subscription = await Subscription.findOne({
+        user: portfolio.user._id,
+        status: 'active',
+        type: 'premium'
+      });
+      const hasPremium = subscription && subscription.currentPeriodEnd > now;
+      if (!hasPremium) {
+        return res.status(403).json({
+          success: false,
+          code: 'TRIAL_EXPIRED',
+          message: "This portfolio's free trial has ended. The owner needs to upgrade to a paid plan to keep it live.",
+          trialEndedAt: portfolio.freeTrialEndsAt
+        });
+      }
+    }
+
     // Increment view count
     portfolio.views += 1;
     portfolio.lastViewed = new Date();

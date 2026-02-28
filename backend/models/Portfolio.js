@@ -52,6 +52,12 @@ const portfolioSchema = new mongoose.Schema({
     type: Boolean,
     default: true
   },
+  freeTrialEndsAt: {
+    type: Date,
+    default: function () {
+      return new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days from creation
+    }
+  },
   views: {
     type: Number,
     default: 0

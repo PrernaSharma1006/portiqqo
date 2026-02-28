@@ -15,6 +15,7 @@ function PublicPortfolioPage() {
   const [portfolio, setPortfolio] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isTrialExpired, setIsTrialExpired] = useState(false);
 
   // Get subdomain from URL hostname or path
   const getSubdomain = () => {
@@ -41,7 +42,11 @@ function PublicPortfolioPage() {
       } catch (err) {
         console.error('Error fetching portfolio:', err);
         console.error('Error response:', err.response?.data);
-        setError(err.response?.data?.message || 'Portfolio not found');
+        if (err.response?.data?.code === 'TRIAL_EXPIRED') {
+          setIsTrialExpired(true);
+        } else {
+          setError(err.response?.data?.message || 'Portfolio not found');
+        }
       } finally {
         setLoading(false);
       }
@@ -51,6 +56,39 @@ function PublicPortfolioPage() {
       fetchPortfolio();
     }
   }, [subdomain]);
+
+  // Trial expired state
+  if (isTrialExpired) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 px-4">
+        <div className="max-w-lg w-full bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-2xl p-10 text-center">
+          <div className="w-20 h-20 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg className="w-10 h-10 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <h1 className="text-3xl font-bold text-white mb-3">Free Trial Ended</h1>
+          <p className="text-slate-300 mb-2">
+            This portfolio's 7-day free trial has expired.
+          </p>
+          <p className="text-slate-400 text-sm mb-8">
+            The owner needs to upgrade to a paid plan to keep their portfolio live and publicly accessible.
+          </p>
+          <div className="space-y-3">
+            <button
+              onClick={() => navigate('/')}
+              className="w-full py-3 px-6 bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white rounded-xl font-semibold transition-all duration-300 shadow-lg"
+            >
+              Create Your Own Free Portfolio
+            </button>
+            <p className="text-slate-500 text-xs">
+              Build and publish your portfolio free for 7 days — no credit card required
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Loading state
   if (loading) {
