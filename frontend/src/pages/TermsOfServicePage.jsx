@@ -18,7 +18,7 @@ export default function TermsOfServicePage() {
       title: "Subscription & Billing",
       content: [
         "7-day free trial available for new users",
-        "After trial: ₹81/month subscription fee",
+        "After trial: ₹199/month subscription fee",
         "Automatic renewal unless cancelled before trial/billing period ends",
         "Refunds available within 7 days of payment (terms apply)",
         "You can cancel your subscription at any time from your account"

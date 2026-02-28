@@ -551,13 +551,13 @@ function HomePage() {
               className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4"
               variants={fadeInUp}
             >
-              Try Free for 7 Days, Then Just ₹81/Month
+              Try Free for 7 Days, Then Just ₹199/Month
             </motion.h2>
             <motion.p 
               className="text-xl text-secondary-600 max-w-2xl mx-auto"
               variants={fadeInUp}
             >
-              Build your professional portfolio risk-free with our 7-day trial. Continue for less than the cost of a coffee!
+              Build your professional portfolio risk-free with our 7-day trial. Upgrade to Premium for just ₹199/month!
             </motion.p>
           </motion.div>
 
@@ -578,7 +578,7 @@ function HomePage() {
               <div className="text-center mb-8">
                 <h3 className="text-2xl font-bold text-secondary-900 mb-2">Professional Portfolio</h3>
                 <div className="text-4xl font-bold text-secondary-900 mb-2">
-                  ₹81<span className="text-lg font-normal text-secondary-600">/month</span>
+                  ₹199<span className="text-lg font-normal text-secondary-600">/month</span>
                 </div>
                 <p className="text-secondary-600">After 7-day free trial • Cancel anytime</p>
               </div>

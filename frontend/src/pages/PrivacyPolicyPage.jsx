@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
       title: "How We Use Your Information",
       content: [
         "To provide and maintain our portfolio building service",
-        "To process your subscription payments (₹81/month after 7-day trial)",
+        "To process your subscription payments (₹199/month after 7-day trial)",
         "To send important updates about your account",
         "To improve our platform based on usage patterns"
       ]

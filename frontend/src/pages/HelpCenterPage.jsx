@@ -20,7 +20,7 @@ export default function HelpCenterPage() {
       description: "Manage your subscription and payments",
       topics: [
         "Understanding the 7-day free trial",
-        "How billing works (₹81/month)",
+        "How billing works (₹199/month)",
         "Canceling your subscription",
         "Payment methods accepted"
       ]
