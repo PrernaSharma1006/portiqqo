@@ -3,10 +3,15 @@ const crypto = require('crypto');
 const Subscription = require('../models/Subscription');
 const User = require('../models/User');
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+// Lazy-initialize so missing keys are caught at call time, not at server start
+const getRazorpay = () => {
+  const key_id = process.env.RAZORPAY_KEY_ID;
+  const key_secret = process.env.RAZORPAY_KEY_SECRET;
+  if (!key_id || !key_secret) {
+    throw new Error('Razorpay credentials are not configured on the server (RAZORPAY_KEY_ID / RAZORPAY_KEY_SECRET missing from .env)');
+  }
+  return new Razorpay({ key_id, key_secret });
+};
 
 // Pricing plans (amount in paise: 1 INR = 100 paise)
 const PLANS = {
@@ -40,6 +45,7 @@ exports.createOrder = async (req, res) => {
 
     const selectedPlan = PLANS[plan];
 
+    const razorpay = getRazorpay();
     const order = await razorpay.orders.create({
       amount: selectedPlan.amount,
       currency: selectedPlan.currency,
@@ -64,7 +70,8 @@ exports.createOrder = async (req, res) => {
     });
   } catch (error) {
     console.error('Create order error:', error);
-    res.status(500).json({ success: false, message: 'Failed to create payment order' });
+    const msg = error?.error?.description || error?.message || 'Failed to create payment order';
+    res.status(500).json({ success: false, message: msg });
   }
 };
 
