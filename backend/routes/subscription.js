@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
+const { auth } = require('../middleware/auth');
+const { createOrder, verifyPayment, getSubscription } = require('../controllers/subscriptionController');
 
-// Placeholder for subscription routes
-// This will be implemented when we build the subscription functionality
+// @route   GET /api/subscriptions/me
+router.get('/me', auth, getSubscription);
 
-// @route   GET /api/subscriptions
-// @desc    Get user subscription
-// @access  Private
-router.get('/', (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Subscription routes - to be implemented'
-  });
-});
+// @route   POST /api/subscriptions/create-order
+router.post('/create-order', auth, createOrder);
+
+// @route   POST /api/subscriptions/verify-payment
+router.post('/verify-payment', auth, verifyPayment);
 
 module.exports = router;

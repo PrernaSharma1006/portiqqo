@@ -38,6 +38,7 @@ import DigitalMarketerTemplateEditor from './components/editor/DigitalMarketerTe
 import PortfolioDisplay from './components/portfolio/PortfolioDisplay'
 import PublicPortfolioPage from './pages/PublicPortfolioPage'
 import SubdomainRouter from './components/routing/SubdomainRouter'
+import PricingPage from './pages/PricingPage'
 
 // Import preview page
 import TemplatePreview from './pages/TemplatePreview'
@@ -76,6 +77,7 @@ function App() {
             <Route path="/help-center" element={<Layout><HelpCenterPage /></Layout>} />
             <Route path="/privacy-policy" element={<Layout><PrivacyPolicyPage /></Layout>} />
             <Route path="/terms-of-service" element={<Layout><TermsOfServicePage /></Layout>} />
+            <Route path="/pricing" element={<PricingPage />} />
             
             {/* Template preview routes */}
             <Route path="/preview/:templateType" element={<TemplatePreview />} />

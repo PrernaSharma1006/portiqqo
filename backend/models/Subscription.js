@@ -6,17 +6,20 @@ const subscriptionSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  stripeCustomerId: {
+  razorpayCustomerId: {
     type: String,
-    required: true,
-    unique: true
+    sparse: true
   },
-  stripeSubscriptionId: {
+  razorpaySubscriptionId: {
     type: String,
     unique: true,
     sparse: true
   },
-  stripePriceId: String,
+  razorpayPaymentId: {
+    type: String,
+    sparse: true
+  },
+  planId: String,
   type: {
     type: String,
     enum: ['free', 'premium'],
@@ -123,17 +126,15 @@ const subscriptionSchema = new mongoose.Schema({
   
   // Payment history
   invoices: [{
-    stripeInvoiceId: String,
+    razorpayPaymentId: String,
+    razorpayOrderId: String,
     amount: Number,
     currency: String,
     status: {
       type: String,
-      enum: ['draft', 'open', 'paid', 'void', 'uncollectible']
+      enum: ['created', 'paid', 'failed', 'refunded']
     },
-    paidAt: Date,
-    dueDate: Date,
-    hostedInvoiceUrl: String,
-    invoicePdf: String
+    paidAt: Date
   }],
   
   // Discount/Coupon information
@@ -163,8 +164,8 @@ const subscriptionSchema = new mongoose.Schema({
 
 // Indexes
 subscriptionSchema.index({ user: 1 });
-subscriptionSchema.index({ stripeCustomerId: 1 });
-subscriptionSchema.index({ stripeSubscriptionId: 1 });
+subscriptionSchema.index({ razorpayCustomerId: 1 });
+subscriptionSchema.index({ razorpaySubscriptionId: 1 });
 subscriptionSchema.index({ status: 1 });
 subscriptionSchema.index({ currentPeriodEnd: 1 });
 
