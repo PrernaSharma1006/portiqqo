@@ -6,7 +6,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
 function UnifiedAuthPage() {
-  const [activeCard, setActiveCard] = useState('choice')
+  const [activeCard, setActiveCard] = useState('login')
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -298,7 +298,11 @@ function UnifiedAuthPage() {
   }
 
   const goBack = () => {
-    setActiveCard('choice')
+    if (activeCard === 'login' || activeCard === 'signup') {
+      navigate(-1)
+      return
+    }
+    setActiveCard('login')
     setErrors({})
     setOtpData({ 
       email: '', 
