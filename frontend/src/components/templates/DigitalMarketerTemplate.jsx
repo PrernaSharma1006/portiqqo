@@ -536,7 +536,6 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
               <p className="text-gray-300 mb-4">
                 {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${marketerData.name}. ${portfolioData.footer?.tagline || 'Driving growth through data-driven marketing.'}`}
               </p>
-              <div className="flex items-center space-x-2 text-gray-300">
               <ul className="space-y-2">
                 <li><a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a></li>
                 <li><a href="#campaigns" className="text-gray-300 hover:text-white transition-colors">Campaigns</a></li>
