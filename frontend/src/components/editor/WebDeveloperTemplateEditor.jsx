@@ -985,66 +985,66 @@ function WebDeveloperTemplateEditor() {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone <span className="text-gray-400 font-normal">(optional)</span></label>
-                <div className="relative">
+                <div className="flex items-center gap-2">
                   <input
                     type="tel"
                     value={portfolioData.profile.phone}
                     onChange={(e) => updateProfileField('phone', e.target.value)}
-                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {portfolioData.profile.phone && (
-                    <button onClick={() => updateProfileField('phone', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
-                      <X className="w-4 h-4" />
+                    <button onClick={() => updateProfileField('phone', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
+                      <X className="w-3.5 h-3.5" /> Remove
                     </button>
                   )}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Website <span className="text-gray-400 font-normal">(optional)</span></label>
-                <div className="relative">
+                <div className="flex items-center gap-2">
                   <input
                     type="url"
                     value={portfolioData.profile.website}
                     onChange={(e) => updateProfileField('website', e.target.value)}
-                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {portfolioData.profile.website && (
-                    <button onClick={() => updateProfileField('website', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
-                      <X className="w-4 h-4" />
+                    <button onClick={() => updateProfileField('website', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
+                      <X className="w-3.5 h-3.5" /> Remove
                     </button>
                   )}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">GitHub <span className="text-gray-400 font-normal">(optional)</span></label>
-                <div className="relative">
+                <div className="flex items-center gap-2">
                   <input
                     type="url"
                     value={portfolioData.profile.github}
                     onChange={(e) => updateProfileField('github', e.target.value)}
                     placeholder="https://github.com/username"
-                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {portfolioData.profile.github && (
-                    <button onClick={() => updateProfileField('github', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
-                      <X className="w-4 h-4" />
+                    <button onClick={() => updateProfileField('github', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
+                      <X className="w-3.5 h-3.5" /> Remove
                     </button>
                   )}
                 </div>
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn <span className="text-gray-400 font-normal">(optional)</span></label>
-                <div className="relative">
+                <div className="flex items-center gap-2">
                   <input
                     type="url"
                     value={portfolioData.profile.linkedin}
                     onChange={(e) => updateProfileField('linkedin', e.target.value)}
                     placeholder="https://linkedin.com/in/username"
-                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
                   {portfolioData.profile.linkedin && (
-                    <button onClick={() => updateProfileField('linkedin', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
-                      <X className="w-4 h-4" />
+                    <button onClick={() => updateProfileField('linkedin', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
+                      <X className="w-3.5 h-3.5" /> Remove
                     </button>
                   )}
                 </div>
