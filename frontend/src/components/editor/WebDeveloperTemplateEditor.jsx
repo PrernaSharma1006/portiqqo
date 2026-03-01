@@ -984,42 +984,70 @@ function WebDeveloperTemplateEditor() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
-                <input
-                  type="tel"
-                  value={portfolioData.profile.phone}
-                  onChange={(e) => updateProfileField('phone', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Phone <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="relative">
+                  <input
+                    type="tel"
+                    value={portfolioData.profile.phone}
+                    onChange={(e) => updateProfileField('phone', e.target.value)}
+                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  {portfolioData.profile.phone && (
+                    <button onClick={() => updateProfileField('phone', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Website</label>
-                <input
-                  type="url"
-                  value={portfolioData.profile.website}
-                  onChange={(e) => updateProfileField('website', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">Website <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={portfolioData.profile.website}
+                    onChange={(e) => updateProfileField('website', e.target.value)}
+                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  {portfolioData.profile.website && (
+                    <button onClick={() => updateProfileField('website', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">GitHub</label>
-                <input
-                  type="url"
-                  value={portfolioData.profile.github}
-                  onChange={(e) => updateProfileField('github', e.target.value)}
-                  placeholder="https://github.com/username"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">GitHub <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={portfolioData.profile.github}
+                    onChange={(e) => updateProfileField('github', e.target.value)}
+                    placeholder="https://github.com/username"
+                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  {portfolioData.profile.github && (
+                    <button onClick={() => updateProfileField('github', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn</label>
-                <input
-                  type="url"
-                  value={portfolioData.profile.linkedin}
-                  onChange={(e) => updateProfileField('linkedin', e.target.value)}
-                  placeholder="https://linkedin.com/in/username"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                />
+                <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn <span className="text-gray-400 font-normal">(optional)</span></label>
+                <div className="relative">
+                  <input
+                    type="url"
+                    value={portfolioData.profile.linkedin}
+                    onChange={(e) => updateProfileField('linkedin', e.target.value)}
+                    placeholder="https://linkedin.com/in/username"
+                    className="w-full px-3 py-2 pr-8 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  />
+                  {portfolioData.profile.linkedin && (
+                    <button onClick={() => updateProfileField('linkedin', '')} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-500 transition-colors" title="Clear">
+                      <X className="w-4 h-4" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>
@@ -1171,7 +1199,8 @@ function WebDeveloperTemplateEditor() {
                     </button>
                     <button
                       onClick={() => removeProject(project.id)}
-                      className="absolute top-2 right-2 w-6 h-6 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700"
+                      className="absolute top-2 right-2 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 shadow-md"
+                      title="Delete project"
                     >
                       <X className="w-4 h-4" />
                     </button>
