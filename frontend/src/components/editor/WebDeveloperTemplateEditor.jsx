@@ -250,6 +250,18 @@ function WebDeveloperTemplateEditor() {
   const [showUploadModal, setShowUploadModal] = useState(false)
   const [uploadType, setUploadType] = useState('')
   const [customSubdomain, setCustomSubdomain] = useState('')
+  const [hiddenProfileFields, setHiddenProfileFields] = useState([])
+
+  const removeProfileField = (field) => {
+    updateProfileField(field, '')
+    setHiddenProfileFields(prev => [...prev, field])
+  }
+
+  const restoreProfileField = (field) => {
+    setHiddenProfileFields(prev => prev.filter(f => f !== field))
+  }
+
+  const isFieldHidden = (field) => hiddenProfileFields.includes(field)
 
   const categories = [
     { id: 'all', name: 'All Projects' },
@@ -983,6 +995,7 @@ function WebDeveloperTemplateEditor() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
+              {!isFieldHidden('phone') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Phone <span className="text-gray-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-2">
@@ -992,13 +1005,13 @@ function WebDeveloperTemplateEditor() {
                     onChange={(e) => updateProfileField('phone', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                  {portfolioData.profile.phone && (
-                    <button onClick={() => updateProfileField('phone', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
-                      <X className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  )}
+                  <button onClick={() => removeProfileField('phone')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors">
+                    <X className="w-3.5 h-3.5" /> Remove
+                  </button>
                 </div>
               </div>
+              )}
+              {!isFieldHidden('website') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Website <span className="text-gray-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-2">
@@ -1008,13 +1021,13 @@ function WebDeveloperTemplateEditor() {
                     onChange={(e) => updateProfileField('website', e.target.value)}
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                  {portfolioData.profile.website && (
-                    <button onClick={() => updateProfileField('website', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
-                      <X className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  )}
+                  <button onClick={() => removeProfileField('website')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors">
+                    <X className="w-3.5 h-3.5" /> Remove
+                  </button>
                 </div>
               </div>
+              )}
+              {!isFieldHidden('github') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">GitHub <span className="text-gray-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-2">
@@ -1025,13 +1038,13 @@ function WebDeveloperTemplateEditor() {
                     placeholder="https://github.com/username"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                  {portfolioData.profile.github && (
-                    <button onClick={() => updateProfileField('github', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
-                      <X className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  )}
+                  <button onClick={() => removeProfileField('github')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors">
+                    <X className="w-3.5 h-3.5" /> Remove
+                  </button>
                 </div>
               </div>
+              )}
+              {!isFieldHidden('linkedin') && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">LinkedIn <span className="text-gray-400 font-normal">(optional)</span></label>
                 <div className="flex items-center gap-2">
@@ -1042,14 +1055,32 @@ function WebDeveloperTemplateEditor() {
                     placeholder="https://linkedin.com/in/username"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                   />
-                  {portfolioData.profile.linkedin && (
-                    <button onClick={() => updateProfileField('linkedin', '')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors" title="Remove">
-                      <X className="w-3.5 h-3.5" /> Remove
-                    </button>
-                  )}
+                  <button onClick={() => removeProfileField('linkedin')} className="flex-shrink-0 flex items-center gap-1 px-3 py-2 bg-red-50 hover:bg-red-100 text-red-500 text-xs font-medium rounded-lg border border-red-200 transition-colors">
+                    <X className="w-3.5 h-3.5" /> Remove
+                  </button>
                 </div>
               </div>
+              )}
             </div>
+
+            {/* Restore hidden optional fields */}
+            {hiddenProfileFields.length > 0 && (
+              <div className="mt-6 pt-5 border-t border-gray-100">
+                <p className="text-xs font-medium text-gray-500 mb-3">Removed fields — click to add back:</p>
+                <div className="flex flex-wrap gap-2">
+                  {hiddenProfileFields.map(field => (
+                    <button
+                      key={field}
+                      onClick={() => restoreProfileField(field)}
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-600 text-xs font-medium rounded-lg border border-purple-200 transition-colors"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      Add {field.charAt(0).toUpperCase() + field.slice(1)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </motion.div>
 
           {/* Tech Stack Section */}
