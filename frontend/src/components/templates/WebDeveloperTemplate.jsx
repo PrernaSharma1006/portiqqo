@@ -157,13 +157,13 @@ function WebDeveloperTemplate({
     bannerImage: portfolioData.profile?.bannerImage || demoProfile.bannerImage,
     location: portfolioData.profile?.location || personalInfo.location || demoProfile.location,
     email: portfolioData.profile?.email || personalInfo.email || demoProfile.email,
-    phone: portfolioData.profile?.phone || personalInfo.phone || demoProfile.phone,
-    website: portfolioData.profile?.website || personalInfo.website || demoProfile.website,
+    phone: portfolioData.profile?.phone ?? '',
+    website: portfolioData.profile?.website ?? '',
     resumeUrl: portfolioData.profile?.resumeUrl || '',
     social: {
-      github: portfolioData.profile?.github || socialLinks.github || '',
-      linkedin: portfolioData.profile?.linkedin || socialLinks.linkedin || '',
-      website: portfolioData.profile?.website || personalInfo.website || ''
+      github: portfolioData.profile?.github ?? socialLinks.github ?? '',
+      linkedin: portfolioData.profile?.linkedin ?? socialLinks.linkedin ?? '',
+      website: portfolioData.profile?.website ?? ''
     },
     projects: [],
     experience: portfolioData.experience || []
@@ -640,26 +640,32 @@ function WebDeveloperTemplate({
                   <Mail className="w-5 h-5" />
                   <span>{profileData.email}</span>
                 </a>
-                <a 
-                  href={`tel:${profileData.phone}`}
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Phone className="w-5 h-5" />
-                  <span>{profileData.phone}</span>
-                </a>
-                <div className="flex items-center space-x-3 text-gray-300">
-                  <MapPin className="w-5 h-5" />
-                  <span>{profileData.location}</span>
-                </div>
-                <a 
-                  href={`https://${profileData.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Globe className="w-5 h-5" />
-                  <span>{profileData.website}</span>
-                </a>
+                {profileData.phone && (
+                  <a 
+                    href={`tel:${profileData.phone}`}
+                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                  >
+                    <Phone className="w-5 h-5" />
+                    <span>{profileData.phone}</span>
+                  </a>
+                )}
+                {profileData.location && (
+                  <div className="flex items-center space-x-3 text-gray-300">
+                    <MapPin className="w-5 h-5" />
+                    <span>{profileData.location}</span>
+                  </div>
+                )}
+                {profileData.website && (
+                  <a 
+                    href={`https://${profileData.website}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
+                  >
+                    <Globe className="w-5 h-5" />
+                    <span>{profileData.website}</span>
+                  </a>
+                )}
               </div>
             </div>
 

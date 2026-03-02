@@ -646,14 +646,30 @@ function WebDeveloperTemplateEditor() {
                   <Mail className="w-5 h-5 mr-2" />
                   {portfolioData.profile.email}
                 </a>
-                <a href={`tel:${portfolioData.profile.phone}`} className="flex items-center text-purple-600 hover:text-purple-700">
-                  <Phone className="w-5 h-5 mr-2" />
-                  {portfolioData.profile.phone}
-                </a>
-                <a href={portfolioData.profile.github} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
-                  <Globe className="w-5 h-5 mr-2" />
-                  GitHub
-                </a>
+                {portfolioData.profile.phone && (
+                  <a href={`tel:${portfolioData.profile.phone}`} className="flex items-center text-purple-600 hover:text-purple-700">
+                    <Phone className="w-5 h-5 mr-2" />
+                    {portfolioData.profile.phone}
+                  </a>
+                )}
+                {portfolioData.profile.github && (
+                  <a href={portfolioData.profile.github} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
+                    <Globe className="w-5 h-5 mr-2" />
+                    GitHub
+                  </a>
+                )}
+                {portfolioData.profile.linkedin && (
+                  <a href={portfolioData.profile.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
+                    <Globe className="w-5 h-5 mr-2" />
+                    LinkedIn
+                  </a>
+                )}
+                {portfolioData.profile.website && (
+                  <a href={`https://${portfolioData.profile.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
+                    <Globe className="w-5 h-5 mr-2" />
+                    {portfolioData.profile.website}
+                  </a>
+                )}
               </div>
             </div>
           </div>
