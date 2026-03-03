@@ -251,6 +251,7 @@ function WebDeveloperTemplateEditor() {
   const [uploadType, setUploadType] = useState('')
   const [customSubdomain, setCustomSubdomain] = useState('')
   const [hiddenProfileFields, setHiddenProfileFields] = useState([])
+  const [hiddenProjectFields, setHiddenProjectFields] = useState({})
 
   const removeProfileField = (field) => {
     updateProfileField(field, '')
@@ -262,6 +263,24 @@ function WebDeveloperTemplateEditor() {
   }
 
   const isFieldHidden = (field) => hiddenProfileFields.includes(field)
+
+  const removeProjectField = (projectId, field, emptyValue = '') => {
+    updateProject(projectId, field, emptyValue)
+    setHiddenProjectFields(prev => ({
+      ...prev,
+      [projectId]: [...(prev[projectId] || []), field]
+    }))
+  }
+
+  const restoreProjectField = (projectId, field) => {
+    setHiddenProjectFields(prev => ({
+      ...prev,
+      [projectId]: (prev[projectId] || []).filter(f => f !== field)
+    }))
+  }
+
+  const isProjectFieldHidden = (projectId, field) =>
+    (hiddenProjectFields[projectId] || []).includes(field)
 
   const categories = [
     { id: 'all', name: 'All Projects' },
@@ -1265,145 +1284,175 @@ function WebDeveloperTemplateEditor() {
 
                     {/* Category + Year */}
                     <div className="grid grid-cols-2 gap-2">
-                      <select
-                        value={project.category}
-                        onChange={(e) => updateProject(project.id, 'category', e.target.value)}
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      >
-                        <option value="">— No Category —</option>
-                        <option value="frontend">Frontend</option>
-                        <option value="backend">Backend</option>
-                        <option value="fullstack">Full Stack</option>
-                        <option value="mobile">Mobile</option>
-                        <option value="api">API</option>
-                      </select>
-                      <div className="flex items-center gap-1">
-                        <input
-                          type="text"
-                          value={project.year}
-                          onChange={(e) => updateProject(project.id, 'year', e.target.value)}
-                          placeholder="Year"
-                          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        />
-                        {project.year && (
+                      {!isProjectFieldHidden(project.id, 'category') ? (
+                        <div className="flex items-center gap-1">
+                          <select
+                            value={project.category}
+                            onChange={(e) => updateProject(project.id, 'category', e.target.value)}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          >
+                            <option value="">— No Category —</option>
+                            <option value="frontend">Frontend</option>
+                            <option value="backend">Backend</option>
+                            <option value="fullstack">Full Stack</option>
+                            <option value="mobile">Mobile</option>
+                            <option value="api">API</option>
+                          </select>
                           <button
-                            onClick={() => updateProject(project.id, 'year', '')}
-                            title="Clear year"
+                            onClick={() => removeProjectField(project.id, 'category', '')}
+                            title="Remove category"
                             className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
-                        )}
-                      </div>
+                        </div>
+                      ) : <div />}
+                      {!isProjectFieldHidden(project.id, 'year') ? (
+                        <div className="flex items-center gap-1">
+                          <input
+                            type="text"
+                            value={project.year}
+                            onChange={(e) => updateProject(project.id, 'year', e.target.value)}
+                            placeholder="Year"
+                            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                          />
+                          <button
+                            onClick={() => removeProjectField(project.id, 'year', '')}
+                            title="Remove year"
+                            className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : null}
                     </div>
 
                     {/* Description */}
-                    <div className="flex items-start gap-1">
-                      <textarea
-                        value={project.description}
-                        onChange={(e) => updateProject(project.id, 'description', e.target.value)}
-                        placeholder="Project description..."
-                        rows={2}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
-                      {project.description && (
+                    {!isProjectFieldHidden(project.id, 'description') && (
+                      <div className="flex items-start gap-1">
+                        <textarea
+                          value={project.description}
+                          onChange={(e) => updateProject(project.id, 'description', e.target.value)}
+                          placeholder="Project description..."
+                          rows={2}
+                          className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
                         <button
-                          onClick={() => updateProject(project.id, 'description', '')}
-                          title="Clear description"
+                          onClick={() => removeProjectField(project.id, 'description', '')}
+                          title="Remove description"
                           className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors mt-1"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* Live URL */}
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="url"
-                        value={project.liveUrl}
-                        onChange={(e) => updateProject(project.id, 'liveUrl', e.target.value)}
-                        placeholder="Live Demo URL (e.g., https://project-demo.com)"
-                        className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
-                      {project.liveUrl && (
+                    {!isProjectFieldHidden(project.id, 'liveUrl') && (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="url"
+                          value={project.liveUrl}
+                          onChange={(e) => updateProject(project.id, 'liveUrl', e.target.value)}
+                          placeholder="Live Demo URL (e.g., https://project-demo.com)"
+                          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
                         <button
-                          onClick={() => updateProject(project.id, 'liveUrl', '')}
-                          title="Clear live URL"
+                          onClick={() => removeProjectField(project.id, 'liveUrl', '')}
+                          title="Remove live URL"
                           className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* GitHub URL */}
-                    <div className="flex items-center gap-1">
-                      <input
-                        type="url"
-                        value={project.githubUrl}
-                        onChange={(e) => updateProject(project.id, 'githubUrl', e.target.value)}
-                        placeholder="GitHub Repository URL"
-                        className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
-                      {project.githubUrl && (
+                    {!isProjectFieldHidden(project.id, 'githubUrl') && (
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="url"
+                          value={project.githubUrl}
+                          onChange={(e) => updateProject(project.id, 'githubUrl', e.target.value)}
+                          placeholder="GitHub Repository URL"
+                          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
                         <button
-                          onClick={() => updateProject(project.id, 'githubUrl', '')}
-                          title="Clear GitHub URL"
+                          onClick={() => removeProjectField(project.id, 'githubUrl', '')}
+                          title="Remove GitHub URL"
                           className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
-                      )}
-                    </div>
+                      </div>
+                    )}
 
                     {/* Technologies Used */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">Technologies Used</label>
-                        {project.technologies.length > 0 && (
+                    {!isProjectFieldHidden(project.id, 'technologies') && (
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium text-gray-700">Technologies Used</label>
                           <button
-                            onClick={() => updateProject(project.id, 'technologies', [])}
-                            title="Clear technologies"
+                            onClick={() => removeProjectField(project.id, 'technologies', [])}
+                            title="Remove technologies"
                             className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
                           >
                             <X className="w-3 h-3" />
-                            Clear
+                            Remove
                           </button>
-                        )}
+                        </div>
+                        <input
+                          type="text"
+                          value={project.technologies.join(', ')}
+                          onChange={(e) => updateProject(project.id, 'technologies', e.target.value.split(', ').filter(t => t))}
+                          placeholder="React, Node.js, MongoDB, etc."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        value={project.technologies.join(', ')}
-                        onChange={(e) => updateProject(project.id, 'technologies', e.target.value.split(', ').filter(t => t))}
-                        placeholder="React, Node.js, MongoDB, etc."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
-                    </div>
+                    )}
 
                     {/* Key Features */}
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <label className="block text-sm font-medium text-gray-700">Key Features</label>
-                        {project.features.length > 0 && (
+                    {!isProjectFieldHidden(project.id, 'features') && (
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <label className="block text-sm font-medium text-gray-700">Key Features</label>
                           <button
-                            onClick={() => updateProject(project.id, 'features', [])}
-                            title="Clear features"
+                            onClick={() => removeProjectField(project.id, 'features', [])}
+                            title="Remove features"
                             className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
                           >
                             <X className="w-3 h-3" />
-                            Clear
+                            Remove
                           </button>
-                        )}
+                        </div>
+                        <input
+                          type="text"
+                          value={project.features.join(', ')}
+                          onChange={(e) => updateProject(project.id, 'features', e.target.value.split(', ').filter(f => f))}
+                          placeholder="Authentication, Real-time chat, etc."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
                       </div>
-                      <input
-                        type="text"
-                        value={project.features.join(', ')}
-                        onChange={(e) => updateProject(project.id, 'features', e.target.value.split(', ').filter(f => f))}
-                        placeholder="Authentication, Real-time chat, etc."
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
-                    </div>
+                    )}
+
+                    {/* Restore strip */}
+                    {(hiddenProjectFields[project.id] || []).length > 0 && (
+                      <div className="pt-3 border-t border-gray-100">
+                        <p className="text-xs font-medium text-gray-500 mb-2">Removed fields — click to add back:</p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {(hiddenProjectFields[project.id] || []).map(field => (
+                            <button
+                              key={field}
+                              onClick={() => restoreProjectField(project.id, field)}
+                              className="flex items-center gap-1 px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-600 text-xs font-medium rounded-lg border border-purple-200 transition-colors"
+                            >
+                              <Plus className="w-3 h-3" />
+                              Add {field === 'liveUrl' ? 'Live URL' : field === 'githubUrl' ? 'GitHub URL' : field.charAt(0).toUpperCase() + field.slice(1)}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
