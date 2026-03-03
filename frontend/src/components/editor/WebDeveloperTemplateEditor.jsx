@@ -1254,6 +1254,7 @@ function WebDeveloperTemplateEditor() {
                   </div>
 
                   <div className="space-y-3">
+                    {/* Title */}
                     <input
                       type="text"
                       value={project.title}
@@ -1261,55 +1262,116 @@ function WebDeveloperTemplateEditor() {
                       placeholder="Project Title"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
-                    
+
+                    {/* Category + Year */}
                     <div className="grid grid-cols-2 gap-2">
                       <select
                         value={project.category}
                         onChange={(e) => updateProject(project.id, 'category', e.target.value)}
                         className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       >
+                        <option value="">— No Category —</option>
                         <option value="frontend">Frontend</option>
                         <option value="backend">Backend</option>
                         <option value="fullstack">Full Stack</option>
                         <option value="mobile">Mobile</option>
                         <option value="api">API</option>
                       </select>
-                      <input
-                        type="text"
-                        value={project.year}
-                        onChange={(e) => updateProject(project.id, 'year', e.target.value)}
-                        placeholder="Year"
-                        className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
+                      <div className="flex items-center gap-1">
+                        <input
+                          type="text"
+                          value={project.year}
+                          onChange={(e) => updateProject(project.id, 'year', e.target.value)}
+                          placeholder="Year"
+                          className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        />
+                        {project.year && (
+                          <button
+                            onClick={() => updateProject(project.id, 'year', '')}
+                            title="Clear year"
+                            className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
                     </div>
-                    
-                    <textarea
-                      value={project.description}
-                      onChange={(e) => updateProject(project.id, 'description', e.target.value)}
-                      placeholder="Project description..."
-                      rows={2}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    />
-                    
-                    <div className="grid grid-cols-1 gap-2">
+
+                    {/* Description */}
+                    <div className="flex items-start gap-1">
+                      <textarea
+                        value={project.description}
+                        onChange={(e) => updateProject(project.id, 'description', e.target.value)}
+                        placeholder="Project description..."
+                        rows={2}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                      {project.description && (
+                        <button
+                          onClick={() => updateProject(project.id, 'description', '')}
+                          title="Clear description"
+                          className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors mt-1"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Live URL */}
+                    <div className="flex items-center gap-1">
                       <input
                         type="url"
                         value={project.liveUrl}
                         onChange={(e) => updateProject(project.id, 'liveUrl', e.target.value)}
                         placeholder="Live Demo URL (e.g., https://project-demo.com)"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
+                      {project.liveUrl && (
+                        <button
+                          onClick={() => updateProject(project.id, 'liveUrl', '')}
+                          title="Clear live URL"
+                          className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* GitHub URL */}
+                    <div className="flex items-center gap-1">
                       <input
                         type="url"
                         value={project.githubUrl}
                         onChange={(e) => updateProject(project.id, 'githubUrl', e.target.value)}
                         placeholder="GitHub Repository URL"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                        className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
+                      {project.githubUrl && (
+                        <button
+                          onClick={() => updateProject(project.id, 'githubUrl', '')}
+                          title="Clear GitHub URL"
+                          className="flex-shrink-0 w-7 h-7 bg-red-100 text-red-500 rounded-full flex items-center justify-center hover:bg-red-200 transition-colors"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                     </div>
-                    
+
+                    {/* Technologies Used */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Technologies Used</label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">Technologies Used</label>
+                        {project.technologies.length > 0 && (
+                          <button
+                            onClick={() => updateProject(project.id, 'technologies', [])}
+                            title="Clear technologies"
+                            className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                            Clear
+                          </button>
+                        )}
+                      </div>
                       <input
                         type="text"
                         value={project.technologies.join(', ')}
@@ -1318,9 +1380,22 @@ function WebDeveloperTemplateEditor() {
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                       />
                     </div>
-                    
+
+                    {/* Key Features */}
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Key Features</label>
+                      <div className="flex items-center justify-between mb-2">
+                        <label className="block text-sm font-medium text-gray-700">Key Features</label>
+                        {project.features.length > 0 && (
+                          <button
+                            onClick={() => updateProject(project.id, 'features', [])}
+                            title="Clear features"
+                            className="flex items-center gap-1 text-xs text-red-500 hover:text-red-700 transition-colors"
+                          >
+                            <X className="w-3 h-3" />
+                            Clear
+                          </button>
+                        )}
+                      </div>
                       <input
                         type="text"
                         value={project.features.join(', ')}

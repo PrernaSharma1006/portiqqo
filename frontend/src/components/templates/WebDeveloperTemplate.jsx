@@ -237,7 +237,7 @@ function WebDeveloperTemplate({
     ...project,
     id: project.id || project._id || index,
     image: project.images?.[0]?.url || project.image || 'https://placehold.co/600x400/e2e8f0/475569?text=Project+Image',
-    category: project.category || 'fullstack',
+    category: project.category || '',
     technologies: project.technologies || [],
     liveUrl: project.links?.live || project.liveUrl,
     githubUrl: project.links?.github || project.githubUrl,
@@ -422,14 +422,16 @@ function WebDeveloperTemplate({
                           <ExternalLink className="w-6 h-6" />
                         </a>
                       )}
-                      <a
-                        href={project.githubUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
-                      >
-                        <Github className="w-6 h-6" />
-                      </a>
+                      {project.githubUrl && (
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+                        >
+                          <Github className="w-6 h-6" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -438,10 +440,13 @@ function WebDeveloperTemplate({
                   <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {project.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 line-clamp-2">
-                    {project.description}
-                  </p>
+                  {project.description && (
+                    <p className="text-gray-600 mb-4 line-clamp-2">
+                      {project.description}
+                    </p>
+                  )}
                   
+                  {project.technologies.length > 0 && (
                   <div className="flex flex-wrap gap-2 mb-4">
                     {project.technologies.slice(0, 3).map((tech, index) => (
                       <span
@@ -457,7 +462,8 @@ function WebDeveloperTemplate({
                       </span>
                     )}
                   </div>
-                  
+                  )}
+
                   {project.stats && (project.stats.stars > 0 || project.stats.commits > 0) && (
                     <div className="flex justify-between items-center text-sm text-gray-500">
                       <div className="flex items-center space-x-4">
