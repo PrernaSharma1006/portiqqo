@@ -186,7 +186,17 @@ function PublicPortfolioPage() {
     const element = portfolioRef.current;
     if (!element) return;
 
-    const html2pdf = (await import('html2pdf.js')).default;
+    // Load html2pdf from CDN if not already loaded
+    if (!window.html2pdf) {
+      await new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+        script.onload = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+      });
+    }
+    const html2pdf = window.html2pdf;
     const ownerName = portfolio.personalInfo?.name || portfolio.subdomain || 'portfolio';
     const fileName = `${ownerName.replace(/\s+/g, '-').toLowerCase()}-portfolio.pdf`;
 
