@@ -328,10 +328,6 @@ function DigitalMarketerTemplateEditor() {
                 <span>Back to Editor</span>
               </button>
               <div className="flex space-x-3">
-                <button onClick={savePortfolio} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                  <Save className="w-4 h-4" />
-                  <span>Save</span>
-                </button>
                 <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                   <span>Publish Portfolio</span>
                 </button>
@@ -360,10 +356,6 @@ function DigitalMarketerTemplateEditor() {
               <button onClick={() => setIsPreview(!isPreview)} className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 <Eye className="w-4 h-4" />
                 <span>{isPreview ? 'Edit' : 'Preview'}</span>
-              </button>
-              <button onClick={savePortfolio} className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                <Save className="w-4 h-4" />
-                <span>Save</span>
               </button>
               <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                 <span>Publish Portfolio</span>
@@ -729,9 +721,6 @@ function DigitalMarketerTemplateEditor() {
 
         {/* Bottom save bar */}
         <div className="mt-10 flex justify-end gap-4 pb-10">
-          <button onClick={savePortfolio} className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
-            <Save className="w-5 h-5" /> Save Draft
-          </button>
           <button onClick={publishPortfolio} className="flex items-center gap-2 px-8 py-3 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors font-medium">
             Publish Portfolio
           </button>

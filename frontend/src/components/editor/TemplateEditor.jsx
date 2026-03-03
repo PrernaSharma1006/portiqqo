@@ -271,14 +271,6 @@ function TemplateEditor() {
               </button>
 
               <button
-                onClick={handleSavePortfolio}
-                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition-colors"
-              >
-                <Save className="w-4 h-4" />
-                <span>Save</span>
-              </button>
-
-              <button
                 onClick={handlePublishPortfolio}
                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
               >
