@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { portfolioAPI } from '../services/api';
-import { Loader2, AlertCircle, Eye } from 'lucide-react';
+import { Loader2, AlertCircle, Eye, Download } from 'lucide-react';
 import WebDeveloperTemplate from '../components/templates/WebDeveloperTemplate';
 import UIUXDesignerTemplate from '../components/templates/UIUXDesignerTemplate';
 import VideoEditorTemplate from '../components/templates/VideoEditorTemplate';
@@ -179,6 +179,28 @@ function PublicPortfolioPage() {
     }
   };
 
+  // PDF download handler
+  const portfolioRef = useRef(null);
+
+  const handleDownloadPDF = async () => {
+    const element = portfolioRef.current;
+    if (!element) return;
+
+    const html2pdf = (await import('html2pdf.js')).default;
+    const ownerName = portfolio.personalInfo?.name || portfolio.subdomain || 'portfolio';
+    const fileName = `${ownerName.replace(/\s+/g, '-').toLowerCase()}-portfolio.pdf`;
+
+    const opt = {
+      margin: 0,
+      filename: fileName,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true, logging: false },
+      jsPDF: { unit: 'px', format: 'a4', orientation: 'portrait', hotfixes: ['px_scaling'] },
+    };
+
+    html2pdf().set(opt).from(element).save();
+  };
+
   // Show view count badge
   const ViewCounter = () => (
     <div className="fixed bottom-4 right-4 bg-white shadow-lg rounded-full px-4 py-2 flex items-center space-x-2 z-50">
@@ -189,8 +211,19 @@ function PublicPortfolioPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {renderTemplate()}
+      <div ref={portfolioRef}>
+        {renderTemplate()}
+      </div>
       <ViewCounter />
+      {/* Download PDF button */}
+      <button
+        onClick={handleDownloadPDF}
+        className="fixed bottom-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-sm font-medium rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+        title="Download as PDF"
+      >
+        <Download className="w-4 h-4" />
+        Download PDF
+      </button>
     </div>
   );
 }
