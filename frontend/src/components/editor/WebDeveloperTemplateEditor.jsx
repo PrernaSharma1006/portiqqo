@@ -252,6 +252,18 @@ function WebDeveloperTemplateEditor() {
   const [customSubdomain, setCustomSubdomain] = useState('')
   const [hiddenProfileFields, setHiddenProfileFields] = useState([])
   const [hiddenProjectFields, setHiddenProjectFields] = useState({})
+  const [hiddenFooterStats, setHiddenFooterStats] = useState([])
+
+  const removeFooterStat = (key) => {
+    updateFooterStats(key, '')
+    setHiddenFooterStats(prev => [...prev, key])
+  }
+
+  const restoreFooterStat = (key) => {
+    setHiddenFooterStats(prev => prev.filter(k => k !== key))
+  }
+
+  const isFooterStatHidden = (key) => hiddenFooterStats.includes(key)
 
   const removeProfileField = (field) => {
     updateProfileField(field, '')
@@ -1670,7 +1682,7 @@ function WebDeveloperTemplateEditor() {
                     { key: 'experience', label: 'Experience', placeholder: '5+ years' },
                     { key: 'clients', label: 'Clients', placeholder: '40+' },
                     { key: 'technologies', label: 'Technologies', placeholder: '15+' },
-                  ].map(({ key, label, placeholder }) => (
+                  ].filter(({ key }) => !isFooterStatHidden(key)).map(({ key, label, placeholder }) => (
                     <div key={key}>
                       <label className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
                       <div className="flex items-center gap-2">
@@ -1682,7 +1694,7 @@ function WebDeveloperTemplateEditor() {
                           className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                         />
                         <button
-                          onClick={() => updateFooterStats(key, '')}
+                          onClick={() => removeFooterStat(key)}
                           className="flex-shrink-0 w-8 h-8 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
                         >
                           <X className="w-4 h-4" />
@@ -1691,6 +1703,23 @@ function WebDeveloperTemplateEditor() {
                     </div>
                   ))}
                 </div>
+                {hiddenFooterStats.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <p className="text-xs font-medium text-gray-500 mb-2">Removed stats — click to add back:</p>
+                    <div className="flex flex-wrap gap-2">
+                      {hiddenFooterStats.map(key => (
+                        <button
+                          key={key}
+                          onClick={() => restoreFooterStat(key)}
+                          className="flex items-center gap-1.5 px-3 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-600 text-xs font-medium rounded-lg border border-purple-200 transition-colors"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add {key.charAt(0).toUpperCase() + key.slice(1)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Social Links */}
