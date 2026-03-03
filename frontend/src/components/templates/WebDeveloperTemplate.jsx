@@ -697,19 +697,31 @@ function WebDeveloperTemplate({
               <p className="text-gray-300 mb-4">
                 {portfolioData.footer?.tagline || 'Full-stack developer passionate about creating scalable web applications and innovative digital solutions.'}
               </p>
-              <div className="flex space-x-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.experience || '5+'}</div>
-                  <div className="text-sm text-gray-300">Years Experience</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.projects || '50+'}</div>
-                  <div className="text-sm text-gray-300">Projects Done</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-400">{portfolioData.footer?.quickStats?.clients || '25+'}</div>
-                  <div className="text-sm text-gray-300">Happy Clients</div>
-                </div>
+              <div className="flex flex-wrap gap-4">
+                {portfolioData.footer?.quickStats?.experience && (
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.experience}</div>
+                    <div className="text-sm text-gray-300">Years Experience</div>
+                  </div>
+                )}
+                {portfolioData.footer?.quickStats?.projects && (
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.projects}</div>
+                    <div className="text-sm text-gray-300">Projects Done</div>
+                  </div>
+                )}
+                {portfolioData.footer?.quickStats?.clients && (
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.clients}</div>
+                    <div className="text-sm text-gray-300">Happy Clients</div>
+                  </div>
+                )}
+                {portfolioData.footer?.quickStats?.technologies && (
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.technologies}</div>
+                    <div className="text-sm text-gray-300">Technologies</div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
