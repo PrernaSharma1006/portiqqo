@@ -296,54 +296,41 @@ function WebDeveloperTemplate({
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Aesthetic sticky nav — public view only */}
+      {/* Sticky navbar — public view only */}
       {isPublic && (
-        <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          navScrolled
-            ? 'bg-gray-900/80 backdrop-blur-xl shadow-2xl border-b border-white/10'
-            : 'bg-transparent'
+        <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          navScrolled ? 'bg-gray-950/90 backdrop-blur-lg shadow-lg' : 'bg-gray-950/50 backdrop-blur-sm'
         }`}>
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center justify-between h-16">
-              {/* Logo / name */}
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex items-center justify-between h-14">
+              {/* Logo */}
               <button
                 onClick={() => scrollToSection('home')}
-                className="text-white font-bold text-lg tracking-tight hover:text-purple-300 transition-colors"
+                className="text-white font-bold text-base tracking-tight"
               >
                 {profileData.name.split(' ')[0]}<span className="text-purple-400">.</span>
               </button>
 
-              {/* Nav links */}
-              <div className="hidden md:flex items-center gap-1">
+              {/* Nav links — pill container */}
+              <div className="hidden md:flex items-center bg-white/10 backdrop-blur-sm rounded-full px-2 py-1 gap-0.5 border border-white/10">
                 {navItems.map(({ id, label }) => (
                   <button
                     key={id}
                     onClick={() => scrollToSection(id)}
-                    className={`relative px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                    className={`px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
                       activeSection === id
-                        ? 'text-white bg-white/15 shadow-inner'
+                        ? 'bg-white text-gray-900 shadow-sm'
                         : 'text-gray-300 hover:text-white hover:bg-white/10'
                     }`}
                   >
                     {label}
-                    {activeSection === id && (
-                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full" />
-                    )}
                   </button>
                 ))}
               </div>
 
-              {/* Mobile hamburger — simple dots */}
-              <div className="flex md:hidden items-center gap-3">
-                {navItems.map(({ id }) => (
-                  <button
-                    key={id}
-                    onClick={() => scrollToSection(id)}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      activeSection === id ? 'bg-purple-400 scale-125' : 'bg-white/40'
-                    }`}
-                  />
-                ))}
+              {/* Mobile — compact label */}
+              <div className="flex md:hidden">
+                <span className="text-purple-300 text-sm font-medium capitalize">{activeSection}</span>
               </div>
             </div>
           </div>
@@ -664,7 +651,8 @@ function WebDeveloperTemplate({
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Work Experience Section */}
+      {profileData.experience && profileData.experience.length > 0 && (
       <section id="experience" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -716,6 +704,7 @@ function WebDeveloperTemplate({
           </motion.div>
         </div>
       </section>
+      )}
 
       {/* Footer */}
       <footer id="contact" className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>

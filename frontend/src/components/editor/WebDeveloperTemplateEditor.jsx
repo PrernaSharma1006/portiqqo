@@ -27,7 +27,8 @@ import {
   Server,
   Smartphone,
   Image as ImageIcon,
-  Download
+  Download,
+  Calendar
 } from 'lucide-react'
 
 function WebDeveloperTemplateEditor() {
@@ -506,6 +507,32 @@ function WebDeveloperTemplateEditor() {
     setPortfolioData(prev => ({
       ...prev,
       services: prev.services.filter((_, i) => i !== index)
+    }))
+  }
+
+  const addExperience = () => {
+    setPortfolioData(prev => ({
+      ...prev,
+      experience: [
+        ...(prev.experience || []),
+        { id: Date.now(), position: '', company: '', duration: '', description: '' }
+      ]
+    }))
+  }
+
+  const updateExperience = (id, field, value) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      experience: (prev.experience || []).map(exp =>
+        exp.id === id ? { ...exp, [field]: value } : exp
+      )
+    }))
+  }
+
+  const removeExperience = (id) => {
+    setPortfolioData(prev => ({
+      ...prev,
+      experience: (prev.experience || []).filter(exp => exp.id !== id)
     }))
   }
 
@@ -1654,6 +1681,89 @@ function WebDeveloperTemplateEditor() {
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Experience Section */}
+          <motion.div
+            className="bg-white rounded-xl shadow-lg p-8"
+            variants={fadeInUp}
+          >
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 flex items-center">
+                <Calendar className="w-6 h-6 mr-2 text-purple-600" />
+                Work Experience
+              </h2>
+              <button
+                onClick={addExperience}
+                className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Add Experience</span>
+              </button>
+            </div>
+
+            {(!portfolioData.experience || portfolioData.experience.length === 0) && (
+              <div className="text-center py-10 text-gray-400 border-2 border-dashed border-gray-200 rounded-xl">
+                <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">No work experience added yet</p>
+                <p className="text-sm mt-1">Click "Add Experience" to add your work history. Leave empty to hide this section.</p>
+              </div>
+            )}
+
+            <div className="space-y-6">
+              {(portfolioData.experience || []).map((exp) => (
+                <div key={exp.id} className="border border-gray-200 rounded-xl p-5 relative">
+                  <button
+                    onClick={() => removeExperience(exp.id)}
+                    className="absolute top-4 right-4 w-7 h-7 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Job Title</label>
+                      <input
+                        type="text"
+                        value={exp.position}
+                        onChange={(e) => updateExperience(exp.id, 'position', e.target.value)}
+                        placeholder="e.g. Senior Frontend Developer"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
+                      <input
+                        type="text"
+                        value={exp.company}
+                        onChange={(e) => updateExperience(exp.id, 'company', e.target.value)}
+                        placeholder="e.g. Google"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+                      <input
+                        type="text"
+                        value={exp.duration}
+                        onChange={(e) => updateExperience(exp.id, 'duration', e.target.value)}
+                        placeholder="e.g. Jan 2022 – Present"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                      <textarea
+                        value={exp.description}
+                        onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
+                        placeholder="Describe your role, responsibilities and achievements..."
+                        rows={3}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
