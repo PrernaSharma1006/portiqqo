@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { 
   ExternalLink, 
@@ -34,7 +34,40 @@ function WebDeveloperTemplate({
 }) {
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [activeSection, setActiveSection] = useState('home')
+  const [navScrolled, setNavScrolled] = useState(false)
   const navigate = useNavigate()
+
+  const navItems = [
+    { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About' },
+    { id: 'projects', label: 'Projects' },
+    { id: 'skills', label: 'Skills' },
+    { id: 'experience', label: 'Experience' },
+    { id: 'contact', label: 'Contact' },
+  ]
+
+  const scrollToSection = (id) => {
+    const el = document.getElementById(id)
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
+  useEffect(() => {
+    if (!isPublic) return
+    const handleScroll = () => {
+      setNavScrolled(window.scrollY > 60)
+      const sections = ['home', 'about', 'projects', 'skills', 'experience', 'contact']
+      for (let i = sections.length - 1; i >= 0; i--) {
+        const el = document.getElementById(sections[i])
+        if (el && window.scrollY >= el.offsetTop - 120) {
+          setActiveSection(sections[i])
+          break
+        }
+      }
+    }
+    window.addEventListener('scroll', handleScroll, { passive: true })
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [isPublic])
 
   // Use real data when public, sample data for preview
   const demoProfile = {
@@ -264,6 +297,60 @@ function WebDeveloperTemplate({
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Aesthetic sticky nav — public view only */}
+      {isPublic && (
+        <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          navScrolled
+            ? 'bg-gray-900/80 backdrop-blur-xl shadow-2xl border-b border-white/10'
+            : 'bg-transparent'
+        }`}>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Logo / name */}
+              <button
+                onClick={() => scrollToSection('home')}
+                className="text-white font-bold text-lg tracking-tight hover:text-purple-300 transition-colors"
+              >
+                {profileData.name.split(' ')[0]}<span className="text-purple-400">.</span>
+              </button>
+
+              {/* Nav links */}
+              <div className="hidden md:flex items-center gap-1">
+                {navItems.map(({ id, label }) => (
+                  <button
+                    key={id}
+                    onClick={() => scrollToSection(id)}
+                    className={`relative px-4 py-1.5 text-sm font-medium rounded-full transition-all duration-200 ${
+                      activeSection === id
+                        ? 'text-white bg-white/15 shadow-inner'
+                        : 'text-gray-300 hover:text-white hover:bg-white/10'
+                    }`}
+                  >
+                    {label}
+                    {activeSection === id && (
+                      <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-purple-400 rounded-full" />
+                    )}
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile hamburger — simple dots */}
+              <div className="flex md:hidden items-center gap-3">
+                {navItems.map(({ id }) => (
+                  <button
+                    key={id}
+                    onClick={() => scrollToSection(id)}
+                    className={`w-2 h-2 rounded-full transition-all ${
+                      activeSection === id ? 'bg-purple-400 scale-125' : 'bg-white/40'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </nav>
+      )}
+
       {/* Header - Only show navigation when not in public view */}
       {!isPublic && (
         <header className="bg-white shadow-sm sticky top-0 z-40">
@@ -290,7 +377,7 @@ function WebDeveloperTemplate({
       )}
 
       {/* Banner Section */}
-      <section className="relative h-96 overflow-hidden">
+      <section id="home" className="relative h-96 overflow-hidden">
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{ backgroundImage: `url(${profileData.bannerImage})` }}
@@ -344,9 +431,51 @@ function WebDeveloperTemplate({
           </div>
         </div>
       </section>
-
+      {/* About / Profile description strip */}
+      <section id="about" className="py-16 bg-gradient-to-r from-blue-900 to-purple-900">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            className="flex flex-col md:flex-row items-center gap-10"
+            initial="initial"
+            whileInView="animate"
+            viewport={{ once: true }}
+            variants={staggerChildren}
+          >
+            <motion.img
+              src={profileData.profileImage}
+              alt={profileData.name}
+              className="w-36 h-36 rounded-full border-4 border-white/30 shadow-2xl object-cover flex-shrink-0"
+              variants={fadeInUp}
+            />
+            <motion.div className="text-white" variants={fadeInUp}>
+              <h2 className="text-3xl font-bold mb-3">About Me</h2>
+              <p className="text-gray-200 text-lg leading-relaxed max-w-3xl">{profileData.description}</p>
+              <div className="flex flex-wrap gap-6 mt-6">
+                {profileData.location && (
+                  <div className="flex items-center gap-2 text-gray-300">
+                    <MapPin className="w-4 h-4 text-purple-300" />
+                    <span>{profileData.location}</span>
+                  </div>
+                )}
+                {profileData.email && (
+                  <a href={`mailto:${profileData.email}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                    <Mail className="w-4 h-4 text-purple-300" />
+                    <span>{profileData.email}</span>
+                  </a>
+                )}
+                {profileData.website && (
+                  <a href={`https://${profileData.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
+                    <Globe className="w-4 h-4 text-purple-300" />
+                    <span>{profileData.website}</span>
+                  </a>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </section>
       {/* Work Showcase Section */}
-      <section id="work" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`}>
+      <section id="projects" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -632,7 +761,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Footer */}
-      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
+      <footer id="contact" className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Contact Info */}
@@ -679,15 +808,11 @@ function WebDeveloperTemplate({
             <div>
               <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
               <div className="space-y-3">
-                <a href="#work" className="block text-gray-300 hover:text-white transition-colors">
-                  My Work
-                </a>
-                <a href="#skills" className="block text-gray-300 hover:text-white transition-colors">
-                  Skills
-                </a>
-                <a href="#services" className="block text-gray-300 hover:text-white transition-colors">
-                  Services
-                </a>
+                <a href="#home" className="block text-gray-300 hover:text-white transition-colors">Home</a>
+                <a href="#about" className="block text-gray-300 hover:text-white transition-colors">About</a>
+                <a href="#projects" className="block text-gray-300 hover:text-white transition-colors">Projects</a>
+                <a href="#skills" className="block text-gray-300 hover:text-white transition-colors">Skills</a>
+                <a href="#experience" className="block text-gray-300 hover:text-white transition-colors">Experience</a>
               </div>
             </div>
 
