@@ -23,14 +23,17 @@ import {
   Mail,
   Phone,
   Globe,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Download
 } from 'lucide-react'
 
 function UIUXDesignerTemplateEditor() {
   const navigate = useNavigate()
   const location = useLocation()
   const fileInputRef = useRef(null)
+  const previewRef = useRef(null)
   const [isPreview, setIsPreview] = useState(false)
+  const [wantsPDF, setWantsPDF] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
@@ -509,6 +512,32 @@ function UIUXDesignerTemplateEditor() {
     }
   }
 
+  // PDF download: fires after preview has mounted
+  useEffect(() => {
+    if (!isPreview || !wantsPDF) return
+    const el = previewRef.current
+    if (!el) return
+    const run = async () => {
+      if (!window.html2pdf) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
+          script.onload = resolve; script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+      const name = portfolioData.profile?.name || 'portfolio'
+      window.html2pdf().set({
+        margin: 0, filename: `${name.replace(/\s+/g, '-').toLowerCase()}-portfolio.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'px', format: 'a4', orientation: 'portrait', hotfixes: ['px_scaling'] },
+      }).from(el).save()
+      setWantsPDF(false)
+    }
+    run()
+  }, [isPreview, wantsPDF])
+
   const savePortfolio = async () => {
     const savedPortfolio = await savePortfolioToBackend(portfolioData, 'ui-ux-designer', customSubdomain, null, portfolioId)
     
@@ -542,7 +571,7 @@ function UIUXDesignerTemplateEditor() {
   if (isPreview) {
     // Preview mode rendering would go here
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div ref={previewRef} className="min-h-screen bg-gray-50">
         {/* Preview Header */}
         <header className="bg-white shadow-sm sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -556,6 +585,13 @@ function UIUXDesignerTemplateEditor() {
               </button>
               
               <div className="flex space-x-4">
+                <button
+                  onClick={() => setWantsPDF(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Download PDF</span>
+                </button>
                 <button
                   onClick={publishPortfolio}
                   className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
@@ -593,6 +629,13 @@ function UIUXDesignerTemplateEditor() {
               >
                 <Eye className="w-4 h-4" />
                 <span>Preview</span>
+              </button>
+              <button
+                onClick={() => { setIsPreview(true); setWantsPDF(true) }}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+              >
+                <Download className="w-4 h-4" />
+                <span>Download PDF</span>
               </button>
               <button
                 onClick={publishPortfolio}

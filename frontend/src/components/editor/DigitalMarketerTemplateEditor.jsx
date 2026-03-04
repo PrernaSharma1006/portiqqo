@@ -9,15 +9,17 @@ import DigitalMarketerTemplate from '../templates/DigitalMarketerTemplate'
 import {
   ArrowLeft, Save, Eye, EyeOff, Upload, X, Plus,
   TrendingUp, Target, Users, BarChart3, Award, Mail, Phone,
-  Globe, MapPin, ChevronDown, ChevronUp
+  Globe, MapPin, ChevronDown, ChevronUp, Download
 } from 'lucide-react'
 
 function DigitalMarketerTemplateEditor() {
   const navigate = useNavigate()
   const location = useLocation()
   const fileInputRef = useRef(null)
+  const previewRef = useRef(null)
   const [uploadTarget, setUploadTarget] = useState(null)
   const [isPreview, setIsPreview] = useState(false)
+  const [wantsPDF, setWantsPDF] = useState(false)
   const [showPublishModal, setShowPublishModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
@@ -279,6 +281,32 @@ function DigitalMarketerTemplateEditor() {
   }
 
   // ─── Save / Publish ──────────────────────────────────────────────────────────
+  // PDF download: fires after preview has mounted
+  useEffect(() => {
+    if (!isPreview || !wantsPDF) return
+    const el = previewRef.current
+    if (!el) return
+    const run = async () => {
+      if (!window.html2pdf) {
+        await new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js'
+          script.onload = resolve; script.onerror = reject
+          document.head.appendChild(script)
+        })
+      }
+      const name = portfolioData.profile?.name || 'portfolio'
+      window.html2pdf().set({
+        margin: 0, filename: `${name.replace(/\s+/g, '-').toLowerCase()}-portfolio.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF: { unit: 'px', format: 'a4', orientation: 'portrait', hotfixes: ['px_scaling'] },
+      }).from(el).save()
+      setWantsPDF(false)
+    }
+    run()
+  }, [isPreview, wantsPDF])
+
   const savePortfolio = async () => {
     const saved = await savePortfolioToBackend(portfolioData, 'digital-marketer', customSubdomain, null, portfolioId)
     if (saved?._id || saved?.id) setPortfolioId(saved._id || saved.id)
@@ -319,7 +347,7 @@ function DigitalMarketerTemplateEditor() {
 
   if (isPreview) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div ref={previewRef} className="min-h-screen bg-gray-50">
         <header className="bg-white shadow-sm sticky top-0 z-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
@@ -328,6 +356,10 @@ function DigitalMarketerTemplateEditor() {
                 <span>Back to Editor</span>
               </button>
               <div className="flex space-x-3">
+                <button onClick={() => setWantsPDF(true)} className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                  <Download className="w-4 h-4" />
+                  <span>Download PDF</span>
+                </button>
                 <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                   <span>Publish Portfolio</span>
                 </button>
@@ -356,6 +388,10 @@ function DigitalMarketerTemplateEditor() {
               <button onClick={() => setIsPreview(!isPreview)} className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 <Eye className="w-4 h-4" />
                 <span>{isPreview ? 'Edit' : 'Preview'}</span>
+              </button>
+              <button onClick={() => { setIsPreview(true); setWantsPDF(true) }} className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
+                <Download className="w-4 h-4" />
+                <span>Download PDF</span>
               </button>
               <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                 <span>Publish Portfolio</span>
