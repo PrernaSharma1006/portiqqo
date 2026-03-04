@@ -40,7 +40,6 @@ function WebDeveloperTemplate({
 
   const navItems = [
     { id: 'home', label: 'Home' },
-    { id: 'about', label: 'About' },
     { id: 'projects', label: 'Projects' },
     { id: 'skills', label: 'Skills' },
     { id: 'experience', label: 'Experience' },
@@ -56,7 +55,7 @@ function WebDeveloperTemplate({
     if (!isPublic) return
     const handleScroll = () => {
       setNavScrolled(window.scrollY > 60)
-      const sections = ['home', 'about', 'projects', 'skills', 'experience', 'contact']
+      const sections = ['home', 'projects', 'skills', 'experience', 'contact']
       for (let i = sections.length - 1; i >= 0; i--) {
         const el = document.getElementById(sections[i])
         if (el && window.scrollY >= el.offsetTop - 120) {
@@ -431,49 +430,7 @@ function WebDeveloperTemplate({
           </div>
         </div>
       </section>
-      {/* About / Profile description strip */}
-      <section id="about" className="py-16 bg-gradient-to-r from-blue-900 to-purple-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            className="flex flex-col md:flex-row items-center gap-10"
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true }}
-            variants={staggerChildren}
-          >
-            <motion.img
-              src={profileData.profileImage}
-              alt={profileData.name}
-              className="w-36 h-36 rounded-full border-4 border-white/30 shadow-2xl object-cover flex-shrink-0"
-              variants={fadeInUp}
-            />
-            <motion.div className="text-white" variants={fadeInUp}>
-              <h2 className="text-3xl font-bold mb-3">About Me</h2>
-              <p className="text-gray-200 text-lg leading-relaxed max-w-3xl">{profileData.description}</p>
-              <div className="flex flex-wrap gap-6 mt-6">
-                {profileData.location && (
-                  <div className="flex items-center gap-2 text-gray-300">
-                    <MapPin className="w-4 h-4 text-purple-300" />
-                    <span>{profileData.location}</span>
-                  </div>
-                )}
-                {profileData.email && (
-                  <a href={`mailto:${profileData.email}`} className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                    <Mail className="w-4 h-4 text-purple-300" />
-                    <span>{profileData.email}</span>
-                  </a>
-                )}
-                {profileData.website && (
-                  <a href={`https://${profileData.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-gray-300 hover:text-white transition-colors">
-                    <Globe className="w-4 h-4 text-purple-300" />
-                    <span>{profileData.website}</span>
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
+
       {/* Work Showcase Section */}
       <section id="projects" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
