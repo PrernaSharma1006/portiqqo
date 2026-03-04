@@ -16,6 +16,7 @@ function PublicPortfolioPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isTrialExpired, setIsTrialExpired] = useState(false);
+  const portfolioRef = useRef(null);
 
   // Get subdomain from URL hostname or path
   const getSubdomain = () => {
@@ -178,9 +179,6 @@ function PublicPortfolioPage() {
       );
     }
   };
-
-  // PDF download handler
-  const portfolioRef = useRef(null);
 
   const handleDownloadPDF = async () => {
     const element = portfolioRef.current;
