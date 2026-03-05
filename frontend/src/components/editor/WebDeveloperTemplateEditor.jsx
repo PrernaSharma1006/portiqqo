@@ -1613,7 +1613,7 @@ function WebDeveloperTemplateEditor() {
             </div>
           </motion.div>
 
-          {/* Services Section */}
+          {/* Experience Section */}
           <motion.div 
             className="bg-white rounded-xl shadow-lg p-8"
             variants={fadeInUp}
@@ -1621,7 +1621,7 @@ function WebDeveloperTemplateEditor() {
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-2xl font-bold text-gray-900 flex items-center">
                 <Monitor className="w-6 h-6 mr-2 text-purple-600" />
-                Services
+                Experience
               </h2>
               <div className="flex items-center space-x-2">
                 <button
@@ -1637,7 +1637,7 @@ function WebDeveloperTemplateEditor() {
                   className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Service</span>
+                  <span>Add Experience</span>
                 </button>
               </div>
             </div>
@@ -1676,7 +1676,7 @@ function WebDeveloperTemplateEditor() {
                       type="text"
                       value={service.title}
                       onChange={(e) => updateService(index, 'title', e.target.value)}
-                      placeholder="Service title"
+                      placeholder="e.g. Frontend Development"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                     <input
@@ -1689,7 +1689,7 @@ function WebDeveloperTemplateEditor() {
                     <textarea
                       value={service.description}
                       onChange={(e) => updateService(index, 'description', e.target.value)}
-                      placeholder="Service description..."
+                      placeholder="Describe your experience in this area..."
                       rows={3}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />

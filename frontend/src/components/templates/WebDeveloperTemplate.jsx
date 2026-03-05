@@ -609,7 +609,7 @@ function WebDeveloperTemplate({
         </div>
       </section>
 
-      {/* Services Section */}
+      {/* Experience Section */}
       <section id="services" className={`py-20 bg-white ${isHidden('services') ? 'hidden' : ''}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -620,10 +620,10 @@ function WebDeveloperTemplate({
           >
             <motion.div className="text-center mb-16" variants={fadeInUp}>
               <h2 className="text-4xl font-bold text-gray-900 mb-4">
-                Services I Provide
+                My Experience
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Comprehensive web development services from concept to deployment
+                Skills and areas I've worked with professionally
               </p>
             </motion.div>
 
