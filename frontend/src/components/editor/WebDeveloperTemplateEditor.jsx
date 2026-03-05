@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react'
+﻿import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
@@ -6,6 +6,7 @@ import { triggerFeedbackModal, hasGivenFeedback } from '../../utils/feedbackHelp
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import WebDeveloperTemplate from '../templates/WebDeveloperTemplate'
 import { 
   ArrowLeft, 
   Save, 
@@ -80,10 +81,10 @@ function WebDeveloperTemplateEditor() {
     const portfolioIdParam = location.state?.portfolioId
     
     if (existingPortfolio) {
-      console.log('📝 Loading existing portfolio for edit');
+      console.log('ðŸ“ Loading existing portfolio for edit');
       loadPortfolioData(existingPortfolio)
     } else if (portfolioIdParam) {
-      console.log('📝 Fetching portfolio by ID:', portfolioIdParam);
+      console.log('ðŸ“ Fetching portfolio by ID:', portfolioIdParam);
       fetchPortfolioById(portfolioIdParam)
     }
   }, [location.state])
@@ -96,10 +97,10 @@ function WebDeveloperTemplateEditor() {
     console.log('_id:', portfolio._id);
     
     if (portfolio.templateData && Object.keys(portfolio.templateData).length > 0) {
-      console.log('✅ Using templateData from portfolio');
+      console.log('âœ… Using templateData from portfolio');
       setPortfolioData(portfolio.templateData)
     } else {
-      console.warn('⚠️ No templateData found, reconstructing from portfolio fields');
+      console.warn('âš ï¸ No templateData found, reconstructing from portfolio fields');
       // Reconstruct portfolioData from portfolio fields for backwards compatibility
       const reconstructedProjects = Array.isArray(portfolio.projects) 
         ? portfolio.projects.map(project => ({
@@ -279,7 +280,7 @@ function WebDeveloperTemplateEditor() {
         { platform: "LinkedIn", url: "https://linkedin.com/in/johnsmith", icon: "Globe" },
         { platform: "Portfolio", url: "https://johnsmith.dev", icon: "Monitor" }
       ],
-      copyright: "© 2024 John Smith. All rights reserved."
+      copyright: "Â© 2024 John Smith. All rights reserved."
     },
     hiddenSections: []
   })
@@ -634,7 +635,7 @@ function WebDeveloperTemplateEditor() {
     
     // Update portfolioId with the saved portfolio's ID
     if (savedPortfolio && savedPortfolio.id) {
-      console.log('✅ Portfolio saved, updating portfolioId:', savedPortfolio.id);
+      console.log('âœ… Portfolio saved, updating portfolioId:', savedPortfolio.id);
       setPortfolioId(savedPortfolio.id)
     }
   }
@@ -675,9 +676,9 @@ function WebDeveloperTemplateEditor() {
 
   if (isPreview) {
     return (
-      <div ref={previewRef} className="min-h-screen bg-gray-50">
+      <div ref={previewRef} className="min-h-screen">
         {/* Preview Header */}
-        <header className="bg-white shadow-sm sticky top-0 z-40">
+        <header className="bg-white shadow-sm sticky top-0 z-[9999]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-4">
               <button
@@ -687,7 +688,6 @@ function WebDeveloperTemplateEditor() {
                 <ArrowLeft className="w-5 h-5" />
                 <span>Back to Editor</span>
               </button>
-              
               <div className="flex space-x-4">
                 <button
                   onClick={() => { setWantsPDF(true) }}
@@ -706,205 +706,15 @@ function WebDeveloperTemplateEditor() {
             </div>
           </div>
         </header>
-
-        {/* Full Preview Content */}
-        <div className="max-w-7xl mx-auto">
-          {/* Banner Section */}
-          <div className="relative h-80 bg-gradient-to-br from-purple-600 via-violet-600 to-blue-600">
-            <img
-              src={portfolioData.profile.bannerImage}
-              alt="Banner"
-              className="w-full h-full object-cover opacity-50"
-            />
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="text-center text-white">
-                <img
-                  src={portfolioData.profile.profileImage}
-                  alt={portfolioData.profile.name}
-                  className="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-lg"
-                />
-                <h1 className="text-4xl font-bold mb-2">{portfolioData.profile.name}</h1>
-                <p className="text-2xl mb-4">{portfolioData.profile.title}</p>
-                <div className="flex items-center justify-center space-x-2 text-lg">
-                  <MapPin className="w-5 h-5" />
-                  <span>{portfolioData.profile.location}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* About Section */}
-          <div className="bg-white p-8 shadow-sm">
-            <div className="max-w-4xl mx-auto">
-              <p className="text-lg text-gray-700 leading-relaxed">{portfolioData.profile.description}</p>
-              <div className="flex flex-wrap gap-4 mt-6">
-                <a href={`mailto:${portfolioData.profile.email}`} className="flex items-center text-purple-600 hover:text-purple-700">
-                  <Mail className="w-5 h-5 mr-2" />
-                  {portfolioData.profile.email}
-                </a>
-                {portfolioData.profile.phone && (
-                  <a href={`tel:${portfolioData.profile.phone}`} className="flex items-center text-purple-600 hover:text-purple-700">
-                    <Phone className="w-5 h-5 mr-2" />
-                    {portfolioData.profile.phone}
-                  </a>
-                )}
-                {portfolioData.profile.github && (
-                  <a href={portfolioData.profile.github} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
-                    <Globe className="w-5 h-5 mr-2" />
-                    GitHub
-                  </a>
-                )}
-                {portfolioData.profile.linkedin && (
-                  <a href={portfolioData.profile.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
-                    <Globe className="w-5 h-5 mr-2" />
-                    LinkedIn
-                  </a>
-                )}
-                {portfolioData.profile.website && (
-                  <a href={`https://${portfolioData.profile.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center text-purple-600 hover:text-purple-700">
-                    <Globe className="w-5 h-5 mr-2" />
-                    {portfolioData.profile.website}
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Tech Stack Section */}
-          <div className="bg-gray-50 p-8">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Tech Stack</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {Object.entries(portfolioData.techStack).map(([category, techs]) => (
-                  <div key={category}>
-                    <h3 className="text-xl font-semibold text-gray-800 mb-4 capitalize">{category}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {techs.map((tech, idx) => (
-                        <span key={idx} className="px-4 py-2 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Projects Section */}
-          <div className="bg-white p-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Projects</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                {portfolioData.projects.map((project) => (
-                  <div key={project.id} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
-                    <img src={project.image} alt={project.title} className="w-full h-48 object-cover" />
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-gray-900 mb-2">{project.title}</h3>
-                      <p className="text-gray-600 mb-4">{project.description}</p>
-                      <div className="flex flex-wrap gap-2 mb-4">
-                        {project.technologies.map((tech, idx) => (
-                          <span key={idx} className="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
-                            {tech}
-                          </span>
-                        ))}
-                      </div>
-                      <div className="flex space-x-4">
-                        {project.githubUrl && (
-                          <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 font-medium">
-                            GitHub →
-                          </a>
-                        )}
-                        {project.liveUrl && (
-                          <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-700 font-medium">
-                            Live Demo →
-                          </a>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Skills Section */}
-          <div className="bg-gray-50 p-8">
-            <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Skills</h2>
-              <div className="space-y-4">
-                {portfolioData.skills.map((skill, idx) => (
-                  <div key={idx}>
-                    <div className="flex justify-between mb-2">
-                      <span className="font-medium text-gray-700">{skill.name}</span>
-                      <span className="text-gray-600">{skill.level}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-purple-600 h-2 rounded-full transition-all duration-500"
-                        style={{ width: `${skill.level}%` }}
-                      ></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Services Section */}
-          <div className="bg-white p-8">
-            <div className="max-w-6xl mx-auto">
-              <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">Services</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                {portfolioData.services.map((service, idx) => (
-                  <div key={idx} className="text-center p-6 border border-gray-200 rounded-lg hover:shadow-lg transition-shadow">
-                    <div className="text-purple-600 mb-4 flex justify-center">
-                      {getServiceIcon(service.icon)}
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{service.title}</h3>
-                    <p className="text-gray-600 text-sm">{service.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Footer */}
-          <footer className="bg-gray-900 text-white p-8">
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                <div>
-                  <h3 className="text-xl font-bold mb-4">{portfolioData.footer.companyName}</h3>
-                  <p className="text-gray-400">{portfolioData.footer.tagline}</p>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-4">Quick Stats</h4>
-                  <div className="space-y-2 text-gray-400">
-                    <div>Projects: {portfolioData.footer.quickStats.projects}</div>
-                    <div>Experience: {portfolioData.footer.quickStats.experience}</div>
-                    <div>Clients: {portfolioData.footer.quickStats.clients}</div>
-                  </div>
-                </div>
-                <div>
-                  <h4 className="font-semibold mb-4">Connect</h4>
-                  <div className="flex space-x-4">
-                    {portfolioData.footer.socialLinks.map((link, idx) => (
-                      <a key={idx} href={link.url} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                        {link.platform}
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-              <div className="border-t border-gray-800 pt-8 text-center text-gray-400">
-                {portfolioData.footer.copyright}
-              </div>
-            </div>
-          </footer>
-        </div>
+        {/* Render actual template â€” exactly what gets published */}
+        <WebDeveloperTemplate
+          portfolioData={portfolioData}
+          isPublic={true}
+        />
       </div>
     )
   }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -1178,7 +988,7 @@ function WebDeveloperTemplateEditor() {
             {/* Restore hidden optional fields */}
             {hiddenProfileFields.length > 0 && (
               <div className="mt-6 pt-5 border-t border-gray-100">
-                <p className="text-xs font-medium text-gray-500 mb-3">Removed fields — click to add back:</p>
+                <p className="text-xs font-medium text-gray-500 mb-3">Removed fields â€” click to add back:</p>
                 <div className="flex flex-wrap gap-2">
                   {hiddenProfileFields.map(field => (
                     <button
@@ -1215,7 +1025,7 @@ function WebDeveloperTemplateEditor() {
               </button>
             </div>
             {isSectionHidden('techStack') && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">âš  This section is hidden â€” it won't appear on your published portfolio.</p>
             )}
             <div className={`space-y-6 ${isSectionHidden('techStack') ? 'hidden' : ''}`}>
               {techStackCategories.map((category) => (
@@ -1291,7 +1101,7 @@ function WebDeveloperTemplateEditor() {
               </div>
             </div>
             {isSectionHidden('projects') && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">âš  This section is hidden â€” it won't appear on your published portfolio.</p>
             )}
 
             {/* Project Guide */}
@@ -1370,7 +1180,7 @@ function WebDeveloperTemplateEditor() {
                               onChange={(e) => updateProject(project.id, 'category', e.target.value)}
                               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                             >
-                              <option value="">— None —</option>
+                              <option value="">â€” None â€”</option>
                               <option value="frontend">Frontend</option>
                               <option value="backend">Backend</option>
                               <option value="fullstack">Full Stack</option>
@@ -1521,7 +1331,7 @@ function WebDeveloperTemplateEditor() {
                     {/* Restore strip */}
                     {(hiddenProjectFields[project.id] || []).length > 0 && (
                       <div className="pt-3 border-t border-gray-100">
-                        <p className="text-xs font-medium text-gray-500 mb-2">Removed fields — click to add back:</p>
+                        <p className="text-xs font-medium text-gray-500 mb-2">Removed fields â€” click to add back:</p>
                         <div className="flex flex-wrap gap-1.5">
                           {(hiddenProjectFields[project.id] || []).map(field => (
                             <button
@@ -1571,7 +1381,7 @@ function WebDeveloperTemplateEditor() {
               </div>
             </div>
             {isSectionHidden('skills') && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">âš  This section is hidden â€” it won't appear on your published portfolio.</p>
             )}
             <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 ${isSectionHidden('skills') ? 'hidden' : ''}`}>
               {portfolioData.skills.map((skill, index) => (
@@ -1741,7 +1551,7 @@ function WebDeveloperTemplateEditor() {
                         {(exp.startMonth || exp.startYear) && (
                           <p className="text-xs text-purple-600 font-medium bg-purple-50 px-3 py-1.5 rounded-lg">
                             Preview: {[exp.startMonth, exp.startYear].filter(Boolean).join(' ')}
-                            {' – '}
+                            {' â€“ '}
                             {exp.currentlyWorking ? 'Present' : [exp.endMonth, exp.endYear].filter(Boolean).join(' ') || '...'}
                           </p>
                         )}
@@ -1783,7 +1593,7 @@ function WebDeveloperTemplateEditor() {
               </button>
             </div>
             {isSectionHidden('footer') && (
-              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">⚠ This section is hidden — it won't appear on your published portfolio.</p>
+              <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200 rounded-lg p-3 mb-4">âš  This section is hidden â€” it won't appear on your published portfolio.</p>
             )}
             <div className={`space-y-8 ${isSectionHidden('footer') ? 'hidden' : ''}`}>
               {/* Company Info */}
@@ -1816,7 +1626,7 @@ function WebDeveloperTemplateEditor() {
                       type="text"
                       value={portfolioData.footer.copyright}
                       onChange={(e) => updateFooterField('copyright', e.target.value)}
-                      placeholder="© 2024 Your Name. All rights reserved."
+                      placeholder="Â© 2024 Your Name. All rights reserved."
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                   </div>
@@ -1855,7 +1665,7 @@ function WebDeveloperTemplateEditor() {
                 </div>
                 {hiddenFooterStats.length > 0 && (
                   <div className="mt-4 pt-4 border-t border-gray-100">
-                    <p className="text-xs font-medium text-gray-500 mb-2">Removed stats — click to add back:</p>
+                    <p className="text-xs font-medium text-gray-500 mb-2">Removed stats â€” click to add back:</p>
                     <div className="flex flex-wrap gap-2">
                       {hiddenFooterStats.map(key => (
                         <button
