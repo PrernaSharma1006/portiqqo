@@ -259,6 +259,11 @@ function WebDeveloperTemplate({
   // Helper to check if a section is hidden in public view
   const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
 
+  // Always prefer real portfolioData.experience; fall back to demo data only when empty
+  const experienceData = (portfolioData.experience && portfolioData.experience.length > 0)
+    ? portfolioData.experience
+    : profileData.experience
+
   const formatExpDuration = (exp) => {
     if (exp.startMonth || exp.startYear) {
       const start = [exp.startMonth, exp.startYear].filter(Boolean).join(' ')
@@ -619,7 +624,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Work Experience Section */}
-      {profileData.experience && profileData.experience.length > 0 && (
+      {experienceData && experienceData.length > 0 && (
       <section id="experience" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -638,14 +643,14 @@ function WebDeveloperTemplate({
             </motion.div>
 
             <div className="max-w-4xl mx-auto">
-              {profileData.experience.map((exp, index) => (
+              {experienceData.map((exp, index) => (
                 <motion.div
                   key={index}
                   className="relative pl-8 pb-12 last:pb-0"
                   variants={fadeInUp}
                 >
                   {/* Timeline line */}
-                  {index !== profileData.experience.length - 1 && (
+                  {index !== experienceData.length - 1 && (
                     <div className="absolute left-4 top-8 bottom-0 w-0.5 bg-blue-200"></div>
                   )}
                   
