@@ -638,9 +638,14 @@ function WebDeveloperTemplate({
                   <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 text-blue-600 rounded-lg mb-6">
                     {service.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4">
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
                     {service.title}
                   </h3>
+                  {service.experience && (
+                    <span className="inline-block px-3 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded-full mb-3">
+                      {service.experience} experience
+                    </span>
+                  )}
                   <p className="text-gray-600">
                     {service.description}
                   </p>

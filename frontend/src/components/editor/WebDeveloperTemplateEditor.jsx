@@ -243,21 +243,25 @@ function WebDeveloperTemplateEditor() {
       {
         icon: "Monitor",
         title: "Frontend Development",
+        experience: "3+ years",
         description: "Modern, responsive web applications using React, Vue.js, and the latest frontend technologies."
       },
       {
         icon: "Server",
         title: "Backend Development", 
+        experience: "2+ years",
         description: "Scalable server-side applications with Node.js, Python, and robust database solutions."
       },
       {
         icon: "Database",
         title: "Database Design",
+        experience: "2+ years",
         description: "Efficient database architecture and optimization for SQL and NoSQL databases."
       },
       {
         icon: "Globe",
         title: "Full Stack Solutions",
+        experience: "3+ years",
         description: "Complete web application development from concept to deployment and maintenance."
       }
     ],
@@ -486,6 +490,7 @@ function WebDeveloperTemplateEditor() {
     const newService = {
       icon: "Code",
       title: "New Service",
+      experience: "",
       description: "Service description..."
     }
     setPortfolioData(prev => ({
@@ -1672,6 +1677,13 @@ function WebDeveloperTemplateEditor() {
                       value={service.title}
                       onChange={(e) => updateService(index, 'title', e.target.value)}
                       placeholder="Service title"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                    />
+                    <input
+                      type="text"
+                      value={service.experience || ''}
+                      onChange={(e) => updateService(index, 'experience', e.target.value)}
+                      placeholder="Years of experience (e.g. 3+ years) — leave blank to hide"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     />
                     <textarea
