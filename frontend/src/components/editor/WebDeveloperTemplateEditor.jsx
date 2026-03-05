@@ -520,7 +520,7 @@ function WebDeveloperTemplateEditor() {
       ...prev,
       experience: [
         ...(prev.experience || []),
-        { id: Date.now(), position: '', company: '', duration: '', description: '' }
+        { id: Date.now(), position: '', company: '', startMonth: '', startYear: '', endMonth: '', endYear: '', currentlyWorking: false, description: '' }
       ]
     }))
   }
@@ -1671,14 +1671,81 @@ function WebDeveloperTemplateEditor() {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
-                      <input
-                        type="text"
-                        value={exp.duration}
-                        onChange={(e) => updateExperience(exp.id, 'duration', e.target.value)}
-                        placeholder="e.g. Jan 2022 – Present"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                      />
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Duration</label>
+                      <div className="space-y-3">
+                        {/* Start Date */}
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1.5 font-medium">Start Date</p>
+                          <div className="grid grid-cols-2 gap-3">
+                            <select
+                              value={exp.startMonth || ''}
+                              onChange={(e) => updateExperience(exp.id, 'startMonth', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            >
+                              <option value="">Month</option>
+                              {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map(m => (
+                                <option key={m} value={m}>{m}</option>
+                              ))}
+                            </select>
+                            <select
+                              value={exp.startYear || ''}
+                              onChange={(e) => updateExperience(exp.id, 'startYear', e.target.value)}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                            >
+                              <option value="">Year</option>
+                              {Array.from({ length: 36 }, (_, i) => 2026 - i).map(y => (
+                                <option key={y} value={y}>{y}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {/* End Date */}
+                        <div>
+                          <p className="text-xs text-gray-500 mb-1.5 font-medium">End Date</p>
+                          <div className="grid grid-cols-2 gap-3">
+                            <select
+                              value={exp.endMonth || ''}
+                              onChange={(e) => updateExperience(exp.id, 'endMonth', e.target.value)}
+                              disabled={exp.currentlyWorking}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                              <option value="">Month</option>
+                              {['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'].map(m => (
+                                <option key={m} value={m}>{m}</option>
+                              ))}
+                            </select>
+                            <select
+                              value={exp.endYear || ''}
+                              onChange={(e) => updateExperience(exp.id, 'endYear', e.target.value)}
+                              disabled={exp.currentlyWorking}
+                              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:bg-gray-100 disabled:text-gray-400 disabled:cursor-not-allowed"
+                            >
+                              <option value="">Year</option>
+                              {Array.from({ length: 36 }, (_, i) => 2026 - i).map(y => (
+                                <option key={y} value={y}>{y}</option>
+                              ))}
+                            </select>
+                          </div>
+                        </div>
+                        {/* Currently working */}
+                        <label className="flex items-center gap-2.5 cursor-pointer select-none">
+                          <input
+                            type="checkbox"
+                            checked={exp.currentlyWorking || false}
+                            onChange={(e) => updateExperience(exp.id, 'currentlyWorking', e.target.checked)}
+                            className="w-4 h-4 accent-purple-600 rounded"
+                          />
+                          <span className="text-sm text-gray-700 font-medium">I currently work here</span>
+                        </label>
+                        {/* Preview */}
+                        {(exp.startMonth || exp.startYear) && (
+                          <p className="text-xs text-purple-600 font-medium bg-purple-50 px-3 py-1.5 rounded-lg">
+                            Preview: {[exp.startMonth, exp.startYear].filter(Boolean).join(' ')}
+                            {' – '}
+                            {exp.currentlyWorking ? 'Present' : [exp.endMonth, exp.endYear].filter(Boolean).join(' ') || '...'}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="md:col-span-2">
                       <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>

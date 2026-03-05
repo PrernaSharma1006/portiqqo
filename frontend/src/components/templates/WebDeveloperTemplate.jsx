@@ -259,6 +259,15 @@ function WebDeveloperTemplate({
   // Helper to check if a section is hidden in public view
   const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
 
+  const formatExpDuration = (exp) => {
+    if (exp.startMonth || exp.startYear) {
+      const start = [exp.startMonth, exp.startYear].filter(Boolean).join(' ')
+      const end = exp.currentlyWorking ? 'Present' : [exp.endMonth, exp.endYear].filter(Boolean).join(' ')
+      return end ? `${start} – ${end}` : start
+    }
+    return exp.duration || ''
+  }
+
   // Use passed projects if in public mode and projects exist, otherwise use demo data
   const projectsToDisplay = isPublic && projects.length > 0 
     ? projects 
@@ -651,7 +660,7 @@ function WebDeveloperTemplate({
                       </div>
                       <div className="flex items-center text-gray-500 mt-2 md:mt-0">
                         <Calendar className="w-4 h-4 mr-2" />
-                        <span>{exp.duration}</span>
+                        <span>{formatExpDuration(exp)}</span>
                       </div>
                     </div>
                     <p className="text-gray-600">{exp.description}</p>
