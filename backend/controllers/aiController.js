@@ -13,7 +13,7 @@ exports.handleAICommand = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Command and portfolioData are required.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     const prompt = `You are an AI assistant embedded inside a portfolio builder application called Portiqqo.
 
@@ -65,9 +65,11 @@ Respond with ONLY the updated JSON object.`;
 
   } catch (error) {
     console.error('AI command error:', error);
-    res.status(500).json({
-      success: false,
-      message: error.message || 'Failed to process AI command.'
-    });
+    const status = error.status || (error.message?.includes('429') ? 429 : 500);
+    const message =
+      status === 429
+        ? 'AI quota exceeded. Please try again in a moment.'
+        : error.message || 'Failed to process AI command.';
+    res.status(status).json({ success: false, message });
   }
 };
