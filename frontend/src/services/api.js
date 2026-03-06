@@ -161,4 +161,11 @@ export const portfolioAPI = {
   delete: (id) => api.delete(`/portfolios/${id}`)
 }
 
+// AI API methods
+export const aiAPI = {
+  // Send a natural language command to update portfolioData
+  command: (command, portfolioData) =>
+    api.post('/ai/command', { command, portfolioData }, { timeout: 30000 })
+}
+
 export default api

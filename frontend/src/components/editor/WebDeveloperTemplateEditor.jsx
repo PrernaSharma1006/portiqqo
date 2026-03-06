@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import { triggerFeedbackModal, hasGivenFeedback } from '../../utils/feedbackHelper'
-import { portfolioAPI } from '../../services/api'
+import { portfolioAPI, aiAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
 import WebDeveloperTemplate from '../templates/WebDeveloperTemplate'
@@ -29,7 +29,10 @@ import {
   Smartphone,
   Image as ImageIcon,
   Download,
-  Calendar
+  Calendar,
+  Sparkles,
+  Send,
+  Loader2
 } from 'lucide-react'
 
 function WebDeveloperTemplateEditor() {
@@ -45,7 +48,35 @@ function WebDeveloperTemplateEditor() {
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [portfolioId, setPortfolioId] = useState(null)
 
-  // PDF download: fires after preview has mounted
+  // AI panel state
+  const [isAIPanelOpen, setIsAIPanelOpen] = useState(false)
+  const [aiCommand, setAICommand] = useState('')
+  const [aiLoading, setAILoading] = useState(false)
+  const [aiHistory, setAIHistory] = useState([])
+  const aiInputRef = useRef(null)
+
+  // AI command handler
+  const handleAICommand = async () => {
+    const cmd = aiCommand.trim()
+    if (!cmd || aiLoading) return
+    setAILoading(true)
+    setAICommand('')
+    setAIHistory(prev => [...prev, { type: 'user', text: cmd }])
+    try {
+      const response = await aiAPI.command(cmd, portfolioData)
+      setPortfolioData(response.data.portfolioData)
+      setAIHistory(prev => [...prev, { type: 'ai', text: '✅ Done! Your portfolio has been updated.' }])
+      toast.success('AI applied your changes!')
+    } catch (err) {
+      const msg = err.response?.data?.message || 'Something went wrong. Please try again.'
+      setAIHistory(prev => [...prev, { type: 'error', text: `❌ ${msg}` }])
+      toast.error(msg)
+    } finally {
+      setAILoading(false)
+    }
+  }
+
+
   useEffect(() => {
     if (!isPreview || !wantsPDF) return
     const el = previewRef.current
@@ -1797,6 +1828,103 @@ function WebDeveloperTemplateEditor() {
         portfolioUrl={publishedPortfolio?.publicUrl || ''}
         subdomain={publishedPortfolio?.subdomain || ''}
       />
+
+      {/* ── AI Assistant Panel ── */}
+      {/* Floating trigger button */}
+      <button
+        onClick={() => { setIsAIPanelOpen(o => !o) }}
+        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-gradient-to-br from-violet-600 to-purple-600 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform"
+        title="AI Assistant"
+      >
+        <Sparkles className="w-6 h-6" />
+      </button>
+
+      {/* Panel */}
+      {isAIPanelOpen && (
+        <div className="fixed bottom-24 right-6 z-50 w-96 bg-white rounded-2xl shadow-2xl border border-purple-100 flex flex-col overflow-hidden" style={{ maxHeight: '520px' }}>
+          {/* Header */}
+          <div className="bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-white">
+              <Sparkles className="w-5 h-5" />
+              <span className="font-bold text-base">AI Portfolio Assistant</span>
+            </div>
+            <button onClick={() => setIsAIPanelOpen(false)} className="text-white/80 hover:text-white">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Chat history */}
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-gray-50" style={{ minHeight: '200px', maxHeight: '300px' }}>
+            {aiHistory.length === 0 && (
+              <div className="text-center py-6">
+                <Sparkles className="w-10 h-10 text-purple-300 mx-auto mb-3" />
+                <p className="text-sm font-medium text-gray-700">Describe any change in plain English</p>
+                <p className="text-xs text-gray-400 mt-1">I'll update your portfolio instantly</p>
+                <div className="flex flex-wrap gap-2 mt-4 justify-center">
+                  {[
+                    'Make my name purple',
+                    'Use a dark hero background',
+                    'Rewrite my bio professionally',
+                    'Hide the skills section',
+                  ].map(ex => (
+                    <button
+                      key={ex}
+                      onClick={() => setAICommand(ex)}
+                      className="text-xs px-3 py-1.5 bg-purple-50 text-purple-700 rounded-full border border-purple-200 hover:bg-purple-100 transition-colors"
+                    >
+                      {ex}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {aiHistory.map((msg, i) => (
+              <div key={i} className={`flex ${msg.type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div className={`max-w-[80%] px-4 py-2.5 rounded-2xl text-sm ${
+                  msg.type === 'user'
+                    ? 'bg-purple-600 text-white rounded-br-none'
+                    : msg.type === 'error'
+                    ? 'bg-red-50 text-red-700 border border-red-200 rounded-bl-none'
+                    : 'bg-white text-gray-800 border border-gray-200 rounded-bl-none shadow-sm'
+                }`}>
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {aiLoading && (
+              <div className="flex justify-start">
+                <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-none px-4 py-2.5 flex items-center gap-2 text-sm text-gray-500 shadow-sm">
+                  <Loader2 className="w-4 h-4 animate-spin text-purple-500" />
+                  Thinking...
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Input area */}
+          <div className="p-3 border-t border-gray-100 bg-white">
+            <div className="flex items-center gap-2">
+              <input
+                ref={aiInputRef}
+                type="text"
+                value={aiCommand}
+                onChange={e => setAICommand(e.target.value)}
+                onKeyDown={e => e.key === 'Enter' && handleAICommand()}
+                placeholder="e.g. Make my heading bold and blue..."
+                disabled={aiLoading}
+                className="flex-1 px-4 py-2.5 text-sm border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none disabled:bg-gray-50"
+              />
+              <button
+                onClick={handleAICommand}
+                disabled={aiLoading || !aiCommand.trim()}
+                className="w-10 h-10 flex-shrink-0 bg-purple-600 text-white rounded-xl flex items-center justify-center hover:bg-purple-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >
+                {aiLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

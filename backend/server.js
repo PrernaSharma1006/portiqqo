@@ -16,6 +16,7 @@ const portfolioRoutes = require('./routes/portfolio');
 const templateRoutes = require('./routes/template');
 const subscriptionRoutes = require('./routes/subscription');
 const uploadRoutes = require('./routes/upload');
+const aiRoutes = require('./routes/ai');
 
 // Import middleware
 const errorHandler = require('./middleware/errorHandler');
@@ -159,6 +160,7 @@ app.use('/portfolios', portfolioRoutes);
 app.use('/templates', templateRoutes);
 app.use('/subscriptions', subscriptionRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/ai', aiRoutes);
 
 // Serve static files for uploaded content
 app.use('/uploads', express.static('uploads'));
