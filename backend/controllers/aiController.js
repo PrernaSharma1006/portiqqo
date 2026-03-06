@@ -13,7 +13,7 @@ exports.handleAICommand = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Command and portfolioData are required.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' }, { apiVersion: 'v1' });
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
 
     const prompt = `You are an AI assistant embedded inside a portfolio builder application called Portiqqo.
 
