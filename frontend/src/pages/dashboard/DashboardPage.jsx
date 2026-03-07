@@ -84,11 +84,27 @@ function DashboardPage() {
   const [copiedId, setCopiedId] = useState(null)
   const [pendingTemplate, setPendingTemplate] = useState(null)
   const [switchingPortfolio, setSwitchingPortfolio] = useState(false)
+  const [subscription, setSubscription] = useState(null)
+
+  const isPremium = subscription?.type === 'premium' && subscription?.status === 'active'
+
+  // Fetch subscription status
+  const fetchSubscription = async () => {
+    try {
+      const token = localStorage.getItem('authToken')
+      const res = await fetch('/api/subscriptions/me', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      const data = await res.json()
+      if (data.success) setSubscription(data.subscription)
+    } catch (_) {}
+  }
 
   // Fetch user's existing portfolios on mount
   useEffect(() => {
     if (isAuthenticated && user) {
       fetchPortfolios()
+      fetchSubscription()
     }
   }, [isAuthenticated, user])
 
@@ -119,8 +135,8 @@ function DashboardPage() {
   }
 
   const handleTemplateSelect = (templateId) => {
-    if (existingPortfolios.length > 0) {
-      // Ask user if they want to replace their existing portfolio
+    if (existingPortfolios.length > 0 && !isPremium) {
+      // Free users: ask to replace or upgrade
       setPendingTemplate(templateId)
       return
     }
@@ -256,6 +272,11 @@ function DashboardPage() {
               <span className="text-sm font-medium text-purple-800">
                 {isAuthenticated && user ? `Welcome back, ${user.firstName}!` : 'Welcome!'}
               </span>
+              {isPremium && (
+                <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full ml-1">
+                  <Crown className="w-3 h-3" /> Premium
+                </span>
+              )}
             </div>
             
             <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6">
@@ -306,7 +327,12 @@ function DashboardPage() {
                               Published
                             </span>
                           )}
-                          {(() => {
+                          {isPremium ? (
+                            <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                              <Crown className="w-3 h-3" />
+                              Premium
+                            </span>
+                          ) : (() => {
                             const trial = getTrialInfo(portfolio)
                             if (!trial) return null
                             if (trial.expired) return (
@@ -523,7 +549,7 @@ function DashboardPage() {
               </div>
               <h3 className="text-2xl font-bold text-slate-800 mb-2">Want Another Portfolio?</h3>
               <p className="text-slate-600">
-                Free accounts are limited to <strong>1 portfolio</strong>. To create a new one you can either upgrade to Premium or delete your existing portfolio.
+                Free accounts are limited to <strong>1 portfolio</strong>. Upgrade to Premium for unlimited portfolios, or delete your existing one to switch.
               </p>
             </div>
 
@@ -540,14 +566,16 @@ function DashboardPage() {
               </div>
             )}
 
-            {/* Upgrade option */}
-            <button
-              onClick={() => { setPendingTemplate(null); navigate('/pricing') }}
-              className="w-full mb-3 py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
-            >
-              <Crown className="w-5 h-5" />
-              Upgrade to Premium — Unlock Unlimited Portfolios
-            </button>
+            {/* Upgrade option — only for free users */}
+            {!isPremium && (
+              <button
+                onClick={() => { setPendingTemplate(null); navigate('/pricing') }}
+                className="w-full mb-3 py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
+              >
+                <Crown className="w-5 h-5" />
+                Upgrade to Premium — Unlock Unlimited Portfolios
+              </button>
+            )}
 
             {/* Divider */}
             <div className="relative my-4">
@@ -555,7 +583,7 @@ function DashboardPage() {
                 <div className="w-full border-t border-slate-200"></div>
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-white text-slate-400 text-xs">or</span>
+                <span className="px-3 bg-white text-slate-400 text-xs">{isPremium ? 'Delete existing to create a new one' : 'or'}</span>
               </div>
             </div>
 
