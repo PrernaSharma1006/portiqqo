@@ -259,6 +259,20 @@ function WebDeveloperTemplate({
   // Helper to check if a section is hidden in public view
   const isHidden = (name) => isPublic && (portfolioData.hiddenSections || []).includes(name)
 
+  // Custom styles — set by AI or manually
+  const customStyles = portfolioData.customStyles || {}
+  const themePresets = {
+    dark:     { pageBg: '#0f172a', sectionAltBg: '#1e293b', nameColor: '#f8fafc', headingColor: '#f1f5f9', titleColor: '#94a3b8', cardBg: '#1e293b', accentColor: '#a78bfa', bodyText: '#cbd5e1' },
+    light:    { pageBg: '#ffffff', sectionAltBg: '#f9fafb', nameColor: '#111827', headingColor: '#111827', titleColor: '#6b7280', cardBg: '#ffffff', accentColor: '#7c3aed', bodyText: '#374151' },
+    minimal:  { pageBg: '#fafafa', sectionAltBg: '#ffffff', nameColor: '#18181b', headingColor: '#18181b', titleColor: '#52525b', cardBg: '#ffffff', accentColor: '#18181b', bodyText: '#3f3f46' },
+    colorful: { pageBg: '#f5f3ff', sectionAltBg: '#ede9fe', nameColor: '#4c1d95', headingColor: '#4c1d95', titleColor: '#7c3aed', cardBg: '#ffffff', accentColor: '#7c3aed', bodyText: '#3730a3' },
+  }
+  const preset = themePresets[customStyles.theme] || {}
+  const cs = { ...preset, ...customStyles }
+  const headingSizePx = { small: '1.875rem', medium: '2.25rem', large: '3rem', xlarge: '3.75rem' }[cs.headingSize] || null
+  const csHeadingStyle = { color: cs.headingColor || undefined, fontFamily: cs.headingFont || undefined, fontSize: headingSizePx || undefined }
+  const csNameStyle   = { color: cs.nameColor   || undefined, fontFamily: cs.headingFont || undefined }
+
   // Always prefer real portfolioData.experience; fall back to demo data only when empty
   const experienceData = (portfolioData.experience && portfolioData.experience.length > 0)
     ? portfolioData.experience
@@ -309,7 +323,7 @@ function WebDeveloperTemplate({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50" style={{ backgroundColor: cs.pageBg || undefined, fontFamily: cs.bodyFont || undefined }}>
       {/* Sticky navbar — public view only */}
       {isPublic && (
         <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
@@ -405,10 +419,10 @@ function WebDeveloperTemplate({
               
               {/* Profile Info */}
               <motion.div className="flex-1 text-white" variants={fadeInUp}>
-                <h1 className="text-4xl md:text-5xl font-bold mb-2">
+                <h1 className="text-4xl md:text-5xl font-bold mb-2" style={csNameStyle}>
                   {profileData.name}
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-200 mb-3">
+                <p className="text-xl md:text-2xl text-gray-200 mb-3" style={{ color: cs.titleColor || undefined }}>
                   {profileData.title}
                 </p>
                 <p className="text-lg text-gray-300 max-w-2xl">
@@ -433,7 +447,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Work Showcase Section */}
-      <section id="projects" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`}>
+      <section id="projects" className={`py-20 bg-white ${isHidden('projects') ? 'hidden' : ''}`} style={{ backgroundColor: cs.cardBg || undefined }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -445,6 +459,7 @@ function WebDeveloperTemplate({
             <motion.h2 
               className="text-4xl font-bold text-gray-900 mb-4"
               variants={fadeInUp}
+              style={csHeadingStyle}
             >
               My Projects
             </motion.h2>
@@ -488,6 +503,7 @@ function WebDeveloperTemplate({
               <motion.div
                 key={project.id}
                 className="group bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300"
+                style={{ backgroundColor: cs.cardBg || undefined }}
                 variants={fadeInUp}
                 whileHover={{ y: -5 }}
               >
@@ -577,7 +593,7 @@ function WebDeveloperTemplate({
       </section>
 
       {/* Skills Section */}
-      <section id="skills" className={`py-20 bg-gray-50 ${isHidden('skills') ? 'hidden' : ''}`}>
+      <section id="skills" className={`py-20 bg-gray-50 ${isHidden('skills') ? 'hidden' : ''}`} style={{ backgroundColor: cs.sectionAltBg || undefined }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -586,7 +602,7 @@ function WebDeveloperTemplate({
             variants={staggerChildren}
           >
             <motion.div className="text-center mb-16" variants={fadeInUp}>
-              <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-4xl font-bold text-gray-900 mb-4" style={csHeadingStyle}>
                 My Skills
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -609,6 +625,7 @@ function WebDeveloperTemplate({
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <motion.div 
                         className="bg-gradient-to-r from-blue-600 to-purple-600 h-3 rounded-full"
+                        style={{ background: cs.accentColor ? `linear-gradient(to right, ${cs.accentColor}, ${cs.accentColor}dd)` : undefined }}
                         initial={{ width: 0 }}
                         whileInView={{ width: `${skill.level}%` }}
                         viewport={{ once: true }}
@@ -625,7 +642,7 @@ function WebDeveloperTemplate({
 
       {/* Work Experience Section */}
       {experienceData && experienceData.length > 0 && (
-      <section id="experience" className="py-20 bg-gray-50">
+      <section id="experience" className="py-20 bg-gray-50" style={{ backgroundColor: cs.sectionAltBg || undefined }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             initial="initial"
@@ -634,7 +651,7 @@ function WebDeveloperTemplate({
             variants={staggerChildren}
           >
             <motion.div className="text-center mb-16" variants={fadeInUp}>
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" style={csHeadingStyle}>
                 Work Experience
               </h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
@@ -657,7 +674,7 @@ function WebDeveloperTemplate({
                   {/* Timeline dot */}
                   <div className="absolute left-2 top-2 w-4 h-4 bg-purple-600 rounded-full border-4 border-white shadow"></div>
                   
-                  <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <div className="bg-white rounded-lg p-6 shadow-sm" style={{ backgroundColor: cs.cardBg || undefined }}>
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-4">
                       <div>
                         <h3 className="text-xl font-bold text-gray-900">{exp.position}</h3>
