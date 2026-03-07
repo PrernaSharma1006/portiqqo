@@ -1,7 +1,3 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 // @desc    Process a natural language command and update portfolio data
 // @route   POST /ai/command
 // @access  Private
@@ -13,44 +9,49 @@ exports.handleAICommand = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Command and portfolioData are required.' });
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-lite' });
+    const groqRes = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are an AI assistant inside a portfolio builder. When given portfolio data and a user command, return ONLY the complete updated portfolioData as raw valid JSON — no markdown, no code blocks, no explanations.'
+          },
+          {
+            role: 'user',
+            content: `Portfolio data:\n${JSON.stringify(portfolioData, null, 2)}\n\nCommand: "${command}"\n\nRules:\n1. Return ONLY raw JSON\n2. Keep ALL existing fields intact unless the command changes them\n3. For color/style changes: add or update a "customStyles" object with CSS-compatible values e.g. { "customStyles": { "nameColor": "#7c3aed" } }\n4. For section visibility: update "hiddenSections" array\n5. For adding content: append to the relevant array\n\nReturn the complete updated JSON object only.`
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 4096
+      })
+    });
 
-    const prompt = `You are an AI assistant embedded inside a portfolio builder application called Portiqqo.
+    if (!groqRes.ok) {
+      const errBody = await groqRes.json().catch(() => ({}));
+      const status = groqRes.status;
+      const message = status === 429
+        ? 'AI quota exceeded. Please try again in a moment.'
+        : errBody?.error?.message || 'AI request failed.';
+      return res.status(status).json({ success: false, message });
+    }
 
-The user currently has the following portfolio data (JSON):
-${JSON.stringify(portfolioData, null, 2)}
+    const groqData = await groqRes.json();
+    let text = groqData.choices?.[0]?.message?.content?.trim() || '';
 
-The user wants to make this change: "${command}"
-
-Your job:
-- Understand the user's intent from the command
-- Apply the change to the portfolio data
-- Return the COMPLETE updated portfolioData as a valid JSON object
-
-Rules:
-1. Return ONLY valid raw JSON — no markdown, no code blocks, no explanations
-2. Keep ALL existing fields intact unless the command explicitly changes them
-3. For text changes (bio, name, title, descriptions): update the relevant field directly
-4. For color/style changes: add or update a "customStyles" object inside the relevant section with CSS-compatible values
-   Example: { "customStyles": { "nameColor": "#7c3aed", "heroBg": "#0f172a" } }
-5. For section visibility: update the "hiddenSections" array (add section name to hide, remove to show)
-6. For adding new content (skills, projects, experience): append to the relevant array
-7. If the command is unclear, make the most reasonable change and return the updated data
-8. For "rewrite bio" or "make more professional" type commands: generate appropriate professional text
-
-Respond with ONLY the updated JSON object.`;
-
-    const result = await model.generateContent(prompt);
-    let text = result.response.text().trim();
-
-    // Strip markdown code blocks if Gemini wraps the response
+    // Strip markdown code blocks if the model wraps the response
     text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '').trim();
 
     let updatedData;
     try {
       updatedData = JSON.parse(text);
     } catch (parseError) {
-      console.error('Failed to parse Gemini response:', text);
+      console.error('Failed to parse AI response:', text);
       return res.status(500).json({
         success: false,
         message: 'AI returned an invalid response. Please rephrase your command and try again.'
@@ -65,11 +66,6 @@ Respond with ONLY the updated JSON object.`;
 
   } catch (error) {
     console.error('AI command error:', error);
-    const status = error.status || (error.message?.includes('429') ? 429 : 500);
-    const message =
-      status === 429
-        ? 'AI quota exceeded. Please try again in a moment.'
-        : error.message || 'Failed to process AI command.';
-    res.status(status).json({ success: false, message });
+    res.status(500).json({ success: false, message: error.message || 'Failed to process AI command.' });
   }
 };
