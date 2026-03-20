@@ -155,6 +155,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // API routes (nginx strips /api prefix, so we mount without it)
 app.use('/auth', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/users', userRoutes);
 app.use('/portfolios', portfolioRoutes);
 app.use('/templates', templateRoutes);

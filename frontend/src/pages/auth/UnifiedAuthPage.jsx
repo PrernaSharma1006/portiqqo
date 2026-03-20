@@ -5,6 +5,10 @@ import { UserPlus, LogIn, CheckCircle, Eye, EyeOff, Mail } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
+const rawApiBase = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || ''
+const normalizedApiBase = rawApiBase.replace(/\/$/, '').replace(/\/api$/, '')
+const googleAuthUrl = normalizedApiBase ? `${normalizedApiBase}/api/auth/google` : '/api/auth/google'
+
 function UnifiedAuthPage() {
   const [activeCard, setActiveCard] = useState('login')
   const [formData, setFormData] = useState({
@@ -407,7 +411,7 @@ function UnifiedAuthPage() {
                   {/* Google Login Button */}
                   <button
                     type="button"
-                    onClick={() => window.location.href = `${import.meta.env.VITE_API_BASE_URL || ''}/api/auth/google`}
+                    onClick={() => window.location.href = googleAuthUrl}
                     className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
@@ -613,7 +617,7 @@ function UnifiedAuthPage() {
                   {/* Google Signup Button */}
                   <button
                     type="button"
-                    onClick={() => window.location.href = `${import.meta.env.VITE_API_BASE_URL || ''}/api/auth/google`}
+                    onClick={() => window.location.href = googleAuthUrl}
                     className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
                   >
                     <svg className="w-5 h-5" viewBox="0 0 24 24">
