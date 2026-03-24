@@ -317,7 +317,7 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-purple-50">
+      <section id="features" className="py-20 bg-purple-50 dark:bg-slate-900 transition-colors duration-300">
         <div className="container-width section-padding">
           <motion.div 
             className="text-center mb-16"
@@ -327,13 +327,13 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4"
+              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-slate-50 mb-4"
               variants={fadeInUp}
             >
               Everything You Need to Succeed
             </motion.h2>
             <motion.p 
-              className="text-xl text-purple-700 max-w-2xl mx-auto"
+              className="text-xl text-purple-700 dark:text-purple-300 max-w-2xl mx-auto"
               variants={fadeInUp}
             >
               Our platform provides all the tools and features you need to create a portfolio that stands out
@@ -353,13 +353,13 @@ function HomePage() {
                 className="card p-6 text-center hover:shadow-lg transition-all duration-300"
                 variants={fadeInUp}
               >
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 text-purple-600 rounded-lg mb-4">
+                <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 rounded-lg mb-4">
                   {feature.icon}
                 </div>
-                <h3 className="text-xl font-semibold text-secondary-900 mb-2">
+                <h3 className="text-xl font-semibold text-secondary-900 dark:text-slate-100 mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-secondary-600">
+                <p className="text-secondary-600 dark:text-slate-300">
                   {feature.description}
                 </p>
               </motion.div>
@@ -369,7 +369,7 @@ function HomePage() {
       </section>
 
       {/* Templates Showcase Section */}
-      <section id="templates" className="py-20 bg-violet-50">
+      <section id="templates" className="py-20 bg-violet-50 dark:bg-slate-900 transition-colors duration-300">
         <div className="container-width section-padding">
           <motion.div 
             className="text-center mb-16"
@@ -379,13 +379,13 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 mb-4"
+              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-slate-50 mb-4"
               variants={fadeInUp}
             >
               Choose Your Perfect Template
             </motion.h2>
             <motion.p 
-              className="text-xl text-violet-700 max-w-2xl mx-auto"
+              className="text-xl text-violet-700 dark:text-violet-300 max-w-2xl mx-auto"
               variants={fadeInUp}
             >
               Specialized templates designed for different professions - pick yours and start building
@@ -402,7 +402,7 @@ function HomePage() {
             {professionTemplates.map((template) => (
               <motion.div 
                 key={template.id}
-                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
                 variants={fadeInUp}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => handleProfessionSelect(template)}
@@ -451,7 +451,7 @@ function HomePage() {
 
       {/* Professions Section */}
       {/* Testimonials Section - Auto-scrolling Carousel */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-20 bg-white dark:bg-slate-800 overflow-hidden transition-colors duration-300">
         <div className="container-width section-padding">
           <motion.div 
             className="text-center mb-16"
@@ -461,13 +461,13 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4"
+              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 dark:text-slate-50 mb-4"
               variants={fadeInUp}
             >
               Loved by Creators Worldwide
             </motion.h2>
             <motion.p 
-              className="text-xl text-secondary-600 max-w-2xl mx-auto"
+              className="text-xl text-secondary-600 dark:text-slate-300 max-w-2xl mx-auto"
               variants={fadeInUp}
             >
               See what our users have to say about their Portiqqo experience
@@ -481,7 +481,7 @@ function HomePage() {
               {[...testimonials, ...testimonials].map((testimonial, index) => (
                 <div 
                   key={index}
-                  className="flex-shrink-0 w-80 bg-gradient-to-br from-slate-50 to-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
+                  className="flex-shrink-0 w-80 bg-gradient-to-br from-slate-50 to-white dark:from-slate-700 dark:to-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-slate-600"
                 >
                   <div className="flex items-center mb-4">
                     {[...Array(5)].map((_, i) => (
@@ -495,14 +495,14 @@ function HomePage() {
                       />
                     ))}
                   </div>
-                  <p className="text-gray-700 mb-6 text-sm leading-relaxed line-clamp-4">
+                  <p className="text-gray-700 dark:text-slate-300 mb-6 text-sm leading-relaxed line-clamp-4">
                     "{testimonial.content}"
                   </p>
                   <div>
-                    <div className="font-semibold text-gray-900">
+                    <div className="font-semibold text-gray-900 dark:text-slate-100">
                       {testimonial.name}
                     </div>
-                    <div className="text-sm text-gray-500">
+                    <div className="text-sm text-gray-500 dark:text-slate-400">
                       {testimonial.role}
                     </div>
                   </div>
@@ -538,7 +538,7 @@ function HomePage() {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-slate-50">
+      <section id="pricing" className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
         <div className="container-width section-padding">
           <motion.div 
             className="text-center mb-16"
@@ -548,13 +548,13 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 mb-4"
+              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 dark:text-slate-50 mb-4"
               variants={fadeInUp}
             >
               Try Free for 7 Days, Then Just ₹199/Month
             </motion.h2>
             <motion.p 
-              className="text-xl text-secondary-600 max-w-2xl mx-auto"
+              className="text-xl text-secondary-600 dark:text-slate-300 max-w-2xl mx-auto"
               variants={fadeInUp}
             >
               Build your professional portfolio risk-free with our 7-day trial. Upgrade to Premium for just ₹199/month!

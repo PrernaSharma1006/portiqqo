@@ -311,7 +311,7 @@ function DashboardPage() {
                   <motion.div
                     key={portfolio._id}
                     whileHover={{ y: -4 }}
-                    className="bg-white rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200"
+                    className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700"
                   >
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
@@ -371,7 +371,7 @@ function DashboardPage() {
                             </a>
                             <button
                               onClick={() => handleCopyLink(portfolio)}
-                              className="flex-shrink-0 p-1 rounded hover:bg-slate-100 transition-colors"
+                              className="flex-shrink-0 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                               title="Copy link"
                             >
                               {copiedId === portfolio._id
@@ -395,7 +395,7 @@ function DashboardPage() {
                         {getPortfolioUrl(portfolio) && (
                           <button
                             onClick={() => handleViewPortfolio(portfolio)}
-                            className="py-2.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg font-medium transition-all duration-300"
+                            className="py-2.5 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300"
                             title="View Portfolio"
                           >
                             <ExternalLink className="w-4 h-4" />
@@ -448,7 +448,7 @@ function DashboardPage() {
                   whileHover={{ y: -8 }}
                   className="group"
                 >
-                  <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100">
+                  <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 dark:border-slate-700">
                     {/* Image */}
                     <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
                       <img 
@@ -508,7 +508,7 @@ function DashboardPage() {
                         
                         <button 
                           onClick={(e) => handleTemplatePreview(template.id, e)}
-                          className="w-full py-2.5 px-4 bg-white border-2 border-purple-200 hover:border-purple-400 hover:bg-purple-50 text-purple-700 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+                          className="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border-2 border-purple-200 dark:border-purple-500 hover:border-purple-400 dark:hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-slate-600 text-purple-700 dark:text-purple-300 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
                         >
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -532,11 +532,11 @@ function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-8 relative transition-colors duration-300"
           >
             <button
               onClick={() => setPendingTemplate(null)}
-              className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+              className="absolute top-4 right-4 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -544,22 +544,22 @@ function DashboardPage() {
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-8 h-8 text-purple-500" />
+              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-purple-500 dark:text-purple-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Want Another Portfolio?</h3>
-              <p className="text-slate-600">
+              <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Want Another Portfolio?</h3>
+              <p className="text-slate-600 dark:text-slate-300">
                 Free accounts are limited to <strong>1 portfolio</strong>. Upgrade to Premium for unlimited portfolios, or delete your existing one to switch.
               </p>
             </div>
 
             {existingPortfolios[0] && (
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 mb-6">
-                <p className="text-sm text-slate-700 font-medium text-center">
+              <div className="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl p-4 mb-6">
+                <p className="text-sm text-slate-700 dark:text-slate-200 font-medium text-center">
                   Current portfolio: <span className="font-bold">{existingPortfolios[0].title}</span>
                 </p>
                 {getPortfolioUrl(existingPortfolios[0]) && (
-                  <p className="text-xs text-slate-500 text-center mt-1">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-1">
                     {getPortfolioUrl(existingPortfolios[0])}
                   </p>
                 )}
@@ -580,16 +580,16 @@ function DashboardPage() {
             {/* Divider */}
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200"></div>
+                <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-white text-slate-400 text-xs">{isPremium ? 'Delete existing to create a new one' : 'or'}</span>
+                <span className="px-3 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs">{isPremium ? 'Delete existing to create a new one' : 'or'}</span>
               </div>
             </div>
 
             {/* Delete & switch option */}
-            <div className="bg-red-50 border border-red-200 rounded-xl p-3 mb-3">
-              <p className="text-xs text-red-700 text-center">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 mb-3">
+              <p className="text-xs text-red-700 dark:text-red-400 text-center">
                 ⚠️ Deleting is permanent and cannot be undone
               </p>
             </div>
@@ -597,14 +597,14 @@ function DashboardPage() {
               <button
                 onClick={() => setPendingTemplate(null)}
                 disabled={switchingPortfolio}
-                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+                className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmSwitch}
                 disabled={switchingPortfolio}
-                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 <Trash2 className="w-4 h-4" />
                 {switchingPortfolio ? 'Deleting...' : 'Delete & Switch'}
@@ -620,24 +620,24 @@ function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 relative"
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-8 relative transition-colors duration-300"
           >
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Trash2 className="w-8 h-8 text-red-600" />
+              <div className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 mb-2">Delete Portfolio?</h3>
-              <p className="text-slate-600 mb-2">
+              <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Delete Portfolio?</h3>
+              <p className="text-slate-600 dark:text-slate-300 mb-2">
                 Are you sure you want to delete <strong>{portfolioToDelete.title}</strong>?
               </p>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 This will permanently delete your portfolio at{' '}
                 <span className="font-medium">{portfolioToDelete.subdomain}.portiqqo.me</span>
               </p>
             </div>
 
-            <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
-              <p className="text-sm text-red-800 text-center">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-4 mb-6">
+              <p className="text-sm text-red-800 dark:text-red-400 text-center">
                 ⚠️ This action cannot be undone
               </p>
             </div>
@@ -645,13 +645,13 @@ function DashboardPage() {
             <div className="flex gap-3">
               <button
                 onClick={handleCancelDelete}
-                className="flex-1 py-3 px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl font-semibold transition-all duration-300"
+                className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmDelete}
-                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
+                className="flex-1 py-3 px-4 bg-red-600 hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-600 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
               >
                 <Trash2 className="w-5 h-5" />
                 Delete Portfolio

@@ -47,6 +47,7 @@ import TemplatePreview from './pages/TemplatePreview'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import Layout from './components/layout/Layout'
 import { AuthProvider } from './contexts/AuthContext'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 // Create a client
 const queryClient = new QueryClient({
@@ -62,7 +63,8 @@ const queryClient = new QueryClient({
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
         <div className="App">
           <Routes>
             {/* Public routes - SubdomainRouter handles both main domain and subdomains */}
@@ -125,7 +127,8 @@ function App() {
         {process.env.NODE_ENV === 'development' && (
           <ReactQueryDevtools initialIsOpen={false} />
         )}
-      </AuthProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   )
 }

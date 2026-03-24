@@ -10,12 +10,12 @@
   
   body {
     font-family: 'Inter', sans-serif;
-    @apply text-slate-700 bg-gradient-to-br from-purple-50 to-blue-50 antialiased;
+    @apply text-slate-700 bg-gradient-to-br from-purple-50 to-blue-50 antialiased dark:text-slate-200 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 transition-colors duration-300;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Poppins', 'Inter', sans-serif;
-    @apply font-semibold text-slate-800;
+    @apply font-semibold text-slate-800 dark:text-slate-100;
   }
   
   * {
@@ -28,46 +28,46 @@
   }
   
   ::-webkit-scrollbar-track {
-    @apply bg-purple-50;
+    @apply bg-purple-50 dark:bg-slate-800;
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-purple-200 rounded-full;
+    @apply bg-purple-200 dark:bg-slate-600 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-purple-300;
+    @apply bg-purple-300 dark:bg-slate-500;
   }
 }
 
 /* Component styles */
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-4 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 dark:focus:ring-offset-slate-900 dark:focus:ring-purple-600 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-4 py-2 bg-purple-100 text-purple-700 font-medium rounded-lg hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-4 py-2 bg-purple-100 text-purple-700 font-medium rounded-lg hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:ring-offset-2 dark:bg-slate-700 dark:text-purple-300 dark:hover:bg-slate-600 dark:focus:ring-offset-slate-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .btn-outline {
-    @apply inline-flex items-center justify-center px-4 py-2 border border-purple-300 text-purple-600 font-medium rounded-lg hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-4 py-2 border border-purple-300 text-purple-600 font-medium rounded-lg hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2 dark:border-purple-500 dark:text-purple-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .btn-ghost {
-    @apply inline-flex items-center justify-center px-4 py-2 text-slate-600 font-medium rounded-lg hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center px-4 py-2 text-slate-600 font-medium rounded-lg hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:ring-offset-2 dark:text-slate-400 dark:hover:bg-slate-700 dark:focus:ring-offset-slate-900 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
   }
   
   .input-field {
-    @apply block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 transition-colors duration-200;
+    @apply block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-300 focus:border-purple-300 dark:bg-slate-700 dark:border-slate-600 dark:text-slate-100 dark:placeholder-slate-500 dark:focus:ring-purple-500 dark:focus:border-purple-500 transition-colors duration-200;
   }
   
   .input-error {
-    @apply border-rose-500 focus:ring-rose-500 focus:border-rose-500;
+    @apply border-rose-500 focus:ring-rose-500 focus:border-rose-500 dark:border-rose-400 dark:focus:ring-rose-400;
   }
   
   .card {
-    @apply bg-white/80 backdrop-blur-sm rounded-lg shadow-soft border border-slate-200;
+    @apply bg-white/80 backdrop-blur-sm rounded-lg shadow-soft border border-slate-200 dark:bg-slate-800/80 dark:border-slate-700;
   }
   
   .card-hover {
@@ -95,7 +95,7 @@
   }
   
   .loading-spinner {
-    @apply animate-spin rounded-full h-6 w-6 border-2 border-purple-100 border-t-purple-600;
+    @apply animate-spin rounded-full h-6 w-6 border-2 border-purple-100 dark:border-slate-700 border-t-purple-600 dark:border-t-purple-500;
   }
   
   .error-text {
