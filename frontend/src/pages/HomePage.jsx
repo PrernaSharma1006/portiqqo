@@ -282,9 +282,9 @@ function HomePage() {
                   {/* Center Content - Cards and Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
-                      {/* Decorative Cards */}
+                      {/* Decorative Cards - Hidden on mobile, shown on md and up */}
                       <motion.div 
-                        className="absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-32 h-24 sm:w-40 sm:h-28 lg:w-48 lg:h-32 bg-gradient-to-br from-blue-500/90 to-violet-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[-12deg]"
+                        className="hidden md:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-32 h-24 sm:w-40 sm:h-28 lg:w-48 lg:h-32 bg-gradient-to-br from-blue-500/90 to-violet-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[-12deg]"
                         animate={{ y: [0, -10, 0], rotate: [-12, -8, -12] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
@@ -294,7 +294,7 @@ function HomePage() {
                       </motion.div>
 
                       <motion.div 
-                        className="absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-32 h-24 sm:w-38 sm:h-26 lg:w-44 lg:h-28 bg-gradient-to-br from-purple-500/90 to-pink-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[8deg]"
+                        className="hidden md:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-32 h-24 sm:w-38 sm:h-26 lg:w-44 lg:h-28 bg-gradient-to-br from-purple-500/90 to-pink-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[8deg]"
                         animate={{ y: [0, 10, 0], rotate: [8, 12, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
