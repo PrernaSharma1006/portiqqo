@@ -10,7 +10,7 @@
   
   body {
     font-family: 'Inter', sans-serif;
-    @apply text-slate-700 bg-gradient-to-br from-purple-50 to-blue-50 antialiased dark:text-slate-200 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 transition-colors duration-300;
+    @apply text-slate-700 bg-gradient-to-br from-purple-50 to-blue-50 antialiased dark:text-slate-200 dark:bg-gradient-to-br dark:from-slate-900 dark:to-slate-800 transition-colors duration-300 overflow-x-hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {

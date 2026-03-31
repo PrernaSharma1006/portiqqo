@@ -261,17 +261,17 @@ function HomePage() {
                 className="relative"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center">
+                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
                   {/* Rotating Circle - Aesthetic Version */}
-                  <div className="absolute" style={{width: '450px', height: '450px', animation: 'spin-slow 20s linear infinite'}}>
-                    <svg width="450" height="450" viewBox="0 0 450 450" style={{overflow: 'visible'}}>
+                  <div className="absolute pointer-events-none w-[290px] h-[290px] sm:w-[380px] sm:h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 20s linear infinite' }}>
+                    <svg className="w-full h-full" viewBox="0 0 450 450">
                       <defs>
                         <path
                           id="circlePath"
                           d="M 225, 225 m -215, 0 a 215,215 0 1,1 430,0 a 215,215 0 1,1 -430,0"
                         />
                       </defs>
-                      <text fontSize="18" fontWeight="600" fill="#cbd5e1" opacity="0.35" letterSpacing="6">
+                      <text className="text-[12px] sm:text-[16px] lg:text-[18px]" fontWeight="600" fill="#cbd5e1" opacity="0.35" letterSpacing="6">
                         <textPath href="#circlePath">
                           PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK
                         </textPath>

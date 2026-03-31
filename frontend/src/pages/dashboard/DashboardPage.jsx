@@ -259,7 +259,7 @@ function DashboardPage() {
         <meta name="description" content="Select the perfect template for your portfolio" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
         <div className="container-width section-padding page-padding">
           {/* Header */}
           <motion.div 
@@ -267,9 +267,9 @@ function DashboardPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-16"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 border border-purple-200 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-purple-600" />
-              <span className="text-sm font-medium text-purple-800">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-full mb-6">
+              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-300" />
+              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
                 {isAuthenticated && user ? `Welcome back, ${user.firstName}!` : 'Welcome!'}
               </span>
               {isPremium && (
@@ -279,15 +279,15 @@ function DashboardPage() {
               )}
             </div>
             
-            <h1 className="text-5xl sm:text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 bg-clip-text text-transparent mb-6">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-300 bg-clip-text text-transparent mb-6">
               Choose Your Perfect Template
             </h1>
-            <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-4">
+            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-4">
               Select a professionally designed template that matches your profession and start building your stunning portfolio in minutes
             </p>
             {isAuthenticated && user && (
-              <p className="text-sm text-slate-500">
-                Signed in as <span className="font-medium text-slate-700">{user.email}</span>
+              <p className="text-sm text-slate-500 dark:text-slate-400 break-all">
+                Signed in as <span className="font-medium text-slate-700 dark:text-slate-200">{user.email}</span>
               </p>
             )}
           </motion.div>
@@ -299,9 +299,9 @@ function DashboardPage() {
               animate={{ opacity: 1, y: 0 }}
               className="mb-16"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-3xl font-bold text-slate-800">Your Portfolios</h2>
-                <span className="text-sm text-slate-500">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
+                <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">Your Portfolios</h2>
+                <span className="text-sm text-slate-500 dark:text-slate-400">
                   {existingPortfolios.length} {existingPortfolios.length === 1 ? 'portfolio' : 'portfolios'}
                 </span>
               </div>
@@ -316,8 +316,8 @@ function DashboardPage() {
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-slate-800 mb-1">{portfolio.title}</h3>
-                          <p className="text-sm text-slate-500 capitalize">
+                          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">{portfolio.title}</h3>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 capitalize">
                             {portfolio.profession?.replace(/-/g, ' ')}
                           </p>
                         </div>
@@ -360,7 +360,7 @@ function DashboardPage() {
                       <div className="flex items-center gap-2 mb-4 min-h-[24px]">
                         {getPortfolioUrl(portfolio) ? (
                           <>
-                            <ExternalLink className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                            <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
                             <a 
                               href={`https://${getPortfolioUrl(portfolio)}`}
                               target="_blank"
@@ -376,11 +376,11 @@ function DashboardPage() {
                             >
                               {copiedId === portfolio._id
                                 ? <Check className="w-4 h-4 text-green-500" />
-                                : <Copy className="w-4 h-4 text-slate-400" />}
+                                : <Copy className="w-4 h-4 text-slate-400 dark:text-slate-500" />}
                             </button>
                           </>
                         ) : (
-                          <span className="text-sm text-slate-400 italic">Save portfolio to generate your link</span>
+                          <span className="text-sm text-slate-400 dark:text-slate-500 italic">Save portfolio to generate your link</span>
                         )}
                       </div>
                       
@@ -403,7 +403,7 @@ function DashboardPage() {
                         )}
                         <button
                           onClick={() => handleDeleteClick(portfolio)}
-                          className="py-2.5 px-4 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg font-medium transition-all duration-300"
+                          className="py-2.5 px-4 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-300 rounded-lg font-medium transition-all duration-300"
                           title="Delete Portfolio"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -418,10 +418,10 @@ function DashboardPage() {
               <div className="mt-16 mb-12">
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200"></div>
+                    <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
                   </div>
                   <div className="relative flex justify-center">
-                    <span className="px-4 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 text-slate-500 text-sm font-medium">
+                    <span className="px-4 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-slate-500 dark:text-slate-400 text-sm font-medium">
                       Want to switch to a different template?
                     </span>
                   </div>
@@ -432,7 +432,7 @@ function DashboardPage() {
 
           {/* Templates Grid */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-slate-800 mb-6 text-center">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
               {existingPortfolios.length > 0 ? 'Switch Your Template' : 'Choose Your Template'}
             </h2>
           </div>
@@ -450,7 +450,7 @@ function DashboardPage() {
                 >
                   <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 dark:border-slate-700">
                     {/* Image */}
-                    <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50">
+                    <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800">
                       <img 
                         src={template.image} 
                         alt={template.name}
@@ -473,10 +473,10 @@ function DashboardPage() {
 
                     {/* Content */}
                     <div className="p-6">
-                      <h3 className="text-2xl font-bold text-slate-800 mb-3 group-hover:text-purple-600 transition-colors">
+                      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-3 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                         {template.name}
                       </h3>
-                      <p className="text-sm text-slate-600 mb-6 leading-relaxed">
+                      <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
                         {template.description}
                       </p>
                       
@@ -484,12 +484,12 @@ function DashboardPage() {
                       <div className="space-y-2.5 mb-6">
                         {template.features.map((feature, i) => (
                           <div key={i} className="flex items-center gap-3">
-                            <div className="w-5 h-5 rounded-full bg-purple-100 flex items-center justify-center flex-shrink-0">
+                            <div className="w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
                               <svg className="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             </div>
-                            <span className="text-sm text-slate-600 font-medium">{feature}</span>
+                            <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{feature}</span>
                           </div>
                         ))}
                       </div>
@@ -593,7 +593,7 @@ function DashboardPage() {
                 ⚠️ Deleting is permanent and cannot be undone
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={() => setPendingTemplate(null)}
                 disabled={switchingPortfolio}
@@ -642,7 +642,7 @@ function DashboardPage() {
               </p>
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <button
                 onClick={handleCancelDelete}
                 className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-300"
