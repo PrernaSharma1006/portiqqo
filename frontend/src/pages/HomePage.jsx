@@ -303,8 +303,8 @@ function HomePage() {
                         <div className="w-2/3 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
                       </motion.div>
 
-                      {/* Center Icon */}
-                      <div className="w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl flex items-center justify-center shadow-2xl">
+                      {/* Center Icon - Hidden on mobile, shown on md and up */}
+                      <div className="hidden md:flex w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
                         <Globe className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                       </div>
                     </div>
