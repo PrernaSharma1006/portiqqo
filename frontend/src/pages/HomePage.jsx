@@ -258,7 +258,7 @@ function HomePage() {
 
               {/* Right Content - Visual Element */}
               <motion.div 
-                className="relative"
+                className="relative hidden md:block"
                 variants={fadeInUp}
               >
                 <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
