@@ -16,7 +16,7 @@ const getRazorpay = () => {
 // Pricing plans (amount in paise: 1 INR = 100 paise)
 const PLANS = {
   monthly: {
-    amount: 19900,      // ₹199/month
+    amount: 8100,       // ₹81/month
     currency: 'INR',
     interval: 'month',
     description: 'Portiqqo Premium - Monthly',

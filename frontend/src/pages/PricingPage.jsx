@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { Check, Zap, Crown, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const MONTHLY_AMOUNT = 199
+const MONTHLY_AMOUNT = 81
 const YEARLY_AMOUNT = 1499
 
 export default function PricingPage() {
@@ -160,7 +160,7 @@ export default function PricingPage() {
               onClick={() => setBillingCycle('yearly')}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'yearly' ? 'bg-white shadow text-gray-900' : 'text-gray-500'}`}
             >
-              Yearly <span className="text-green-600 font-semibold ml-1">Save 37%</span>
+              Yearly <span className="text-green-600 font-semibold ml-1">Billed annually</span>
             </button>
           </div>
         </div>
