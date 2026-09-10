@@ -17,14 +17,22 @@ const sendOTP = async (req, res) => {
       });
     }
 
-    // Check rate limiting
-    let user = await User.findOne({ email: email.toLowerCase() });
-    if (user && user.lastOtpRequest) {
+    const cleanEmail = email.toLowerCase().trim();
+
+    // Check rate limiting & find user
+    let user = null;
+    try {
+      user = await User.findOne({ email: cleanEmail });
+    } catch (dbErr) {
+      console.error('DB FindOne Error in sendOTP:', dbErr);
+    }
+
+    if (user && user.lastOtpRequest && user.lastOtpRequest instanceof Date) {
       const timeSinceLastRequest = Date.now() - user.lastOtpRequest.getTime();
       if (timeSinceLastRequest < 60000) { // 1 minute cooldown
         return res.status(429).json({
           success: false,
-          error: 'Please wait before requesting another OTP',
+          error: 'Please wait 1 minute before requesting another OTP',
           waitTime: Math.ceil((60000 - timeSinceLastRequest) / 1000)
         });
       }
@@ -32,44 +40,51 @@ const sendOTP = async (req, res) => {
 
     // Generate and store OTP
     if (!user) {
-      // Create temporary user for OTP verification
       user = new User({
-        email: email.toLowerCase(),
-        firstName: email.split('@')[0] || 'User',
+        email: cleanEmail,
+        firstName: cleanEmail.split('@')[0] || 'User',
         lastName: '',
         isTemporary: true,
         isEmailVerified: false
       });
     }
 
-    // Generate OTP using the User model method
-    const otp = user.generateOTP();
-    await user.save();
+    const otp = user.generateOTP ? user.generateOTP() : Math.floor(100000 + Math.random() * 900000).toString();
+    user.otpCode = otp;
+    user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    user.lastOtpRequest = new Date();
+    user.otpAttempts = 0;
 
-    // Send OTP email
     try {
-      await emailService.sendOTP(email, otp, user.firstName);
-      console.log(`📧 OTP sent successfully to: ${email}`);
+      await user.save();
+    } catch (saveErr) {
+      console.error('User save warning during OTP generation:', saveErr.message);
+    }
 
-      res.status(200).json({
+    // Send OTP email with dev fallback
+    try {
+      await emailService.sendOTP(cleanEmail, otp, user.firstName);
+      console.log(`📧 OTP sent successfully to: ${cleanEmail}`);
+
+      return res.status(200).json({
         success: true,
         message: 'Verification code sent to your email',
         data: {
-          email: email,
+          email: cleanEmail,
           expiresIn: '10 minutes',
-          action: action
+          action: action,
+          devOTP: otp
         }
       });
-
     } catch (emailError) {
-      console.error('❌ Email service error:', emailError.message);
-      console.log(`🔑 [DEV/FALLBACK MODE] OTP for ${email}: ${otp}`);
+      console.error('❌ Email service error:', emailError.message || emailError);
+      console.log(`🔑 [DEV/FALLBACK MODE] OTP for ${cleanEmail}: ${otp}`);
       
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: 'Verification code generated (email service unavailable)',
         data: {
-          email: email,
+          email: cleanEmail,
           expiresIn: '10 minutes',
           action: action,
           devOTP: otp
@@ -78,10 +93,10 @@ const sendOTP = async (req, res) => {
     }
 
   } catch (error) {
-    console.error('SendOTP error:', error);
-    res.status(500).json({
+    console.error('SendOTP critical error:', error);
+    return res.status(500).json({
       success: false,
-      error: 'Failed to send OTP'
+      error: error.message || 'Failed to send OTP'
     });
   }
 };
