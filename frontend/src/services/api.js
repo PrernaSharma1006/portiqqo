@@ -2,7 +2,10 @@ import axios from 'axios'
 import toast from 'react-hot-toast'
 
 const getApiBaseUrl = () => {
-  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
+  const envUrl = import.meta.env.VITE_API_URL
+  if (envUrl && envUrl.startsWith('http') && !envUrl.includes('your-render-url')) {
+    return envUrl
+  }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     return 'https://portiqqo.onrender.com/api'
   }

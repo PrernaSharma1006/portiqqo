@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom'
 
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
-  if (envUrl && envUrl.startsWith('http')) {
+  if (envUrl && envUrl.startsWith('http') && !envUrl.includes('your-render-url')) {
     return envUrl.replace(/\/$/, '').replace(/\/api$/, '')
   }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
