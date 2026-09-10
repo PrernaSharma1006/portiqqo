@@ -2,6 +2,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ArrowLeft, Eye } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import TemplateFooter from '../components/templates/TemplateFooter'
 
 // Import sample data for each template type
 const sampleData = {
@@ -850,7 +851,7 @@ function TemplatePreview() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -1353,98 +1354,24 @@ function TemplatePreview() {
           </button>
         </div>
 
-        {/* Template Footer (Editable by User) */}
+        {/* Template Footer */}
         {data.footer && (
-          <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white py-8 px-6">
-            <div className="max-w-6xl mx-auto">
-              {/* Main Footer Content */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-6">
-                {/* Company Info */}
-                <div>
-                  <h3 className="text-lg font-bold mb-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">{data.footer.companyName}</h3>
-                  <p className="text-gray-400 mb-4 text-xs leading-relaxed">{data.footer.tagline}</p>
-                  <div className="space-y-2">
-                    {data.footer.email && (
-                      <a href={`mailto:${data.footer.email}`} className="flex items-center text-gray-300 hover:text-purple-400 transition-colors group">
-                        <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-2 group-hover:bg-purple-600 transition-all">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                          </svg>
-                        </div>
-                        <span className="text-xs">{data.footer.email}</span>
-                      </a>
-                    )}
-                    {data.footer.phone && (
-                      <a href={`tel:${data.footer.phone}`} className="flex items-center text-gray-300 hover:text-purple-400 transition-colors group">
-                        <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-2 group-hover:bg-purple-600 transition-all">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
-                          </svg>
-                        </div>
-                        <span className="text-xs">{data.footer.phone}</span>
-                      </a>
-                    )}
-                    {data.footer.location && (
-                      <div className="flex items-center text-gray-300">
-                        <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-2">
-                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                          </svg>
-                        </div>
-                        <span className="text-xs">{data.footer.location}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div>
-                  <h4 className="text-base font-bold mb-3 text-purple-400">Quick Stats</h4>
-                  <div className="grid grid-cols-2 gap-2">
-                    {Object.entries(data.footer.quickStats).map(([key, value]) => (
-                      <div key={key} className="bg-gradient-to-br from-gray-800 to-gray-900 p-3 rounded-lg border border-gray-700 hover:border-purple-500 transition-all">
-                        <div className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent mb-0.5">{value}</div>
-                        <div className="text-[10px] text-gray-400 capitalize font-medium">{key}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                <div>
-                  <h4 className="text-base font-bold mb-3 text-purple-400">Quick Links</h4>
-                  <div className="space-y-2">
-                    {data.footer.socialLinks.map((link, idx) => (
-                      <a 
-                        key={idx} 
-                        href={link.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center text-gray-300 hover:text-white transition-all group"
-                      >
-                        <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center mr-2 group-hover:bg-gradient-to-r group-hover:from-purple-600 group-hover:to-blue-600 transition-all">
-                          <span className="text-sm transform group-hover:translate-x-0.5 transition-transform">→</span>
-                        </div>
-                        <span className="text-sm font-medium">{link.platform}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Bar */}
-              <div className="border-t border-gray-800 pt-4">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-2">
-                  <p className="text-gray-400 text-xs">{data.footer.copyright}</p>
-                  <p className="text-gray-500 text-[10px] flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 bg-purple-500 rounded-full animate-pulse"></span>
-                    Built with Portiqqo • All content is customizable
-                  </p>
-                </div>
-              </div>
-            </div>
-          </footer>
+          <TemplateFooter
+            name={data.footer.companyName || data.profile?.name}
+            title={data.profile?.title || 'Professional'}
+            tagline={data.footer.tagline || data.profile?.description}
+            email={data.footer.email || data.profile?.email}
+            phone={data.footer.phone || data.profile?.phone}
+            location={data.footer.location || data.profile?.location}
+            socialLinks={data.footer.socialLinks || {
+              github: data.profile?.github,
+              linkedin: data.profile?.linkedin,
+              twitter: data.profile?.twitter,
+              website: data.profile?.website
+            }}
+            stats={data.footer.quickStats}
+            accentColor="purple"
+          />
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { TrendingUp, BarChart3, ExternalLink, Award, Calendar, MapPin, Mail, Phone, Download, ArrowRight, Target, Users, LineChart, PieChart, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import TemplateFooter from './TemplateFooter'
 
 function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
   const [selectedMetric, setSelectedMetric] = useState('overview')
@@ -527,45 +528,27 @@ function DigitalMarketerTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Footer */}
-      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {/* Marketer Info */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">{marketerData.name}</h3>
-              <p className="text-gray-300 mb-4">
-                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${marketerData.name}. ${portfolioData.footer?.tagline || 'Driving growth through data-driven marketing.'}`}
-              </p>
-              <ul className="space-y-2">
-                <li><a href="#about" className="text-gray-300 hover:text-white transition-colors">About</a></li>
-                <li><a href="#campaigns" className="text-gray-300 hover:text-white transition-colors">Campaigns</a></li>
-                <li><a href="#services" className="text-gray-300 hover:text-white transition-colors">Services</a></li>
-                <li><a href="#contact" className="text-gray-300 hover:text-white transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            {/* Portfolio Builder Info */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Portfolio Builder</h3>
-              <p className="text-gray-300 mb-4 text-sm">
-                Create your professional portfolio with our easy-to-use platform.
-              </p>
-              <div className="flex items-center space-x-2 text-gray-300 text-sm">
-                <span>Questions?</span>
-                <a href="mailto:portfolio.builder659@gmail.com" className="text-blue-400 hover:text-blue-300 transition-colors">
-                  Contact Support
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-300 text-sm">
-              Made with Portfolio Builder • <a href="mailto:portfolio.builder659@gmail.com" className="text-blue-400 hover:text-blue-300 transition-colors">Get Help</a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <TemplateFooter
+        name={marketerData.name}
+        title={marketerData.title}
+        tagline={marketerData.bio || 'Growth Strategist & Digital Marketing Consultant'}
+        email={marketerData.email}
+        phone={marketerData.phone}
+        location={marketerData.location}
+        socialLinks={{
+          linkedin: marketerData.social.linkedin,
+          website: marketerData.website
+        }}
+        quickLinks={[
+          { label: 'Home', href: '#home' },
+          { label: 'Campaigns', href: '#campaigns' },
+          { label: 'Metrics', href: '#metrics' },
+          { label: 'Services', href: '#services' },
+          { label: 'Contact', href: '#contact' }
+        ]}
+        accentColor="orange"
+        isHidden={isHidden('footer')}
+      />
     </div>
   )
 }

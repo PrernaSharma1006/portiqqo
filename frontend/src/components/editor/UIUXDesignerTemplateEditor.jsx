@@ -5,6 +5,8 @@ import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/p
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import PDFPaymentModal from '../modals/PDFPaymentModal'
+import UIUXDesignerTemplate from '../templates/UIUXDesignerTemplate'
 import { 
   ArrowLeft, 
   Save, 
@@ -36,6 +38,7 @@ function UIUXDesignerTemplateEditor() {
   const [wantsPDF, setWantsPDF] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
+  const [showPDFPaymentModal, setShowPDFPaymentModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [portfolioId, setPortfolioId] = useState(null)
@@ -586,11 +589,11 @@ function UIUXDesignerTemplateEditor() {
               
               <div className="flex space-x-4">
                 <button
-                  onClick={() => setWantsPDF(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  onClick={() => setShowPDFPaymentModal(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF</span>
+                  <Download className="w-4 h-4 text-pink-400" />
+                  <span>Download PDF (₹30)</span>
                 </button>
                 <button
                   onClick={publishPortfolio}
@@ -603,7 +606,7 @@ function UIUXDesignerTemplateEditor() {
           </div>
         </header>
         
-        {/* Preview content would go here */}
+        <UIUXDesignerTemplate isPublic={true} portfolioData={portfolioData} />
       </div>
     )
   }
@@ -615,7 +618,7 @@ function UIUXDesignerTemplateEditor() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -631,11 +634,11 @@ function UIUXDesignerTemplateEditor() {
                 <span>Preview</span>
               </button>
               <button
-                onClick={() => { setIsPreview(true); setWantsPDF(true) }}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                onClick={() => setShowPDFPaymentModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
               >
-                <Download className="w-4 h-4" />
-                <span>Download PDF</span>
+                <Download className="w-4 h-4 text-pink-400" />
+                <span>Download PDF (₹30)</span>
               </button>
               <button
                 onClick={publishPortfolio}
@@ -1522,6 +1525,13 @@ function UIUXDesignerTemplateEditor() {
         onClose={() => setShowPublishModal(false)}
         portfolioUrl={publishedPortfolio?.publicUrl}
         subdomain={publishedPortfolio?.subdomain}
+      />
+
+      <PDFPaymentModal 
+        isOpen={showPDFPaymentModal}
+        onClose={() => setShowPDFPaymentModal(false)}
+        onPaymentSuccess={() => { setIsPreview(true); setWantsPDF(true) }}
+        portfolioName={portfolioData.profile?.name ? `${portfolioData.profile.name}'s Portfolio` : 'UI/UX Designer Portfolio'}
       />
     </div>
   )

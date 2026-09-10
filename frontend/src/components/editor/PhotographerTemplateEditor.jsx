@@ -3,6 +3,8 @@ import { motion } from 'framer-motion'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/portfolioHelper'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import PDFPaymentModal from '../modals/PDFPaymentModal'
+import TemplateFooter from '../templates/TemplateFooter'
 import { 
   ArrowLeft, 
   Save, 
@@ -34,6 +36,7 @@ function PhotographerTemplateEditor() {
   const [wantsPDF, setWantsPDF] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
+  const [showPDFPaymentModal, setShowPDFPaymentModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [portfolioId, setPortfolioId] = useState(null)
@@ -618,11 +621,11 @@ function PhotographerTemplateEditor() {
               
               <div className="flex space-x-4">
                 <button
-                  onClick={() => setWantsPDF(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  onClick={() => setShowPDFPaymentModal(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF</span>
+                  <Download className="w-4 h-4 text-pink-400" />
+                  <span>Download PDF (₹30)</span>
                 </button>
                 <button
                   onClick={publishPortfolio}
@@ -711,85 +714,17 @@ function PhotographerTemplateEditor() {
           </div>
 
           {/* Footer */}
-          <footer className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white p-12">
-            <div className="max-w-6xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                {/* Company Info */}
-                <div>
-                  <h3 className="text-2xl font-bold mb-2">{portfolioData.footer.companyName}</h3>
-                  <p className="text-gray-400 mb-4">{portfolioData.footer.tagline}</p>
-                  {portfolioData.footer.email && (
-                    <div className="flex items-center text-gray-400 mb-2">
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                        <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                      </svg>
-                      <a href={`mailto:${portfolioData.footer.email}`} className="hover:text-white transition-colors">
-                        {portfolioData.footer.email}
-                      </a>
-                    </div>
-                  )}
-                  {portfolioData.footer.phone && (
-                    <div className="flex items-center text-gray-400 mb-2">
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
-                      </svg>
-                      <a href={`tel:${portfolioData.footer.phone}`} className="hover:text-white transition-colors">
-                        {portfolioData.footer.phone}
-                      </a>
-                    </div>
-                  )}
-                  {portfolioData.footer.location && (
-                    <div className="flex items-center text-gray-400">
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"/>
-                      </svg>
-                      <span>{portfolioData.footer.location}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Quick Stats */}
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Quick Stats</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(portfolioData.footer.quickStats).map(([key, value]) => (
-                      <div key={key} className="text-center bg-gray-800 bg-opacity-50 p-4 rounded-lg">
-                        <div className="text-2xl font-bold text-purple-400">{value}</div>
-                        <div className="text-sm text-gray-400 capitalize">{key}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Social Links */}
-                <div>
-                  <h4 className="text-lg font-semibold mb-4">Connect With Me</h4>
-                  <div className="space-y-3">
-                    {portfolioData.footer.socialLinks.map((link, idx) => (
-                      <a 
-                        key={idx} 
-                        href={link.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="flex items-center text-gray-400 hover:text-white transition-colors group"
-                      >
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center mr-3 group-hover:bg-purple-600 transition-colors">
-                          <span className="text-lg">→</span>
-                        </div>
-                        <span>{link.platform}</span>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Bar */}
-              <div className="border-t border-gray-700 pt-8 text-center">
-                <p className="text-gray-400">{portfolioData.footer.copyright}</p>
-              </div>
-            </div>
-          </footer>
+          <TemplateFooter
+            name={portfolioData.footer?.companyName || portfolioData.name}
+            title={portfolioData.title || 'Photographer'}
+            tagline={portfolioData.footer?.tagline || portfolioData.bio}
+            email={portfolioData.footer?.email || portfolioData.email}
+            phone={portfolioData.footer?.phone || portfolioData.phone}
+            location={portfolioData.footer?.location || portfolioData.location}
+            socialLinks={portfolioData.footer?.socialLinks || portfolioData.social}
+            stats={portfolioData.footer?.quickStats || portfolioData.stats}
+            accentColor="amber"
+          />
         </div>
       </div>
     )
@@ -802,7 +737,7 @@ function PhotographerTemplateEditor() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -818,11 +753,11 @@ function PhotographerTemplateEditor() {
                 <span>Preview</span>
               </button>
               <button
-                onClick={() => { setIsPreview(true); setWantsPDF(true) }}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                onClick={() => setShowPDFPaymentModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
               >
-                <Download className="w-4 h-4" />
-                <span>Download PDF</span>
+                <Download className="w-4 h-4 text-pink-400" />
+                <span>Download PDF (₹30)</span>
               </button>
               <button
                 onClick={publishPortfolio}
@@ -1629,6 +1564,13 @@ function PhotographerTemplateEditor() {
         onClose={() => setShowPublishModal(false)}
         portfolioUrl={publishedPortfolio?.publicUrl}
         subdomain={publishedPortfolio?.subdomain}
+      />
+
+      <PDFPaymentModal 
+        isOpen={showPDFPaymentModal}
+        onClose={() => setShowPDFPaymentModal(false)}
+        onPaymentSuccess={() => { setIsPreview(true); setWantsPDF(true) }}
+        portfolioName={portfolioData.profile?.name ? `${portfolioData.profile.name}'s Portfolio` : 'Photographer Portfolio'}
       />
     </div>
   )

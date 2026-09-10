@@ -8,6 +8,7 @@ import VideoEditorTemplate from '../components/templates/VideoEditorTemplate';
 import PhotographerTemplate from '../components/templates/PhotographerTemplate';
 import GeneralPortfolioTemplate from '../components/templates/GeneralPortfolioTemplate';
 import DigitalMarketerTemplate from '../components/templates/DigitalMarketerTemplate';
+import PDFPaymentModal from '../components/modals/PDFPaymentModal';
 
 function PublicPortfolioPage() {
   const { subdomain: pathSubdomain } = useParams();
@@ -16,27 +17,36 @@ function PublicPortfolioPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isTrialExpired, setIsTrialExpired] = useState(false);
+  const [showPDFPaymentModal, setShowPDFPaymentModal] = useState(false);
   const portfolioRef = useRef(null);
 
-  // Get subdomain from URL hostname or path
-  const getSubdomain = () => {
-    const hostname = window.location.hostname;
+  // Get subdomain or custom domain from URL hostname or path
+  const getIdentifier = () => {
+    const hostname = window.location.hostname.toLowerCase();
+    
     // If it's a subdomain like "example.portiqqo.me"
     if (hostname.endsWith('.portiqqo.me') && hostname !== 'portiqqo.me' && hostname !== 'www.portiqqo.me') {
       return hostname.replace('.portiqqo.me', '');
     }
+    
+    // If it's an external custom domain
+    const isMainOrLocal = hostname === 'portiqqo.me' || hostname === 'www.portiqqo.me' || hostname === 'localhost' || hostname === '127.0.0.1';
+    if (!isMainOrLocal && !hostname.endsWith('.portiqqo.me')) {
+      return hostname;
+    }
+
     // Fallback to path-based (for backward compatibility)
     return pathSubdomain;
   };
 
-  const subdomain = getSubdomain();
+  const identifier = getIdentifier();
 
   useEffect(() => {
     const fetchPortfolio = async () => {
       try {
         setLoading(true);
-        console.log('Fetching portfolio for subdomain:', subdomain);
-        const response = await portfolioAPI.getPublic(subdomain);
+        const refParam = document.referrer ? `?ref=${encodeURIComponent(document.referrer)}` : '';
+        const response = await portfolioAPI.getPublic(`${identifier}${refParam}`);
         console.log('Portfolio response:', response.data);
         setPortfolio(response.data.portfolio);
         setError(null);
@@ -53,10 +63,10 @@ function PublicPortfolioPage() {
       }
     };
 
-    if (subdomain) {
+    if (identifier) {
       fetchPortfolio();
     }
-  }, [subdomain]);
+  }, [identifier]);
 
   // Trial expired state
   if (isTrialExpired) {
@@ -225,13 +235,20 @@ function PublicPortfolioPage() {
       <ViewCounter />
       {/* Download PDF button */}
       <button
-        onClick={handleDownloadPDF}
-        className="fixed bottom-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-sm font-medium rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
-        title="Download as PDF"
+        onClick={() => setShowPDFPaymentModal(true)}
+        className="fixed bottom-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 hover:from-stone-900 hover:to-black text-white text-sm font-medium rounded-full shadow-lg transition-all duration-200 hover:shadow-xl"
+        title="Download as PDF (₹30)"
       >
-        <Download className="w-4 h-4" />
-        Download PDF
+        <Download className="w-4 h-4 text-pink-400" />
+        <span>Download PDF (₹30)</span>
       </button>
+
+      <PDFPaymentModal 
+        isOpen={showPDFPaymentModal}
+        onClose={() => setShowPDFPaymentModal(false)}
+        onPaymentSuccess={handleDownloadPDF}
+        portfolioName={portfolio?.personalInfo?.name ? `${portfolio.personalInfo.name}'s Portfolio` : 'Portfolio'}
+      />
     </div>
   );
 }

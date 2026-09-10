@@ -5,8 +5,17 @@
  * This script sets up the initial database structure and default data
  */
 
-const { MongoClient } = require('mongodb');
-require('dotenv').config();
+const path = require('path');
+let mongoose;
+try {
+  mongoose = require('mongoose');
+} catch (e) {
+  mongoose = require(path.resolve(__dirname, '../backend/node_modules/mongoose'));
+}
+const { MongoClient } = mongoose.mongo;
+try {
+  require('dotenv').config({ path: path.resolve(__dirname, '../backend/.env') });
+} catch (e) {}
 
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/portfolio-builder';
 const DB_NAME = process.env.DB_NAME || 'portfolio-builder';

@@ -137,30 +137,30 @@ export default function PricingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white transition-colors">
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 hover:text-gray-800 transition-colors mb-8">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 mb-3">Simple, Transparent Pricing</h1>
-          <p className="text-lg text-gray-500">Start for free. Upgrade when you need more.</p>
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">Simple, Transparent Pricing</h1>
+          <p className="text-lg text-gray-500 dark:text-slate-400">Start for free. Upgrade when you need more.</p>
 
           {/* Billing toggle */}
-          <div className="inline-flex items-center bg-gray-100 rounded-full p-1 mt-6">
+          <div className="inline-flex items-center bg-gray-100 dark:bg-slate-800 rounded-full p-1 mt-6 border border-transparent dark:border-slate-700">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly' ? 'bg-white shadow text-gray-900' : 'text-gray-500'}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly' ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-slate-400'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'yearly' ? 'bg-white shadow text-gray-900' : 'text-gray-500'}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'yearly' ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-slate-400'}`}
             >
-              Yearly <span className="text-green-600 font-semibold ml-1">Billed annually</span>
+              Yearly <span className="text-green-600 dark:text-green-400 font-semibold ml-1">Billed annually</span>
             </button>
           </div>
         </div>
@@ -169,25 +169,25 @@ export default function PricingPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
 
           {/* Free Plan */}
-          <div className="bg-white rounded-2xl shadow-md border border-gray-200 p-8">
+          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-200 dark:border-slate-700 p-8">
             <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-gray-500" />
-              <h2 className="text-xl font-bold text-gray-800">Free</h2>
+              <Zap className="w-5 h-5 text-gray-500 dark:text-slate-400" />
+              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Free</h2>
             </div>
             <div className="mb-6">
-              <span className="text-4xl font-bold text-gray-900">₹0</span>
-              <span className="text-gray-400 ml-1">/ forever</span>
+              <span className="text-4xl font-bold text-gray-900 dark:text-white">₹0</span>
+              <span className="text-gray-400 dark:text-slate-500 ml-1">/ forever</span>
             </div>
             <ul className="space-y-3 mb-8">
               {freeFeatures.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-gray-600 text-sm">
+                <li key={f} className="flex items-center gap-2 text-gray-600 dark:text-slate-300 text-sm">
                   <Check className="w-4 h-4 text-green-500 flex-shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <button
               onClick={() => navigate(isAuthenticated ? '/dashboard' : '/auth')}
-              className="w-full py-3 rounded-xl border-2 border-gray-200 text-gray-700 font-semibold hover:border-gray-300 transition-colors"
+              className="w-full py-3 rounded-xl border-2 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold hover:border-gray-300 dark:hover:border-slate-600 transition-colors"
             >
               {isAuthenticated ? 'Go to Dashboard' : 'Get Started Free'}
             </button>
@@ -238,7 +238,7 @@ export default function PricingPage() {
         </div>
 
         {/* Trust line */}
-        <p className="text-center text-gray-400 text-sm mt-8">
+        <p className="text-center text-gray-400 dark:text-slate-500 text-sm mt-8">
           Secure payments via Razorpay · Cancel anytime · Instant activation
         </p>
       </div>

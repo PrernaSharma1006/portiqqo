@@ -7,13 +7,20 @@ import Layout from '../layout/Layout';
 function SubdomainRouter() {
   const hostname = window.location.hostname;
   
-  // Check if we're on a subdomain (not main domain or www)
-  const isSubdomain = hostname.endsWith('.portiqqo.me') && 
-                      hostname !== 'portiqqo.me' && 
-                      hostname !== 'www.portiqqo.me';
+  // Check main domains and local dev hosts
+  const isMainDomain = hostname === 'portiqqo.me' || 
+                       hostname === 'www.portiqqo.me' || 
+                       hostname === 'localhost' || 
+                       hostname === '127.0.0.1';
 
-  if (isSubdomain) {
-    // We're on a subdomain - show the portfolio page
+  // Check if we're on a portiqqo.me subdomain (e.g., username.portiqqo.me)
+  const isSubdomain = hostname.endsWith('.portiqqo.me') && !isMainDomain;
+
+  // Check if we're on a custom domain (e.g. johnsmith.dev)
+  const isCustomDomain = !isMainDomain && !hostname.endsWith('.portiqqo.me');
+
+  if (isSubdomain || isCustomDomain) {
+    // We're on a subdomain or custom domain - show the portfolio page
     return <PublicPortfolioPage />;
   } else {
     // We're on the main domain - show the homepage

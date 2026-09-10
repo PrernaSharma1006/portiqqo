@@ -5,6 +5,7 @@ import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/p
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import PDFPaymentModal from '../modals/PDFPaymentModal'
 import DigitalMarketerTemplate from '../templates/DigitalMarketerTemplate'
 import {
   ArrowLeft, Save, Eye, EyeOff, Upload, X, Plus,
@@ -21,6 +22,7 @@ function DigitalMarketerTemplateEditor() {
   const [isPreview, setIsPreview] = useState(false)
   const [wantsPDF, setWantsPDF] = useState(false)
   const [showPublishModal, setShowPublishModal] = useState(false)
+  const [showPDFPaymentModal, setShowPDFPaymentModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [portfolioId, setPortfolioId] = useState(null)
@@ -356,9 +358,9 @@ function DigitalMarketerTemplateEditor() {
                 <span>Back to Editor</span>
               </button>
               <div className="flex space-x-3">
-                <button onClick={() => setWantsPDF(true)} className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF</span>
+                <button onClick={() => setShowPDFPaymentModal(true)} className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm">
+                  <Download className="w-4 h-4 text-pink-400" />
+                  <span>Download PDF (₹30)</span>
                 </button>
                 <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                   <span>Publish Portfolio</span>
@@ -380,18 +382,18 @@ function DigitalMarketerTemplateEditor() {
       <header className="bg-white shadow-sm sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <button onClick={() => navigate('/dashboard')} className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
+            <button onClick={() => navigate('/')} className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors">
               <ArrowLeft className="w-5 h-5" />
-              <span>Dashboard</span>
+              <span>Back to Templates</span>
             </button>
             <div className="flex space-x-3">
               <button onClick={() => setIsPreview(!isPreview)} className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
                 <Eye className="w-4 h-4" />
                 <span>{isPreview ? 'Edit' : 'Preview'}</span>
               </button>
-              <button onClick={() => { setIsPreview(true); setWantsPDF(true) }} className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors">
-                <Download className="w-4 h-4" />
-                <span>Download PDF</span>
+              <button onClick={() => setShowPDFPaymentModal(true)} className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm">
+                <Download className="w-4 h-4 text-pink-400" />
+                <span>Download PDF (₹30)</span>
               </button>
               <button onClick={publishPortfolio} className="flex items-center space-x-2 px-6 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
                 <span>Publish Portfolio</span>
@@ -768,6 +770,13 @@ function DigitalMarketerTemplateEditor() {
         onClose={() => setShowPublishModal(false)}
         portfolioUrl={publishedPortfolio?.publicUrl || ''}
         subdomain={publishedPortfolio?.subdomain || ''}
+      />
+
+      <PDFPaymentModal 
+        isOpen={showPDFPaymentModal}
+        onClose={() => setShowPDFPaymentModal(false)}
+        onPaymentSuccess={() => { setIsPreview(true); setWantsPDF(true) }}
+        portfolioName={portfolioData.profile?.name ? `${portfolioData.profile.name}'s Portfolio` : 'Digital Marketer Portfolio'}
       />
     </div>
   )

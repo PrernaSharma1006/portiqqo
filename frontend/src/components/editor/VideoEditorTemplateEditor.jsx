@@ -5,6 +5,8 @@ import { savePortfolioToBackend, publishPortfolioToBackend } from '../../utils/p
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import PublishSuccessModal from '../modals/PublishSuccessModal'
+import PDFPaymentModal from '../modals/PDFPaymentModal'
+import TemplateFooter from '../templates/TemplateFooter'
 import { 
   ArrowLeft, 
   Save, 
@@ -36,6 +38,7 @@ function VideoEditorTemplateEditor() {
   const [wantsPDF, setWantsPDF] = useState(false)
   const [editingSection, setEditingSection] = useState(null)
   const [showPublishModal, setShowPublishModal] = useState(false)
+  const [showPDFPaymentModal, setShowPDFPaymentModal] = useState(false)
   const [publishedPortfolio, setPublishedPortfolio] = useState(null)
   const [loadingPortfolio, setLoadingPortfolio] = useState(false)
   const [portfolioId, setPortfolioId] = useState(null)
@@ -573,11 +576,11 @@ function VideoEditorTemplateEditor() {
               
               <div className="flex space-x-4">
                 <button
-                  onClick={() => setWantsPDF(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                  onClick={() => setShowPDFPaymentModal(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
                 >
-                  <Download className="w-4 h-4" />
-                  <span>Download PDF</span>
+                  <Download className="w-4 h-4 text-pink-400" />
+                  <span>Download PDF (₹30)</span>
                 </button>
                 <button
                   onClick={publishPortfolio}
@@ -826,101 +829,17 @@ function VideoEditorTemplateEditor() {
           </section>
 
           {/* Footer */}
-          <footer className="bg-gradient-to-br from-gray-900 via-slate-900 to-gray-900 text-white py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-                {/* Get In Touch */}
-                <div>
-                  <h4 className="text-xl font-bold mb-6 text-purple-400">Get In Touch</h4>
-                  <div className="space-y-4">
-                    {portfolioData.footer.email && (
-                      <a href={`mailto:${portfolioData.footer.email}`} className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors group">
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-purple-600 transition-colors">
-                          <Mail className="w-5 h-5" />
-                        </div>
-                        <span>{portfolioData.footer.email}</span>
-                      </a>
-                    )}
-                    {portfolioData.footer.phone && (
-                      <a href={`tel:${portfolioData.footer.phone}`} className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors group">
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-purple-600 transition-colors">
-                          <Phone className="w-5 h-5" />
-                        </div>
-                        <span>{portfolioData.footer.phone}</span>
-                      </a>
-                    )}
-                    {portfolioData.footer.location && (
-                      <div className="flex items-center space-x-3 text-gray-300">
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center">
-                          <MapPin className="w-5 h-5" />
-                        </div>
-                        <span>{portfolioData.footer.location}</span>
-                      </div>
-                    )}
-                    {portfolioData.footer.website && (
-                      <a href={`https://${portfolioData.footer.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors group">
-                        <div className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center group-hover:bg-purple-600 transition-colors">
-                          <Globe className="w-5 h-5" />
-                        </div>
-                        <span>{portfolioData.footer.website}</span>
-                      </a>
-                    )}
-                  </div>
-                </div>
-
-                {/* Quick Stats */}
-                <div>
-                  <h4 className="text-xl font-bold mb-6 text-purple-400">Quick Stats</h4>
-                  <div className="grid grid-cols-2 gap-4">
-                    {Object.entries(portfolioData.footer.quickStats).map(([key, value]) => (
-                      <div key={key} className="bg-gray-800 bg-opacity-50 p-4 rounded-lg text-center hover:bg-opacity-70 transition-all">
-                        <div className="text-3xl font-bold text-purple-400 mb-1">{value}</div>
-                        <div className="text-sm text-gray-400 capitalize">{key}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Services */}
-                <div>
-                  <h4 className="text-xl font-bold mb-6 text-purple-400">Services</h4>
-                  <div className="space-y-4">
-                    {portfolioData.footer.services.map((service, index) => (
-                      <div key={index} className="group">
-                        <h5 className="font-semibold text-white group-hover:text-purple-400 transition-colors mb-1">
-                          {service.title}
-                        </h5>
-                        <p className="text-sm text-gray-400 leading-relaxed">{service.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-
-              {/* Social Links & Copyright */}
-              <div className="border-t border-gray-800 pt-8">
-                <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                  <div className="flex flex-wrap justify-center gap-4">
-                    {portfolioData.footer.socialLinks.map((link, index) => (
-                      <a 
-                        key={index} 
-                        href={link.url} 
-                        target="_blank" 
-                        rel="noopener noreferrer"
-                        className="w-12 h-12 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-purple-600 transition-all text-gray-300 hover:text-white hover:scale-110"
-                        title={link.platform}
-                      >
-                        {getServiceIcon(link.icon)}
-                      </a>
-                    ))}
-                  </div>
-                  <div className="text-center md:text-right">
-                    <p className="text-gray-400 text-sm">{portfolioData.footer.copyright}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </footer>
+          <TemplateFooter
+            name={portfolioData.footer?.companyName || portfolioData.profile?.name || 'Alex Vance'}
+            title={portfolioData.profile?.title || 'Senior Video Editor & Colorist'}
+            tagline={portfolioData.footer?.tagline || portfolioData.profile?.description}
+            email={portfolioData.footer?.email || portfolioData.profile?.email}
+            phone={portfolioData.footer?.phone || portfolioData.profile?.phone}
+            location={portfolioData.footer?.location || portfolioData.profile?.location}
+            socialLinks={portfolioData.footer?.socialLinks}
+            stats={portfolioData.footer?.quickStats}
+            accentColor="purple"
+          />
         </div>
       </div>
     )
@@ -933,7 +852,7 @@ function VideoEditorTemplateEditor() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/')}
               className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -949,11 +868,11 @@ function VideoEditorTemplateEditor() {
                 <span>Preview</span>
               </button>
               <button
-                onClick={() => { setIsPreview(true); setWantsPDF(true) }}
-                className="flex items-center space-x-2 px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-colors"
+                onClick={() => setShowPDFPaymentModal(true)}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
               >
-                <Download className="w-4 h-4" />
-                <span>Download PDF</span>
+                <Download className="w-4 h-4 text-pink-400" />
+                <span>Download PDF (₹30)</span>
               </button>
               <button
                 onClick={publishPortfolio}
@@ -1768,6 +1687,13 @@ function VideoEditorTemplateEditor() {
         onClose={() => setShowPublishModal(false)}
         portfolioUrl={publishedPortfolio?.publicUrl}
         subdomain={publishedPortfolio?.subdomain}
+      />
+
+      <PDFPaymentModal 
+        isOpen={showPDFPaymentModal}
+        onClose={() => setShowPDFPaymentModal(false)}
+        onPaymentSuccess={() => { setIsPreview(true); setWantsPDF(true) }}
+        portfolioName={portfolioData.profile?.name ? `${portfolioData.profile.name}'s Portfolio` : 'Video Editor Portfolio'}
       />
     </div>
   )

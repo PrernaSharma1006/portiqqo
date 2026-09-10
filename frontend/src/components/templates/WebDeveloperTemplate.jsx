@@ -23,6 +23,7 @@ import {
   Clock
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import TemplateFooter from './TemplateFooter'
 
 function WebDeveloperTemplate({ 
   isPublic = false, 
@@ -696,114 +697,30 @@ function WebDeveloperTemplate({
       )}
 
       {/* Footer */}
-      <footer id="contact" className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Get In Touch</h3>
-              <div className="space-y-3">
-                <a 
-                  href={`mailto:${profileData.email}`}
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Mail className="w-5 h-5" />
-                  <span>{profileData.email}</span>
-                </a>
-                {profileData.phone && (
-                  <a 
-                    href={`tel:${profileData.phone}`}
-                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                  >
-                    <Phone className="w-5 h-5" />
-                    <span>{profileData.phone}</span>
-                  </a>
-                )}
-                {profileData.location && (
-                  <div className="flex items-center space-x-3 text-gray-300">
-                    <MapPin className="w-5 h-5" />
-                    <span>{profileData.location}</span>
-                  </div>
-                )}
-                {profileData.website && (
-                  <a 
-                    href={`https://${profileData.website}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                  >
-                    <Globe className="w-5 h-5" />
-                    <span>{profileData.website}</span>
-                  </a>
-                )}
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
-              <div className="space-y-3">
-                <a href="#home" className="block text-gray-300 hover:text-white transition-colors">Home</a>
-                <a href="#about" className="block text-gray-300 hover:text-white transition-colors">About</a>
-                <a href="#projects" className="block text-gray-300 hover:text-white transition-colors">Projects</a>
-                <a href="#skills" className="block text-gray-300 hover:text-white transition-colors">Skills</a>
-                <a href="#experience" className="block text-gray-300 hover:text-white transition-colors">Experience</a>
-              </div>
-            </div>
-
-            {/* About */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">About</h3>
-              <p className="text-gray-300 mb-4">
-                {portfolioData.footer?.tagline || 'Full-stack developer passionate about creating scalable web applications and innovative digital solutions.'}
-              </p>
-              <div className="flex flex-wrap gap-4">
-                {portfolioData.footer?.quickStats?.experience && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.experience}</div>
-                    <div className="text-sm text-gray-300">Years Experience</div>
-                  </div>
-                )}
-                {portfolioData.footer?.quickStats?.projects && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.projects}</div>
-                    <div className="text-sm text-gray-300">Projects Done</div>
-                  </div>
-                )}
-                {portfolioData.footer?.quickStats?.clients && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.clients}</div>
-                    <div className="text-sm text-gray-300">Happy Clients</div>
-                  </div>
-                )}
-                {portfolioData.footer?.quickStats?.technologies && (
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-400">{portfolioData.footer.quickStats.technologies}</div>
-                    <div className="text-sm text-gray-300">Technologies</div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-300 mb-4 md:mb-0">
-                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. All rights reserved.`}
-              </p>
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-300 text-sm">Built with</span>
-                <a 
-                  href="mailto:portfolio.builder659@gmail.com"
-                  className="text-blue-400 hover:text-blue-300 transition-colors text-sm"
-                >
-                  Portfolio Builder
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <TemplateFooter
+        name={profileData.name}
+        title={profileData.title}
+        tagline={profileData.description || portfolioData.footer?.tagline}
+        email={profileData.email}
+        phone={profileData.phone}
+        location={profileData.location}
+        socialLinks={{
+          github: profileData.github,
+          linkedin: profileData.linkedin,
+          twitter: profileData.twitter,
+          website: profileData.website
+        }}
+        quickLinks={[
+          { label: 'Home', href: '#home' },
+          { label: 'About', href: '#about' },
+          { label: 'Projects', href: '#projects' },
+          { label: 'Skills', href: '#skills' },
+          { label: 'Experience', href: '#experience' },
+          { label: 'Contact', href: '#contact' }
+        ]}
+        accentColor="blue"
+        isHidden={isHidden('footer')}
+      />
     </div>
   )
 }

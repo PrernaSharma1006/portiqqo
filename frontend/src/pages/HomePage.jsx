@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowRight, Palette, Globe, Upload, Zap, Users, Star, Check, ExternalLink, Eye } from 'lucide-react'
+import { ArrowRight, Palette, Globe, Upload, Zap, Users, Star, Check, ExternalLink, Eye, Quote, CheckCircle2, Heart, MessageSquare, Bot, BarChart3, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import TemplateSelectionModal, { professionTemplates } from '../components/modals/TemplateSelectionModal'
 import FeedbackModal from '../components/modals/FeedbackModal'
 import { markFeedbackGiven } from '../utils/feedbackHelper'
+import Cube3DCard from '../components/cards/Cube3DCard'
+import StrokeText from '../components/ui/StrokeText'
+import BounceCards from '../components/ui/BounceCards'
+import ProfileCard from '../components/ui/ProfileCard'
+import { Code, Film, Camera, Briefcase } from 'lucide-react'
 
 // Animation variants
 const fadeInUp = {
@@ -28,24 +33,57 @@ function HomePage() {
   const [testimonials, setTestimonials] = useState([
     {
       name: "Sarah Johnson",
-      role: "UI/UX Designer",
-      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b647?w=150",
-      content: "Portiqqo made it incredibly easy to showcase my design work. The templates are beautiful and professional!",
-      rating: 5
+      role: "Lead Product Designer",
+      handle: "@sarah.design",
+      avatar: "https://images.unsplash.com/photo-1494790108755-2616b612b647?w=150&h=150&fit=crop&crop=face",
+      content: "Portiqqo made it incredibly easy to showcase my Figma case studies. I closed 3 high-ticket freelance clients within two weeks of launching!",
+      rating: 5,
+      highlight: "Closed 3 high-ticket clients"
     },
     {
       name: "Mike Chen",
-      role: "Full Stack Developer",
-      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150",
-      content: "As a developer, I appreciate the clean code and fast loading times. My clients are impressed with my portfolio.",
-      rating: 5
+      role: "Full Stack Engineer",
+      handle: "@mikechen.dev",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face",
+      content: "The GitHub integration and instant custom domain setup are brilliant. My portfolio loads blazingly fast and recruiters constantly compliment the clean UI.",
+      rating: 5,
+      highlight: "Blazingly fast & clean UI"
     },
     {
       name: "Emma Davis",
-      role: "Photographer",
-      avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150",
-      content: "The image quality is fantastic and the gallery layouts are perfect for showcasing my photography work.",
-      rating: 5
+      role: "Commercial Photographer",
+      handle: "@emmadavis.photo",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=face",
+      content: "The high-resolution photo gallery and lightbox view let my shots speak for themselves. The best portfolio tool for visual creators hands down.",
+      rating: 5,
+      highlight: "Best for visual creators"
+    },
+    {
+      name: "Alex Rivera",
+      role: "Motion & Video Editor",
+      handle: "@alexmotion.cc",
+      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop&crop=face",
+      content: "Embedding 4K showreels with custom aspect ratios works like magic. Portiqqo helped me stand out from dozens of applicants for a major studio project.",
+      rating: 5,
+      highlight: "4K video showcase"
+    },
+    {
+      name: "Priya Sharma",
+      role: "Growth & Digital Marketer",
+      handle: "@priyagrowth.me",
+      avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&h=150&fit=crop&crop=face",
+      content: "Presenting SEO growth curves and campaign ROI in an interactive format completely changed my pitch conversion rate. 10/10 recommended!",
+      rating: 5,
+      highlight: "Boosted pitch conversions"
+    },
+    {
+      name: "David Kim",
+      role: "Frontend Architect",
+      handle: "@davidkim.tech",
+      avatar: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&h=150&fit=crop&crop=face",
+      content: "I used to spend weeks rebuilding my portfolio from scratch. With Portiqqo, I had a custom-branded site live with my own domain in under 15 minutes.",
+      rating: 5,
+      highlight: "Live in under 15 minutes"
     }
   ])
   const navigate = useNavigate()
@@ -131,24 +169,106 @@ function HomePage() {
 
   const features = [
     {
-      icon: <Palette className="w-6 h-6" />,
-      title: "Professional Templates",
-      description: "Choose from profession-specific templates designed by experts for developers, designers, photographers, and more."
+      icon: <Palette className="w-6 h-6 text-pink-500" />,
+      title: "Profession-Tailored Templates",
+      description: "Designed specifically for Developers, UI/UX Designers, Photographers, and Marketers with customized showcase blocks.",
+      gradient: "from-pink-500/10 via-amber-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+      badge: "6+ Professions",
+      backTagline: "Engineered for your creative craft",
+      backDetails: [
+        "Tailored presets for Devs, Designers, Photographers & Editors",
+        "Interactive case study, showreel & portfolio sections",
+        "Instant 1-click theme, font & layout customization"
+      ]
     },
     {
-      icon: <Upload className="w-6 h-6" />,
-      title: "Easy Upload System",
-      description: "Upload your work with drag-and-drop simplicity. Support for images, videos, PDFs, and external links."
+      icon: <Bot className="w-6 h-6 text-pink-500" />,
+      title: "AI Portfolio Assistant",
+      description: "Powered by Smart AI. Automatically generate compelling project case studies, bio summaries, and SEO descriptions.",
+      gradient: "from-pink-500/10 via-stone-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-[#f5ebe0] text-pink-600 border-[#e6ccb2]",
+      badge: "Smart AI",
+      backTagline: "Powered by Advanced AI",
+      backDetails: [
+        "Auto-generate project case studies & descriptions",
+        "Instant professional bio & skill highlights writer",
+        "Automated SEO meta tags & social preview generator"
+      ]
     },
     {
-      icon: <Globe className="w-6 h-6" />,
-      title: "Unique Subdomain",
-      description: "Get your own professional subdomain instantly. Share your portfolio with a memorable, branded URL."
+      icon: <Globe className="w-6 h-6 text-pink-500" />,
+      title: "Custom Domains & Subdomains",
+      description: "Connect your own branded domain (yourname.com) with automatic SSL certificate or get a free custom subdomain in seconds.",
+      gradient: "from-pink-500/10 via-amber-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+      badge: "100% White-Label",
+      backTagline: "Zero Portiqqo branding required",
+      backDetails: [
+        "Free custom subdomain (yourname.portiqqo.me)",
+        "Connect branded custom domain (yourname.com)",
+        "Automatic SSL certificates & edge CDN binding"
+      ]
     },
     {
-      icon: <Zap className="w-6 h-6" />,
-      title: "Lightning Fast",
-      description: "Optimized for speed and performance. Your portfolio loads instantly on any device, anywhere."
+      icon: <Upload className="w-6 h-6 text-pink-500" />,
+      title: "Instant Media & File Uploads",
+      description: "Drag-and-drop support for high-res images, 4K video embeds (YouTube/Vimeo), and downloadable PDF resumes.",
+      gradient: "from-pink-500/10 via-stone-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-[#f5ebe0] text-pink-600 border-[#e6ccb2]",
+      badge: "50MB Max Files",
+      backTagline: "Lightning fast asset CDN storage",
+      backDetails: [
+        "Drag & drop high-resolution photo galleries",
+        "4K video embeds with custom aspect ratios",
+        "Downloadable PDF resumes & client proposal docs"
+      ]
+    },
+    {
+      icon: <BarChart3 className="w-6 h-6 text-pink-500" />,
+      title: "Visitor Analytics & Insights",
+      description: "Track real-time pageviews, client referrers (LinkedIn, GitHub, Direct), and discover which projects get the most attention.",
+      gradient: "from-pink-500/10 via-amber-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+      badge: "Live Metrics",
+      backTagline: "Real-time client tracking dashboard",
+      backDetails: [
+        "Real-time pageview counter & unique visitor stats",
+        "Client referral tracking (LinkedIn, GitHub, Direct)",
+        "See which project case studies convert best"
+      ]
+    },
+    {
+      icon: <Zap className="w-6 h-6 text-pink-500" />,
+      title: "Blazing Performance & SEO",
+      description: "Built for speed with 99+ Google Lighthouse scores, social OpenGraph share cards, and mobile-first responsiveness.",
+      gradient: "from-pink-500/10 via-amber-500/5 to-transparent",
+      borderColor: "border-[#f472b6]/80 dark:border-pink-500/60",
+      sideColor: "bg-[#f472b6] dark:bg-pink-600 border-[#ec4899] dark:border-pink-500",
+      topColor: "bg-[#f472b6]/90 dark:bg-pink-500/90 border-[#f472b6] dark:border-pink-400",
+      iconBg: "bg-pink-500/10 text-pink-600 border-pink-500/20",
+      badge: "99+ Lighthouse",
+      backTagline: "Built for maximum search visibility",
+      backDetails: [
+        "Sub-0.4 second First Contentful Paint load time",
+        "Automatic OpenGraph social sharing previews",
+        "Mobile-first responsive design across all devices"
+      ]
     }
   ]
 
@@ -175,6 +295,17 @@ function HomePage() {
     "Email Support"
   ]
 
+  const annualFeatures = [
+    "7 Days Free Trial",
+    "1 Portfolio Website",
+    "Professional Templates",
+    "Custom Subdomain",
+    "Mobile Responsive",
+    "Advanced Analytics & Insights",
+    "Priority Support",
+    "Save ₹272 / Year (28% OFF)"
+  ]
+
   return (
     <>
       <Helmet>
@@ -184,20 +315,7 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-slate-950 via-slate-900 to-blue-950 py-12 md:py-16">
-        {/* Animated Background Elements */}
-        <div className="absolute inset-0">
-          <div className="absolute top-10 left-5 md:top-20 md:left-10 w-48 h-48 md:w-72 md:h-72 bg-purple-600/20 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-10 right-5 md:bottom-20 md:right-10 w-64 h-64 md:w-96 md:h-96 bg-blue-600/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 lg:w-[500px] lg:h-[500px] bg-violet-600/10 rounded-full blur-3xl"></div>
-        </div>
-
-        {/* Grid Pattern Overlay */}
-        <div className="absolute inset-0 opacity-[0.03]" style={{
-          backgroundImage: 'linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px)',
-          backgroundSize: '50px 50px'
-        }}></div>
-
+      <section className="relative overflow-hidden bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
         <div className="relative container-width section-padding">
           <motion.div 
             className="max-w-7xl mx-auto"
@@ -206,29 +324,37 @@ function HomePage() {
             variants={staggerChildren}
           >
             {/* Main Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-6 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Left Content */}
-              <div className="space-y-4">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500/10 border border-blue-500/20 rounded-full text-blue-300 text-sm backdrop-blur-sm">
-                  <Zap className="w-4 h-4" />
+              <div className="space-y-4 sm:space-y-5">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm">
+                  <Zap className="w-3.5 h-3.5 text-pink-500" />
                   <span>No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
-                <motion.h1 
-                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-heading font-extrabold leading-tight"
-                  variants={fadeInUp}
-                >
-                  <span className="text-white">Build Your</span>
-                  <br />
-                  <span className="bg-gradient-to-r from-blue-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">
-                    Dream Portfolio
-                  </span>
-                  <br />
-                  <span className="text-white">Today</span>
-                </motion.h1>
+                <motion.div variants={fadeInUp}>
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2">
+                    <span>Build Your</span>
+                    <StrokeText 
+                      text="Dream Portfolio"
+                      fillColor="#f472b6"
+                      strokeColor="#f472b6"
+                      strokeWidth={2}
+                      fontSize={100}
+                      fontWeight={900}
+                      letterSpacing={-1}
+                      trigger="loop"
+                      repeatDelay={2.5}
+                      fillMode="wipe"
+                      drawDuration={1.4}
+                      className="text-[#f472b6] dark:text-[#f472b6]"
+                    />
+                    <span>Today</span>
+                  </h1>
+                </motion.div>
                 
                 <motion.p 
-                  className="text-base sm:text-lg md:text-xl text-gray-300 leading-relaxed max-w-xl"
+                  className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-lg font-normal"
                   variants={fadeInUp}
                 >
                   Stunning templates, powerful customization, and your own domain. 
@@ -236,20 +362,20 @@ function HomePage() {
                 </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1"
                   variants={fadeInUp}
                 >
                   <Link 
                     to="/auth" 
-                    className="group px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white rounded-xl font-bold text-base sm:text-lg shadow-2xl shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 hover:-translate-y-1 flex items-center justify-center"
+                    className="group px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center"
                   >
                     Start Building Free
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   
                   <button 
                     onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-6 sm:px-8 py-3 sm:py-4 bg-white/5 hover:bg-white/10 text-white border-2 border-white/20 hover:border-white/40 rounded-xl font-bold text-base sm:text-lg backdrop-blur-sm transition-all duration-300 hover:-translate-y-1"
+                    className="px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                   >
                     Explore Templates
                   </button>
@@ -262,8 +388,8 @@ function HomePage() {
                 variants={fadeInUp}
               >
                 <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
-                  {/* Rotating Circle - Aesthetic Version (Hidden on mobile, visible on md and up) */}
-                  <div className="hidden md:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 20s linear infinite' }}>
+                  {/* Rotating Circle - Editorial Beige Version */}
+                  <div className="hidden md:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
                     <svg className="w-full h-full" viewBox="0 0 450 450">
                       <defs>
                         <path
@@ -271,7 +397,7 @@ function HomePage() {
                           d="M 225, 225 m -215, 0 a 215,215 0 1,1 430,0 a 215,215 0 1,1 -430,0"
                         />
                       </defs>
-                      <text className="text-[16px] lg:text-[18px]" fontWeight="600" fill="#cbd5e1" opacity="0.35" letterSpacing="6">
+                      <text className="text-[15px] lg:text-[17px]" fontWeight="700" fill="#a89f91" opacity="0.45" letterSpacing="6">
                         <textPath href="#circlePath">
                           PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK
                         </textPath>
@@ -282,20 +408,20 @@ function HomePage() {
                   {/* Center Content - Cards and Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
-                      {/* Decorative Cards - Hidden on mobile, shown on md and up */}
+                      {/* Decorative Cards */}
                       <motion.div 
-                        className="hidden md:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-32 h-24 sm:w-40 sm:h-28 lg:w-48 lg:h-32 bg-gradient-to-br from-blue-500/90 to-violet-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[-12deg]"
-                        animate={{ y: [0, -10, 0], rotate: [-12, -8, -12] }}
+                        className="hidden md:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-36 h-26 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-xl p-4 rotate-[-10deg]"
+                        animate={{ y: [0, -8, 0], rotate: [-10, -6, -10] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
-                        <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Web Developer</div>
-                        <div className="w-full h-1.5 sm:h-2 bg-white/30 rounded-full mb-1"></div>
-                        <div className="w-3/4 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
+                        <div className="text-stone-900 dark:text-stone-100 text-xs sm:text-sm font-bold mb-2">Web Developer</div>
+                        <div className="w-full h-2 bg-pink-400/30 rounded-full mb-1.5"></div>
+                        <div className="w-3/4 h-2 bg-pink-400/30 rounded-full"></div>
                       </motion.div>
 
                       <motion.div 
-                        className="hidden md:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-32 h-24 sm:w-38 sm:h-26 lg:w-44 lg:h-28 bg-gradient-to-br from-purple-500/90 to-pink-600/90 rounded-2xl shadow-2xl backdrop-blur-sm p-3 sm:p-4 rotate-[8deg]"
-                        animate={{ y: [0, 10, 0], rotate: [8, 12, 8] }}
+                        className="hidden md:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-36 h-26 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-2xl shadow-xl p-4 rotate-[8deg]"
+                        animate={{ y: [0, 8, 0], rotate: [8, 11, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
                         <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Photographer</div>
@@ -317,8 +443,8 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-20 bg-purple-50 dark:bg-slate-900 transition-colors duration-300">
-        <div className="container-width section-padding">
+      <section id="features" className="py-24 bg-gradient-to-b from-purple-50/50 via-white to-violet-50/40 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300 relative overflow-hidden">
+        <div className="container-width section-padding relative z-10">
           <motion.div 
             className="text-center mb-16"
             initial="initial"
@@ -326,42 +452,38 @@ function HomePage() {
             viewport={{ once: true }}
             variants={staggerChildren}
           >
+            <motion.div 
+              variants={fadeInUp}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 text-stone-900 dark:text-pink-300 text-xs sm:text-sm font-semibold mb-4 shadow-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-pink-500" />
+              <span>THE ULTIMATE FREELANCE TOOLKIT</span>
+            </motion.div>
+
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-slate-50 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-4 tracking-tight"
               variants={fadeInUp}
             >
               Everything You Need to Succeed
             </motion.h2>
             <motion.p 
-              className="text-xl text-purple-700 dark:text-purple-300 max-w-2xl mx-auto"
+              className="text-base sm:text-xl text-stone-600 dark:text-stone-300 max-w-2xl mx-auto leading-relaxed"
               variants={fadeInUp}
             >
-              Our platform provides all the tools and features you need to create a portfolio that stands out
+              From custom domains to Smart AI assistants and 4K media showcases, build a portfolio that converts visitors into paying clients.
             </motion.p>
           </motion.div>
 
           <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-7xl mx-auto"
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={staggerChildren}
           >
             {features.map((feature, index) => (
-              <motion.div 
-                key={index}
-                className="card p-6 text-center hover:shadow-lg transition-all duration-300"
-                variants={fadeInUp}
-              >
-                <div className="inline-flex items-center justify-center w-12 h-12 bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 rounded-lg mb-4">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-secondary-900 dark:text-slate-100 mb-2">
-                  {feature.title}
-                </h3>
-                <p className="text-secondary-600 dark:text-slate-300">
-                  {feature.description}
-                </p>
+              <motion.div key={index} variants={fadeInUp}>
+                <Cube3DCard feature={feature} />
               </motion.div>
             ))}
           </motion.div>
@@ -369,141 +491,322 @@ function HomePage() {
       </section>
 
       {/* Templates Showcase Section */}
-      <section id="templates" className="py-20 bg-violet-50 dark:bg-slate-900 transition-colors duration-300">
-        <div className="container-width section-padding">
+      <section id="templates" className="py-20 bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 transition-colors duration-300 relative overflow-hidden">
+        <div className="container-width section-padding relative z-10">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-10"
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={staggerChildren}
           >
+            <motion.div 
+              variants={fadeInUp}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 text-stone-900 dark:text-pink-300 text-xs sm:text-sm font-semibold mb-4 shadow-sm"
+            >
+              <Palette className="w-3.5 h-3.5 text-pink-500" />
+              <span>CURATED PROFESSION TEMPLATES</span>
+            </motion.div>
+
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-gray-900 dark:text-slate-50 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-4 tracking-tight"
               variants={fadeInUp}
             >
-              Choose Your Perfect Template
+              Choose Your <span className="text-pink-500">Perfect Template</span>
             </motion.h2>
             <motion.p 
-              className="text-xl text-violet-700 dark:text-violet-300 max-w-2xl mx-auto"
+              className="text-base sm:text-xl text-stone-600 dark:text-stone-300 max-w-2xl mx-auto leading-relaxed"
               variants={fadeInUp}
             >
-              Specialized templates designed for different professions - pick yours and start building
+              Handcrafted, responsive portfolio templates engineered for your specific creative craft.
             </motion.p>
           </motion.div>
 
-          <motion.div 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+          {/* BounceCards Interactive Showcase */}
+          <motion.div
+            variants={fadeInUp}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
-            variants={staggerChildren}
+            className="w-full flex justify-center py-6 overflow-hidden min-h-[420px]"
+          >
+            <BounceCards
+              cards={[
+                {
+                  id: 'developer',
+                  name: 'Web Developer',
+                  content: (
+                    <div className="w-full h-full p-5 bg-[#141210] text-stone-100 flex flex-col justify-between relative group select-none">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-1 bg-pink-500/20 text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Development</span>
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      </div>
+                      <div className="my-auto space-y-3">
+                        <div className="p-3 bg-stone-900 rounded-xl border border-stone-800 font-mono text-[11px] text-pink-300">
+                          <span className="text-stone-500">// dev.config.js</span>
+                          <br />
+                          <span className="text-pink-400">const</span> dev = &#123;
+                          <br />
+                          &nbsp;&nbsp;stack: <span className="text-amber-200">'React, Node'</span>
+                          <br />
+                          &#125;;
+                        </div>
+                        <h4 className="text-lg font-bold text-stone-100">Web Developer</h4>
+                        <p className="text-xs text-stone-400 line-clamp-2">For software engineers, frontend & full-stack devs.</p>
+                      </div>
+                      <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-xs font-bold text-pink-400 group-hover:translate-x-0.5 transition-transform">
+                        <span>Use Template</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  id: 'designer',
+                  name: 'UI/UX Designer',
+                  content: (
+                    <div className="w-full h-full p-5 bg-[#fdfbf7] dark:bg-stone-900 text-stone-900 dark:text-stone-100 flex flex-col justify-between relative group border border-[#e6ccb2] dark:border-stone-800 select-none">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-1 bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Product Design</span>
+                        <Sparkles className="w-4 h-4 text-pink-500" />
+                      </div>
+                      <div className="my-auto space-y-3">
+                        <div className="p-3 bg-[#f5ebe0] dark:bg-stone-800 rounded-xl border border-[#e6ccb2] dark:border-stone-700">
+                          <div className="flex gap-1.5 mb-2">
+                            <div className="w-3 h-3 rounded-full bg-pink-400" />
+                            <div className="w-3 h-3 rounded-full bg-amber-400" />
+                            <div className="w-3 h-3 rounded-full bg-stone-400" />
+                          </div>
+                          <div className="h-2 w-3/4 bg-stone-300 dark:bg-stone-700 rounded mb-1" />
+                          <div className="h-2 w-1/2 bg-pink-300 dark:bg-pink-500/40 rounded" />
+                        </div>
+                        <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">UI/UX Designer</h4>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">Figma creators, case studies & design systems.</p>
+                      </div>
+                      <div className="pt-2 border-t border-[#e6ccb2] dark:border-stone-800 flex justify-between items-center text-xs font-bold text-pink-600 dark:text-pink-400 group-hover:translate-x-0.5 transition-transform">
+                        <span>Use Template</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  id: 'photographer',
+                  name: 'Photographer',
+                  content: (
+                    <div className="w-full h-full p-5 bg-[#141210] text-stone-100 flex flex-col justify-between relative group select-none">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-1 bg-pink-500/20 text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Visual & Photo</span>
+                        <Camera className="w-4 h-4 text-pink-400" />
+                      </div>
+                      <div className="my-auto space-y-3">
+                        <div className="h-20 rounded-xl bg-gradient-to-tr from-pink-900/60 to-stone-800 border border-stone-800 flex items-center justify-center">
+                          <div className="w-9 h-9 rounded-full border-2 border-pink-400/60 flex items-center justify-center">
+                            <div className="w-3.5 h-3.5 rounded-full bg-pink-500" />
+                          </div>
+                        </div>
+                        <h4 className="text-lg font-bold text-stone-100">Photographer</h4>
+                        <p className="text-xs text-stone-400 line-clamp-2">Distraction-free layout for photo galleries & artists.</p>
+                      </div>
+                      <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-xs font-bold text-pink-400 group-hover:translate-x-0.5 transition-transform">
+                        <span>Use Template</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  id: 'videographer',
+                  name: 'Video Editor',
+                  content: (
+                    <div className="w-full h-full p-5 bg-[#fdfbf7] dark:bg-stone-900 text-stone-900 dark:text-stone-100 flex flex-col justify-between relative group border border-[#e6ccb2] dark:border-stone-800 select-none">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-1 bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Motion & Video</span>
+                        <Film className="w-4 h-4 text-pink-500" />
+                      </div>
+                      <div className="my-auto space-y-3">
+                        <div className="h-20 rounded-xl bg-[#f5ebe0] dark:bg-stone-800 border border-[#e6ccb2] dark:border-stone-700 flex items-center justify-center">
+                          <div className="w-9 h-9 rounded-full bg-[#f472b6] text-stone-950 flex items-center justify-center shadow-md text-xs font-bold">
+                            ▶
+                          </div>
+                        </div>
+                        <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">Video Editor</h4>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">4K showreels, animators & video creators.</p>
+                      </div>
+                      <div className="pt-2 border-t border-[#e6ccb2] dark:border-stone-800 flex justify-between items-center text-xs font-bold text-pink-600 dark:text-pink-400 group-hover:translate-x-0.5 transition-transform">
+                        <span>Use Template</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )
+                },
+                {
+                  id: 'general',
+                  name: 'General Portfolio',
+                  content: (
+                    <div className="w-full h-full p-5 bg-[#141210] text-stone-100 flex flex-col justify-between relative group select-none">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="px-2.5 py-1 bg-pink-500/20 text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">All Creators</span>
+                        <Briefcase className="w-4 h-4 text-pink-400" />
+                      </div>
+                      <div className="my-auto space-y-3">
+                        <div className="p-3 bg-stone-900 rounded-xl border border-stone-800 space-y-1.5">
+                          <div className="h-2 w-full bg-stone-700 rounded" />
+                          <div className="h-2 w-2/3 bg-pink-500/60 rounded" />
+                        </div>
+                        <h4 className="text-lg font-bold text-stone-100">General Portfolio</h4>
+                        <p className="text-xs text-stone-400 line-clamp-2">Versatile modular layout for any creative craft.</p>
+                      </div>
+                      <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-xs font-bold text-pink-400 group-hover:translate-x-0.5 transition-transform">
+                        <span>Use Template</span>
+                        <ArrowRight className="w-4 h-4" />
+                      </div>
+                    </div>
+                  )
+                }
+              ]}
+              containerWidth={1000}
+              containerHeight={380}
+              cardWidth={260}
+              cardHeight={340}
+              animationDelay={0.2}
+              animationStagger={0.08}
+              easeType="elastic.out(1, 0.7)"
+              transformStyles={[
+                'rotate(-12deg) translate(-270px, 15px)',
+                'rotate(-6deg) translate(-135px, -5px)',
+                'rotate(0deg) translate(0px, 0px)',
+                'rotate(6deg) translate(135px, -5px)',
+                'rotate(12deg) translate(270px, 15px)'
+              ]}
+              enableHover={true}
+              onCardClick={(item) => handleProfessionSelect({ id: item.id })}
+            />
+          </motion.div>
+
+          {/* Profession Quick Select Pills */}
+          <motion.div 
+            className="flex flex-wrap items-center justify-center gap-2.5 mt-6 max-w-3xl mx-auto"
+            initial={{ opacity: 0, y: 15 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
           >
             {professionTemplates.map((template) => (
-              <motion.div 
+              <button
                 key={template.id}
-                className="bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer group"
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02 }}
                 onClick={() => handleProfessionSelect(template)}
+                className="px-4 py-2 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-full text-xs font-bold transition-all duration-200 hover:scale-105 shadow-sm flex items-center gap-2"
               >
-                <div className={`${template.color} p-8 text-white`}>
-                  <div className="mb-4">{template.icon}</div>
-                  <h3 className="text-2xl font-bold mb-2">{template.name}</h3>
-                  <p className="text-white/90">{template.description}</p>
-                </div>
-                <div className="p-6">
-                  <div className="mb-4">
-                    <h4 className="font-semibold text-gray-900 mb-2">Key Features:</h4>
-                    <ul className="space-y-1">
-                      {template.features.map((feature, idx) => (
-                        <li key={idx} className="flex items-start text-sm text-gray-600">
-                          <Check className="w-4 h-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigate(`/preview/${template.id}`)
-                      }}
-                      className="flex-1 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium group/preview flex items-center justify-center"
-                    >
-                      <Eye className="w-4 h-4 mr-2" />
-                      Preview
-                    </button>
-                    <button
-                      className="flex-1 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium group/use flex items-center justify-center"
-                    >
-                      Use Template
-                      <ArrowRight className="w-4 h-4 ml-2 group-hover/use:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
-                </div>
-              </motion.div>
+                <span>{template.name}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-pink-500" />
+              </button>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* Professions Section */}
-      {/* Testimonials Section - Auto-scrolling Carousel */}
-      <section className="py-20 bg-white dark:bg-slate-800 overflow-hidden transition-colors duration-300">
+      {/* Testimonials Section - Modern Social Proof Carousel */}
+      <section className="py-20 bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 overflow-hidden transition-colors duration-300 relative">
         <div className="container-width section-padding">
           <motion.div 
-            className="text-center mb-16"
+            className="text-center mb-14"
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={staggerChildren}
           >
+            <motion.div 
+              variants={fadeInUp}
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 text-stone-900 dark:text-pink-300 text-xs sm:text-sm font-semibold mb-4 shadow-sm"
+            >
+              <div className="flex items-center gap-0.5 text-amber-500">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-3.5 h-3.5 fill-current text-amber-500" />
+                ))}
+              </div>
+              <span className="font-bold">4.9/5</span>
+              <span className="text-stone-400 dark:text-stone-500">&bull;</span>
+              <span>Trusted by 2,500+ Freelancers & Creators</span>
+            </motion.div>
+
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 dark:text-slate-50 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-4 tracking-tight"
               variants={fadeInUp}
             >
               Loved by Creators Worldwide
             </motion.h2>
             <motion.p 
-              className="text-xl text-secondary-600 dark:text-slate-300 max-w-2xl mx-auto"
+              className="text-base sm:text-xl text-stone-600 dark:text-stone-300 max-w-2xl mx-auto leading-relaxed"
               variants={fadeInUp}
             >
-              See what our users have to say about their Portiqqo experience
+              See how developers, designers, and video creators win dream clients with Portiqqo
             </motion.p>
           </motion.div>
 
-          {/* Auto-scrolling testimonials */}
-          <div className="relative mb-12">
-            <div className="flex gap-6 animate-scroll-left">
-              {/* Duplicate testimonials for seamless loop */}
-              {[...testimonials, ...testimonials].map((testimonial, index) => (
+          {/* Continuous Smooth Infinite Marquee with Left & Right Gradient Masks */}
+          <div className="relative mb-14 overflow-hidden py-4 -mx-4 sm:-mx-6 lg:-mx-8">
+            {/* Left Edge Gradient Fade */}
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-16 sm:w-36 bg-gradient-to-r from-[#f9f6f0] dark:from-[#141210] to-transparent z-10" />
+            
+            {/* Right Edge Gradient Fade */}
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-16 sm:w-36 bg-gradient-to-l from-[#f9f6f0] dark:from-[#141210] to-transparent z-10" />
+
+            <div className="flex gap-6 animate-scroll-left hover:[animation-play-state:paused] w-max">
+              {/* Duplicate testimonials 3x for endless seamless loop */}
+              {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
                 <div 
                   key={index}
-                  className="flex-shrink-0 w-80 bg-gradient-to-br from-slate-50 to-white dark:from-slate-700 dark:to-slate-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100 dark:border-slate-600"
+                  className="w-[340px] sm:w-[380px] flex-shrink-0 bg-[#fdfbf7] dark:bg-[#1a1816] rounded-2xl p-6 sm:p-7 shadow-md hover:shadow-xl transition-all duration-300 border border-[#e6ccb2] dark:border-stone-800 flex flex-col justify-between group hover:-translate-y-1 relative"
                 >
-                  <div className="flex items-center mb-4">
-                    {[...Array(5)].map((_, i) => (
-                      <Star 
-                        key={i} 
-                        className={`w-5 h-5 ${
-                          i < testimonial.rating 
-                            ? 'text-yellow-400 fill-yellow-400' 
-                            : 'text-gray-300'
-                        }`} 
-                      />
-                    ))}
-                  </div>
-                  <p className="text-gray-700 dark:text-slate-300 mb-6 text-sm leading-relaxed line-clamp-4">
-                    "{testimonial.content}"
-                  </p>
+                  {/* Top: Stars & Highlight Badge */}
                   <div>
-                    <div className="font-semibold text-gray-900 dark:text-slate-100">
-                      {testimonial.name}
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-1">
+                        {[...Array(testimonial.rating || 5)].map((_, i) => (
+                          <Star 
+                            key={i} 
+                            className="w-4 h-4 text-amber-500 fill-amber-500" 
+                          />
+                        ))}
+                      </div>
+                      
+                      {testimonial.highlight && (
+                        <span className="text-[11px] font-semibold text-pink-600 dark:text-pink-300 bg-[#f5ebe0] dark:bg-stone-800 px-2.5 py-0.5 rounded-full border border-[#e6ccb2] dark:border-stone-700">
+                          {testimonial.highlight}
+                        </span>
+                      )}
                     </div>
-                    <div className="text-sm text-gray-500 dark:text-slate-400">
-                      {testimonial.role}
+
+                    {/* Testimonial Quote */}
+                    <div className="relative mb-6">
+                      <Quote className="w-6 h-6 text-stone-300 dark:text-stone-700 absolute -top-2 -left-1 -z-0 opacity-60" />
+                      <p className="text-stone-800 dark:text-stone-200 text-sm sm:text-[15px] leading-relaxed relative z-10 italic">
+                        "{testimonial.content}"
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Creator Info Footer */}
+                  <div className="flex items-center gap-3 pt-4 border-t border-[#e6ccb2]/60 dark:border-stone-800">
+                    <img 
+                      src={testimonial.avatar} 
+                      alt={testimonial.name} 
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-pink-400/40 shadow-sm flex-shrink-0"
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <h4 className="font-bold text-stone-900 dark:text-stone-100 text-sm sm:text-base truncate">
+                          {testimonial.name}
+                        </h4>
+                        <CheckCircle2 className="w-4 h-4 text-pink-500 flex-shrink-0" title="Verified Creator" />
+                      </div>
+                      <div className="flex items-center justify-between text-xs text-stone-500 dark:text-stone-400">
+                        <span className="truncate">{testimonial.role}</span>
+                        {testimonial.handle && (
+                          <span className="font-mono text-pink-500 dark:text-pink-400 text-[11px]">{testimonial.handle}</span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -511,9 +814,9 @@ function HomePage() {
             </div>
           </div>
 
-          {/* Share Feedback Button - Below carousel */}
+          {/* Share Feedback Button & Trust Metrics */}
           <motion.div 
-            className="text-center"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -521,25 +824,21 @@ function HomePage() {
           >
             <button
               onClick={() => setIsFeedbackModalOpen(true)}
-              className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-purple-600 to-blue-600 rounded-xl hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl hover:scale-105"
+              className="group relative inline-flex items-center justify-center px-8 py-3.5 font-extrabold text-stone-950 text-sm sm:text-base transition-all duration-300 bg-[#f472b6] hover:bg-[#ec4899] rounded-2xl shadow-lg shadow-pink-500/20 hover:scale-105"
             >
               <span className="relative flex items-center gap-2">
-                <Star className="w-5 h-5 fill-current" />
-                Share Your Feedback
-                <Star className="w-5 h-5 fill-current" />
+                <MessageSquare className="w-4 h-4" />
+                Share Your Story & Feedback
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </span>
-              <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-400 to-blue-400 blur-lg opacity-30 group-hover:opacity-50 transition-opacity -z-10"></div>
             </button>
-            <p className="text-sm text-gray-500 mt-4">
-              Help us improve • Your feedback matters
-            </p>
           </motion.div>
         </div>
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
-        <div className="container-width section-padding">
+      <section id="pricing" className="py-24 bg-gradient-to-b from-[#f9f6f0] via-[#f5ebe0]/40 to-[#f9f6f0] dark:from-stone-950 dark:via-stone-900 dark:to-stone-950 transition-colors duration-300 relative overflow-hidden">
+        <div className="container-width section-padding relative z-10">
           <motion.div 
             className="text-center mb-16"
             initial="initial"
@@ -548,72 +847,166 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold text-secondary-900 dark:text-slate-50 mb-4"
+              className="text-3xl sm:text-4xl md:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-100 mb-4 tracking-tight"
               variants={fadeInUp}
             >
-              Try Free for 7 Days, Then Just ₹81/Month
+              Simple, Transparent Pricing
             </motion.h2>
             <motion.p 
-              className="text-xl text-secondary-600 dark:text-slate-300 max-w-2xl mx-auto"
+              className="text-base sm:text-xl text-stone-600 dark:text-stone-300 max-w-2xl mx-auto leading-relaxed"
               variants={fadeInUp}
             >
-              Build your professional portfolio risk-free with our 7-day trial. Upgrade to Premium for just ₹81/month!
+              Start with a 7-day risk-free trial on any plan. Cancel anytime with zero hassle!
             </motion.p>
           </motion.div>
 
           <motion.div 
-            className="max-w-lg mx-auto"
+            className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 items-stretch px-2 sm:px-4"
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
             variants={fadeInUp}
           >
-            <div className="card p-8 relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-semibold">
-                  7 DAYS FREE TRIAL
-                </span>
-              </div>
-              
-              <div className="text-center mb-8">
-                <h3 className="text-2xl font-bold text-secondary-900 mb-2">Professional Portfolio</h3>
-                <div className="text-4xl font-bold text-secondary-900 mb-2">
-                  ₹81<span className="text-lg font-normal text-secondary-600">/month</span>
+            {/* Monthly Plan Card */}
+            <ProfileCard
+              behindGlowEnabled={true}
+              behindGlowColor="rgba(244, 114, 182, 0.35)"
+              behindGlowSize="50%"
+              enableTilt={true}
+              showUserInfo={false}
+              innerGradient="linear-gradient(150deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 235, 224, 0.75) 100%)"
+              className="w-full h-full"
+            >
+              <div className="relative flex flex-col h-full text-stone-900 dark:text-stone-100 justify-between">
+                <div>
+                  {/* 7 Days Free Trial Badge */}
+                  <div className="flex justify-center mb-5">
+                    <span className="inline-flex items-center gap-1.5 bg-pink-100 dark:bg-pink-950/80 text-pink-700 dark:text-pink-300 text-xs font-extrabold uppercase px-3.5 py-1.5 rounded-full tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5 text-pink-500 fill-pink-500" />
+                      7 DAYS FREE TRIAL
+                    </span>
+                  </div>
+                  
+                  <div className="text-center mb-5">
+                    <h3 className="text-2xl font-extrabold text-stone-900 dark:text-stone-100 mb-1 tracking-tight">
+                      Monthly Plan
+                    </h3>
+                    <div className="flex items-baseline justify-center gap-1 my-2">
+                      <span className="text-4xl font-black text-stone-900 dark:text-stone-100 tracking-tight">₹81</span>
+                      <span className="text-base font-semibold text-stone-600 dark:text-stone-400">/month</span>
+                    </div>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 font-medium">
+                      Billed monthly after 7-day trial • Cancel anytime
+                    </p>
+                  </div>
+
+                  <div className="w-full h-px bg-stone-300/60 dark:bg-stone-700/60 my-3" />
+
+                  <ul className="space-y-2.5 my-4">
+                    {pricingFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-center text-stone-800 dark:text-stone-200 font-semibold text-xs sm:text-sm">
+                        <div className="w-5 h-5 rounded-full bg-pink-100 dark:bg-pink-950/80 text-pink-600 dark:text-pink-400 flex items-center justify-center mr-2.5 flex-shrink-0">
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <p className="text-secondary-600">After 7-day free trial • Cancel anytime</p>
-              </div>
 
-              <ul className="space-y-4 mb-8">
-                {pricingFeatures.map((feature, index) => (
-                  <li key={index} className="flex items-center">
-                    <Check className="w-5 h-5 text-green-500 mr-3 flex-shrink-0" />
-                    <span className="text-secondary-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
+                <div>
+                  <div className="mt-5 text-center">
+                    <Link 
+                      to="/auth"
+                      className="w-full py-3.5 text-sm font-extrabold text-stone-100 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group"
+                    >
+                      <span>Start Monthly Trial</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
 
-              <div className="text-center">
-                <Link 
-                  to="/auth"
-                  className="btn-primary w-full py-3 text-lg"
-                >
-                  Get Started Free
-                </Link>
+                  <div className="mt-3 text-center">
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                      No credit card required for trial
+                    </p>
+                  </div>
+                </div>
               </div>
+            </ProfileCard>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-secondary-600">
-                  No credit card required for trial • Full access to all features • Cancel anytime
-                </p>
+            {/* Annual Plan Card (700/year - Featured) */}
+            <ProfileCard
+              behindGlowEnabled={true}
+              behindGlowColor="rgba(244, 114, 182, 0.65)"
+              behindGlowSize="55%"
+              enableTilt={true}
+              showUserInfo={false}
+              innerGradient="linear-gradient(150deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 235, 224, 0.85) 50%, rgba(244, 114, 182, 0.22) 100%)"
+              className="w-full h-full"
+            >
+              <div className="relative flex flex-col h-full text-stone-900 dark:text-stone-100 justify-between">
+                <div>
+                  {/* Best Value Badge */}
+                  <div className="flex justify-center mb-5">
+                    <span className="inline-flex items-center gap-1.5 bg-[#f472b6] text-stone-950 text-xs font-black uppercase px-3.5 py-1.5 rounded-full shadow-md shadow-pink-500/20 tracking-wider">
+                      <Sparkles className="w-3.5 h-3.5 fill-stone-950" />
+                      BEST VALUE — SAVE 28%
+                    </span>
+                  </div>
+                  
+                  <div className="text-center mb-5">
+                    <h3 className="text-2xl font-extrabold text-stone-900 dark:text-stone-100 mb-1 tracking-tight">
+                      Annual Access
+                    </h3>
+                    <div className="flex items-baseline justify-center gap-1 my-2">
+                      <span className="text-4xl font-black text-stone-900 dark:text-stone-100 tracking-tight">₹700</span>
+                      <span className="text-base font-semibold text-stone-600 dark:text-stone-400">/year</span>
+                    </div>
+                    <p className="text-xs text-pink-600 dark:text-pink-400 font-bold">
+                      Just ~₹58/month • 7-day free trial included
+                    </p>
+                  </div>
+
+                  <div className="w-full h-px bg-pink-300/50 dark:bg-pink-900/40 my-3" />
+
+                  <ul className="space-y-2.5 my-4">
+                    {annualFeatures.map((feature, index) => (
+                      <li key={index} className="flex items-center text-stone-900 dark:text-stone-100 font-bold text-xs sm:text-sm">
+                        <div className="w-5 h-5 rounded-full bg-[#f472b6] text-stone-950 flex items-center justify-center mr-2.5 flex-shrink-0 shadow-xs">
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                        <span>{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div>
+                  <div className="mt-5 text-center">
+                    <Link 
+                      to="/auth"
+                      className="w-full py-3.5 text-sm font-extrabold text-stone-950 bg-[#f472b6] hover:bg-[#ec4899] rounded-xl shadow-lg shadow-pink-500/25 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 group"
+                    >
+                      <span>Get Annual Access</span>
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </div>
+
+                  <div className="mt-3 text-center">
+                    <p className="text-[11px] text-stone-500 dark:text-stone-400 font-medium">
+                      Billed annually • Cancel anytime
+                    </p>
+                  </div>
+                </div>
               </div>
-            </div>
+            </ProfileCard>
           </motion.div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-600 text-white">
-        <div className="container-width section-padding">
+      <section className="py-20 bg-stone-900 dark:bg-stone-950 text-stone-100 relative overflow-hidden border-t border-stone-800/80">
+        <div className="container-width section-padding relative z-10">
           <motion.div 
             className="text-center max-w-3xl mx-auto"
             initial="initial"
@@ -622,13 +1015,13 @@ function HomePage() {
             variants={staggerChildren}
           >
             <motion.h2 
-              className="text-3xl md:text-4xl font-heading font-bold mb-4"
+              className="text-3xl md:text-4xl font-heading font-extrabold mb-4 text-stone-100"
               variants={fadeInUp}
             >
               Ready to Show the World Your Work?
             </motion.h2>
             <motion.p 
-              className="text-xl text-peach-100 mb-8"
+              className="text-lg sm:text-xl text-stone-300 mb-8"
               variants={fadeInUp}
             >
               Join thousands of creators who trust Portiqqo to showcase their talent
@@ -636,7 +1029,7 @@ function HomePage() {
             <motion.div variants={fadeInUp}>
               <Link 
                 to="/auth"
-                className="btn-primary bg-white text-primary-600 hover:bg-primary-50 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="inline-flex items-center justify-center bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 px-8 py-4 text-lg font-extrabold rounded-2xl shadow-lg shadow-pink-500/20 hover:scale-105 transition-all duration-300 group"
               >
                 Create Your Portfolio Now
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Building2, ExternalLink, Award, Calendar, MapPin, Mail, Phone, Download, ArrowRight, Ruler, Home, Lightbulb, Users, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import TemplateFooter from './TemplateFooter'
 
 function ArchitectTemplate({ isPublic = false, portfolioData = {} }) {
   const [selectedCategory, setSelectedCategory] = useState('all')
@@ -626,59 +627,27 @@ function ArchitectTemplate({ isPublic = false, portfolioData = {} }) {
       </section>
 
       {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            {/* Architect Info */}
-            <div>
-              <h3 className="text-xl font-bold mb-4">Michael Chen</h3>
-              <p className="text-gray-400 mb-4">
-                © 2025 Michael Chen. Designing spaces that inspire and endure.
-              </p>
-              <div className="flex items-center space-x-2 text-gray-400">
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
-                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
-                </svg>
-                <a href="mailto:portfolio.builder659@gmail.com" className="hover:text-white transition-colors">
-                  portfolio.builder659@gmail.com
-                </a>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Projects</h3>
-              <ul className="space-y-2">
-                <li><a href="#about" className="text-gray-400 hover:text-white transition-colors">About</a></li>
-                <li><a href="#projects" className="text-gray-400 hover:text-white transition-colors">Projects</a></li>
-                <li><a href="#services" className="text-gray-400 hover:text-white transition-colors">Services</a></li>
-                <li><a href="#contact" className="text-gray-400 hover:text-white transition-colors">Contact</a></li>
-              </ul>
-            </div>
-
-            {/* Portfolio Builder Info */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">Portfolio Builder</h3>
-              <p className="text-gray-400 mb-4 text-sm">
-                Create your professional portfolio with our easy-to-use platform.
-              </p>
-              <div className="flex items-center space-x-2 text-gray-400 text-sm">
-                <span>Questions?</span>
-                <a href="mailto:portfolio.builder659@gmail.com" className="text-blue-400 hover:text-blue-300 transition-colors">
-                  Contact Support
-                </a>
-              </div>
-            </div>
-          </div>
-          
-          <div className="border-t border-gray-700 pt-8 text-center">
-            <p className="text-gray-400 text-sm">
-              Made with Portfolio Builder • <a href="mailto:portfolio.builder659@gmail.com" className="text-blue-400 hover:text-blue-300 transition-colors">Get Help</a>
-            </p>
-          </div>
-        </div>
-      </footer>
+      <TemplateFooter
+        name={architectData.name}
+        title={architectData.title}
+        tagline={architectData.bio || 'Designing innovative, sustainable architectural spaces that inspire.'}
+        email={architectData.email}
+        phone={architectData.phone}
+        location={architectData.location}
+        socialLinks={{
+          linkedin: architectData.social?.linkedin,
+          instagram: architectData.social?.instagram,
+          website: architectData.website
+        }}
+        quickLinks={[
+          { label: 'Home', href: '#home' },
+          { label: 'About', href: '#about' },
+          { label: 'Projects', href: '#projects' },
+          { label: 'Services', href: '#services' },
+          { label: 'Contact', href: '#contact' }
+        ]}
+        accentColor="indigo"
+      />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -59,6 +60,12 @@ app.use(cors({
     // Allow all subdomains of portiqqo.me (e.g., username.portiqqo.me)
     const subdomainRegex = /^https?:\/\/[a-z0-9-]+\.portiqqo\.me$/;
     if (subdomainRegex.test(origin)) {
+      return callback(null, true);
+    }
+
+    // Allow all Vercel deployments (e.g., your-app.vercel.app or preview URLs)
+    const vercelRegex = /^https?:\/\/[a-z0-9-]+\.vercel\.app$/;
+    if (vercelRegex.test(origin)) {
       return callback(null, true);
     }
     
@@ -153,18 +160,54 @@ if (process.env.NODE_ENV === 'development') {
   });
 }
 
-// API routes (nginx strips /api prefix, so we mount without it)
+// API routes (support both direct and /api prefixed routes)
 app.use('/auth', authRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/portfolios', portfolioRoutes);
+app.use('/api/portfolios', portfolioRoutes);
 app.use('/templates', templateRoutes);
+app.use('/api/templates', templateRoutes);
 app.use('/subscriptions', subscriptionRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/api/upload', uploadRoutes);
 app.use('/ai', aiRoutes);
+app.use('/api/ai', aiRoutes);
+
+// Ensure upload directories exist
+const fs = require('fs');
+const uploadDirs = [
+  path.join(__dirname, 'uploads'),
+  path.join(__dirname, 'uploads', 'images'),
+  path.join(__dirname, 'uploads', 'videos'),
+  path.join(__dirname, 'uploads', 'resumes'),
+  path.join(__dirname, 'uploads', 'files')
+];
+uploadDirs.forEach(dir => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+});
 
 // Serve static files for uploaded content
-app.use('/uploads', express.static('uploads'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// In production, serve frontend client-side SPA build
+if (process.env.NODE_ENV === 'production') {
+  const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+  if (fs.existsSync(frontendDist)) {
+    app.use(express.static(frontendDist));
+    app.get('*', (req, res, next) => {
+      if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads') && !req.path.startsWith('/auth') && !req.path.startsWith('/portfolios')) {
+        return res.sendFile(path.join(frontendDist, 'index.html'));
+      }
+      next();
+    });
+  }
+}
 
 // 404 handler
 app.use(notFound);

@@ -1,6 +1,8 @@
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { FileText, Upload, X, Check, AlertCircle, Download, Eye } from 'lucide-react'
+import { uploadService } from '../../../services/apiService'
+import toast from 'react-hot-toast'
 
 function ResumeUploadStep({ portfolioData, setPortfolioData, onStepComplete, onNext }) {
   const [uploadedFile, setUploadedFile] = useState(portfolioData.resume || null)
@@ -39,38 +41,38 @@ function ResumeUploadStep({ portfolioData, setPortfolioData, onStepComplete, onN
     }
   }
 
-  const handleFileUpload = (file) => {
+  const handleFileUpload = async (file) => {
     setIsUploading(true)
-    setUploadProgress(0)
+    setUploadProgress(20)
 
-    // Simulate file upload progress
-    const interval = setInterval(() => {
-      setUploadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval)
-          setIsUploading(false)
-          
-          // Create file object with metadata
-          const fileData = {
-            name: file.name,
-            size: file.size,
-            type: file.type,
-            url: URL.createObjectURL(file), // In real app, this would be a server URL
-            uploadDate: new Date().toISOString()
-          }
-          
-          setUploadedFile(fileData)
-          setPortfolioData(prev => ({
-            ...prev,
-            resume: fileData
-          }))
-          
-          onStepComplete(3)
-          return 100
-        }
-        return prev + 10
-      })
-    }, 200)
+    try {
+      const res = await uploadService.uploadPDF(file, 'resumes')
+      const fileUrl = res?.url || res?.file?.url || res?.data?.url
+
+      setUploadProgress(100)
+      setIsUploading(false)
+
+      const fileData = {
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        url: fileUrl,
+        uploadDate: new Date().toISOString()
+      }
+
+      setUploadedFile(fileData)
+      setPortfolioData(prev => ({
+        ...prev,
+        resume: fileData
+      }))
+
+      onStepComplete?.(3)
+      toast.success('Resume uploaded successfully!')
+    } catch (error) {
+      console.error('Resume upload failed:', error)
+      toast.error('Failed to upload resume. Please try again.')
+      setIsUploading(false)
+    }
   }
 
   const removeFile = () => {

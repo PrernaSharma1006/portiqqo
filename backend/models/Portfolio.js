@@ -20,6 +20,20 @@ const portfolioSchema = new mongoose.Schema({
     trim: true,
     match: [/^[a-z0-9-]+$/, 'Subdomain can only contain lowercase letters, numbers, and hyphens']
   },
+  customDomain: {
+    type: String,
+    sparse: true,
+    unique: true,
+    lowercase: true,
+    trim: true
+  },
+  customDomainVerified: {
+    type: Boolean,
+    default: false
+  },
+  customDomainVerifiedAt: {
+    type: Date
+  },
   profession: {
     type: String,
     required: true,
@@ -65,6 +79,22 @@ const portfolioSchema = new mongoose.Schema({
   lastViewed: {
     type: Date
   },
+  viewEvents: [{
+    timestamp: {
+      type: Date,
+      default: Date.now
+    },
+    referrer: {
+      type: String,
+      default: 'Direct'
+    },
+    device: {
+      type: String,
+      default: 'Desktop'
+    },
+    browser: String,
+    ip: String
+  }],
   
   // Personal Information
   personalInfo: {
@@ -422,13 +452,17 @@ const portfolioSchema = new mongoose.Schema({
 // Indexes
 portfolioSchema.index({ user: 1 });
 portfolioSchema.index({ subdomain: 1 });
+portfolioSchema.index({ customDomain: 1 }, { sparse: true });
 portfolioSchema.index({ profession: 1 });
 portfolioSchema.index({ isPublished: 1, isActive: 1 });
 portfolioSchema.index({ views: -1 });
 
 // Virtual for full URL
 portfolioSchema.virtual('fullUrl').get(function() {
-  const baseUrl = process.env.SUBDOMAIN_BASE || 'portfolios.local';
+  if (this.customDomain && this.customDomainVerified) {
+    return `https://${this.customDomain}`;
+  }
+  const baseUrl = process.env.SUBDOMAIN_BASE || 'portiqqo.me';
   return `https://${this.subdomain}.${baseUrl}`;
 });
 

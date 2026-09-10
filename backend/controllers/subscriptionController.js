@@ -28,6 +28,12 @@ const PLANS = {
     interval: 'year',
     description: 'Portiqqo Premium - Yearly',
     durationDays: 365
+  },
+  pdf_export: {
+    amount: 3000,       // ₹30/export
+    currency: 'INR',
+    description: 'Portiqqo Portfolio PDF Export - ₹30',
+    durationDays: 0
   }
 };
 
@@ -109,6 +115,18 @@ exports.verifyPayment = async (req, res) => {
       status: 'paid',
       paidAt: now
     };
+
+    if (plan === 'pdf_export') {
+      if (subscription) {
+        subscription.invoices.push(invoiceEntry);
+        await subscription.save();
+      }
+      return res.status(200).json({
+        success: true,
+        message: 'PDF export payment verified successfully',
+        paymentId: razorpay_payment_id
+      });
+    }
 
     if (subscription) {
       subscription.type = 'premium';

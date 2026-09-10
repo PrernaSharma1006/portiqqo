@@ -93,14 +93,21 @@ function App() {
             <Route path="/template/general" element={<GeneralPortfolioTemplate />} />
             
             {/* Template editor routes */}
-            <Route path="/editor/:templateType" element={<TemplateEditor />} />
-            <Route path="/builder/general" element={<GeneralPortfolioBuilder />} />
-            <Route path="/editor/video-editor" element={<VideoEditorTemplateEditor />} />
             <Route path="/editor/web-developer" element={<WebDeveloperTemplateEditor />} />
+            <Route path="/editor/developer" element={<WebDeveloperTemplateEditor />} />
             <Route path="/editor/ui-ux-designer" element={<UIUXDesignerTemplateEditor />} />
+            <Route path="/editor/uiux-designer" element={<UIUXDesignerTemplateEditor />} />
+            <Route path="/editor/designer" element={<UIUXDesignerTemplateEditor />} />
+            <Route path="/editor/video-editor" element={<VideoEditorTemplateEditor />} />
+            <Route path="/editor/videographer" element={<VideoEditorTemplateEditor />} />
             <Route path="/editor/photographer" element={<PhotographerTemplateEditor />} />
-            <Route path="/editor/general-portfolio" element={<GeneralPortfolioTemplateEditor />} />
             <Route path="/editor/digital-marketer" element={<DigitalMarketerTemplateEditor />} />
+            <Route path="/editor/general-portfolio" element={<GeneralPortfolioTemplateEditor />} />
+            <Route path="/editor/general" element={<GeneralPortfolioTemplateEditor />} />
+            <Route path="/editor/illustrator" element={<GeneralPortfolioTemplateEditor />} />
+            <Route path="/editor/architect" element={<GeneralPortfolioTemplateEditor />} />
+            <Route path="/builder/general" element={<GeneralPortfolioBuilder />} />
+            <Route path="/editor/:templateType" element={<TemplateEditor />} />
             
             {/* Portfolio display route */}
             <Route path="/portfolio/:portfolioId" element={<PortfolioDisplay />} />

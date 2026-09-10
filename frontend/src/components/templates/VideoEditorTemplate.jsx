@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link, useNavigate } from 'react-router-dom'
+import TemplateFooter from './TemplateFooter'
 import { 
   ArrowLeft, 
   Play, 
@@ -480,100 +481,29 @@ function VideoEditorTemplate({
       </section>
 
       {/* Footer */}
-      <footer className={`bg-gray-900 text-white py-12 ${isHidden('footer') ? 'hidden' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Contact Info */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Get In Touch</h3>
-              <div className="space-y-3">
-                <a 
-                  href={`mailto:${profileData.email}`}
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Mail className="w-5 h-5" />
-                  <span>{profileData.email}</span>
-                </a>
-                <a 
-                  href={`tel:${profileData.phone}`}
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Phone className="w-5 h-5" />
-                  <span>{profileData.phone}</span>
-                </a>
-                <div className="flex items-center space-x-3 text-gray-300">
-                  <MapPin className="w-5 h-5" />
-                  <span>{profileData.location}</span>
-                </div>
-                <a 
-                  href={`https://${profileData.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <Globe className="w-5 h-5" />
-                  <span>{profileData.website}</span>
-                </a>
-              </div>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">Quick Links</h3>
-              <div className="space-y-3">
-                <a href="#work" className="block text-gray-300 hover:text-white transition-colors">
-                  My Work
-                </a>
-                <a href="#skills" className="block text-gray-300 hover:text-white transition-colors">
-                  Skills
-                </a>
-                <a href="#services" className="block text-gray-300 hover:text-white transition-colors">
-                  Services
-                </a>
-              </div>
-            </div>
-
-            {/* About */}
-            <div>
-              <h3 className="text-xl font-bold text-white mb-4">About</h3>
-              <p className="text-gray-300 mb-4">
-                {portfolioData.footer?.tagline || 'Professional video editor passionate about bringing stories to life through compelling visual narratives.'}
-              </p>
-              <div className="flex space-x-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.experience || '8+'}</div>
-                  <div className="text-sm text-gray-300">Years Experience</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.projects || '500+'}</div>
-                  <div className="text-sm text-gray-300">Projects Done</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-400">{portfolioData.footer?.quickStats?.clients || '50+'}</div>
-                  <div className="text-sm text-gray-300">Happy Clients</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center">
-            <div className="flex flex-col md:flex-row justify-between items-center">
-              <p className="text-gray-300 mb-4 md:mb-0">
-                {portfolioData.footer?.copyright || `© ${new Date().getFullYear()} ${profileData.name}. All rights reserved.`}
-              </p>
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-300 text-sm">Built with</span>
-                <a 
-                  href="mailto:portfolio.builder659@gmail.com"
-                  className="text-purple-400 hover:text-purple-300 transition-colors text-sm"
-                >
-                  Portfolio Builder
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <TemplateFooter
+        name={profileData.name}
+        title={profileData.title}
+        tagline={profileData.description || 'Professional Video Editor & Motion Graphics Artist'}
+        email={profileData.email}
+        phone={profileData.phone}
+        location={profileData.location}
+        socialLinks={{
+          youtube: profileData.youtube,
+          vimeo: profileData.vimeo,
+          instagram: profileData.instagram,
+          website: profileData.website
+        }}
+        quickLinks={[
+          { label: 'Home', href: '#home' },
+          { label: 'My Work', href: '#work' },
+          { label: 'Showreel', href: '#showreel' },
+          { label: 'Services', href: '#services' },
+          { label: 'Contact', href: '#contact' }
+        ]}
+        accentColor="rose"
+        isHidden={isHidden('footer')}
+      />
     </div>
   )
 }

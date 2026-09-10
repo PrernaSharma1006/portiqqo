@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, Camera, Upload, Check, AlertCircle } from 'lucide-react'
+import { User, Camera, Upload, Check, AlertCircle, Loader2 } from 'lucide-react'
+import { uploadService } from '../../../services/apiService'
+import toast from 'react-hot-toast'
 
 function PersonalInfoStep({ portfolioData, setPortfolioData, onStepComplete, onNext }) {
   const [formData, setFormData] = useState(portfolioData.personalInfo || {})
@@ -26,10 +28,21 @@ function PersonalInfoStep({ portfolioData, setPortfolioData, onStepComplete, onN
     }
   }
 
-  const handleImageUpload = (file) => {
-    // In a real app, this would upload to cloud storage
-    const imageUrl = URL.createObjectURL(file)
-    handleInputChange('avatar', imageUrl)
+  const [uploadingAvatar, setUploadingAvatar] = useState(false)
+
+  const handleImageUpload = async (file) => {
+    setUploadingAvatar(true)
+    try {
+      const res = await uploadService.uploadImage(file, 'avatars')
+      const imageUrl = res?.url || res?.file?.url || res?.data?.url
+      handleInputChange('avatar', imageUrl)
+      toast.success('Profile picture uploaded successfully!')
+    } catch (err) {
+      console.error('Avatar upload error:', err)
+      toast.error('Failed to upload image. Please try again.')
+    } finally {
+      setUploadingAvatar(false)
+    }
   }
 
   const handleDrop = (e) => {

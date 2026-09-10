@@ -19,10 +19,36 @@ import { useNavigate, useParams } from 'react-router-dom'
 import ComponentSelector from './ComponentSelector'
 import WorkUploader from './WorkUploader'
 import ComponentEditor from './ComponentEditor'
+import WebDeveloperTemplateEditor from './WebDeveloperTemplateEditor'
+import UIUXDesignerTemplateEditor from './UIUXDesignerTemplateEditor'
+import VideoEditorTemplateEditor from './VideoEditorTemplateEditor'
+import PhotographerTemplateEditor from './PhotographerTemplateEditor'
+import DigitalMarketerTemplateEditor from './DigitalMarketerTemplateEditor'
+import GeneralPortfolioTemplateEditor from './GeneralPortfolioTemplateEditor'
 
 function TemplateEditor() {
   const navigate = useNavigate()
   const { templateType } = useParams()
+
+  if (templateType === 'web-developer' || templateType === 'developer') {
+    return <WebDeveloperTemplateEditor />
+  }
+  if (templateType === 'ui-ux-designer' || templateType === 'uiux-designer' || templateType === 'designer') {
+    return <UIUXDesignerTemplateEditor />
+  }
+  if (templateType === 'video-editor' || templateType === 'videographer') {
+    return <VideoEditorTemplateEditor />
+  }
+  if (templateType === 'photographer') {
+    return <PhotographerTemplateEditor />
+  }
+  if (templateType === 'digital-marketer' || templateType === 'marketer') {
+    return <DigitalMarketerTemplateEditor />
+  }
+  if (templateType === 'general' || templateType === 'general-portfolio' || templateType === 'illustrator' || templateType === 'architect') {
+    return <GeneralPortfolioTemplateEditor />
+  }
+
   const [template, setTemplate] = useState(null)
   const [selectedComponent, setSelectedComponent] = useState(null)
   const [isPreviewMode, setIsPreviewMode] = useState(false)

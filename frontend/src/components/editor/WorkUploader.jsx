@@ -13,6 +13,8 @@ import {
   Check,
   AlertCircle
 } from 'lucide-react'
+import { uploadService } from '../../services/apiService'
+import toast from 'react-hot-toast'
 
 function WorkUploader({ portfolioData, setPortfolioData, onClose }) {
   const [activeTab, setActiveTab] = useState('projects')
@@ -62,34 +64,43 @@ function WorkUploader({ portfolioData, setPortfolioData, onClose }) {
     for (const file of files) {
       const fileId = Math.random().toString(36).substr(2, 9)
       
-      // Simulate upload progress
-      setUploadProgress(prev => ({ ...prev, [fileId]: 0 }))
+      setUploadProgress(prev => ({ ...prev, [fileId]: 20 }))
       
-      // Create file URL (in real app, this would upload to cloud storage)
-      const fileUrl = URL.createObjectURL(file)
-      
-      // Simulate upload progress
-      for (let progress = 0; progress <= 100; progress += 10) {
-        await new Promise(resolve => setTimeout(resolve, 100))
-        setUploadProgress(prev => ({ ...prev, [fileId]: progress }))
-      }
-      
-      uploadedFiles.push({
-        id: fileId,
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        url: fileUrl
-      })
-      
-      // Remove progress after upload
-      setTimeout(() => {
-        setUploadProgress(prev => {
-          const newProgress = { ...prev }
-          delete newProgress[fileId]
-          return newProgress
+      try {
+        let res;
+        if (file.type.startsWith('image/')) {
+          res = await uploadService.uploadImage(file, 'projects')
+        } else if (file.type.startsWith('video/')) {
+          res = await uploadService.uploadVideo(file, 'projects')
+        } else if (file.type === 'application/pdf') {
+          res = await uploadService.uploadPDF(file, 'resumes')
+        } else {
+          res = await uploadService.uploadImage(file, 'general')
+        }
+
+        const fileUrl = res?.url || res?.file?.url || res?.data?.url
+        setUploadProgress(prev => ({ ...prev, [fileId]: 100 }))
+        
+        uploadedFiles.push({
+          id: fileId,
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          url: fileUrl
         })
-      }, 1000)
+        toast.success(`Uploaded ${file.name}`)
+      } catch (err) {
+        console.error('File upload failed:', err)
+        toast.error(`Failed to upload ${file.name}`)
+      } finally {
+        setTimeout(() => {
+          setUploadProgress(prev => {
+            const newProgress = { ...prev }
+            delete newProgress[fileId]
+            return newProgress
+          })
+        }, 1000)
+      }
     }
     
     return uploadedFiles

@@ -3,8 +3,8 @@ import toast from 'react-hot-toast'
 
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000/api',
-  timeout: 10000,
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  timeout: 15000,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -158,7 +158,15 @@ export const portfolioAPI = {
   getPublic: (subdomain) => api.get(`/portfolios/public/${subdomain}`),
   
   // Delete portfolio
-  delete: (id) => api.delete(`/portfolios/${id}`)
+  delete: (id) => api.delete(`/portfolios/${id}`),
+
+  // Custom domain methods (Premium)
+  setCustomDomain: (id, domain) => api.post(`/portfolios/${id}/custom-domain`, { domain }),
+  verifyCustomDomain: (id) => api.post(`/portfolios/${id}/custom-domain/verify`),
+  removeCustomDomain: (id) => api.delete(`/portfolios/${id}/custom-domain`),
+
+  // Analytics methods
+  getAnalytics: (id) => api.get(`/portfolios/${id}/analytics`)
 }
 
 // AI API methods

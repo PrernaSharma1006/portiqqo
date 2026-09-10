@@ -2,10 +2,12 @@ import { Helmet } from 'react-helmet-async'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check, Crown, Clock } from 'lucide-react'
+import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check, Crown, Clock, Globe, ShieldCheck, CheckCircle2, AlertCircle, X, Loader2, BarChart3, TrendingUp, Eye } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { portfolioAPI } from '../../services/api'
 import toast from 'react-hot-toast'
+import TemplateMosaicGrid from '../../components/templates/TemplateMosaicGrid'
+import PortfolioAnalyticsModal from '../../components/modals/PortfolioAnalyticsModal'
 
 const templates = [
   {
@@ -236,6 +238,99 @@ function DashboardPage() {
     setPortfolioToDelete(null)
   }
 
+  // Visitor Analytics modal state & handler
+  const [showAnalyticsModal, setShowAnalyticsModal] = useState(false)
+  const [analyticsPortfolio, setAnalyticsPortfolio] = useState(null)
+
+  const handleOpenAnalyticsModal = (portfolio) => {
+    setAnalyticsPortfolio(portfolio)
+    setShowAnalyticsModal(true)
+  }
+
+  // Custom Domain modal state & handlers
+  const [showDomainModal, setShowDomainModal] = useState(false)
+  const [domainPortfolio, setDomainPortfolio] = useState(null)
+  const [customDomainInput, setCustomDomainInput] = useState('')
+  const [savingDomain, setSavingDomain] = useState(false)
+  const [verifyingDomain, setVerifyingDomain] = useState(false)
+  const [verificationResult, setVerificationResult] = useState(null)
+
+  const handleOpenDomainModal = (portfolio) => {
+    setDomainPortfolio(portfolio)
+    setCustomDomainInput(portfolio.customDomain || '')
+    setVerificationResult(null)
+    setShowDomainModal(true)
+  }
+
+  const handleSaveDomain = async () => {
+    if (!domainPortfolio || !customDomainInput.trim()) {
+      toast.error('Please enter a domain name')
+      return
+    }
+    setSavingDomain(true)
+    try {
+      const res = await portfolioAPI.setCustomDomain(domainPortfolio._id, customDomainInput.trim())
+      if (res.data.success) {
+        toast.success('Custom domain saved! Follow DNS instructions below.')
+        setDomainPortfolio(prev => ({
+          ...prev,
+          customDomain: res.data.customDomain,
+          customDomainVerified: res.data.customDomainVerified
+        }))
+        await fetchPortfolios()
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to set custom domain')
+    } finally {
+      setSavingDomain(false)
+    }
+  }
+
+  const handleVerifyDomain = async () => {
+    if (!domainPortfolio) return
+    setVerifyingDomain(true)
+    try {
+      const res = await portfolioAPI.verifyCustomDomain(domainPortfolio._id)
+      if (res.data.success && res.data.verified) {
+        toast.success('🎉 Domain verified! Your portfolio is live on your custom domain.')
+        setDomainPortfolio(prev => ({
+          ...prev,
+          customDomainVerified: true
+        }))
+        setVerificationResult({ success: true, message: res.data.message })
+        await fetchPortfolios()
+      } else {
+        toast.error(res.data.message || 'DNS verification pending')
+        setVerificationResult({ success: false, message: res.data.message, details: res.data.details })
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Verification failed')
+      setVerificationResult({ success: false, message: err.response?.data?.message || 'Verification failed' })
+    } finally {
+      setVerifyingDomain(false)
+    }
+  }
+
+  const handleRemoveDomain = async () => {
+    if (!domainPortfolio) return
+    try {
+      const res = await portfolioAPI.removeCustomDomain(domainPortfolio._id)
+      if (res.data.success) {
+        toast.success('Custom domain removed')
+        setCustomDomainInput('')
+        setDomainPortfolio(prev => ({
+          ...prev,
+          customDomain: null,
+          customDomainVerified: false
+        }))
+        setVerificationResult(null)
+        await fetchPortfolios()
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to remove domain')
+    }
+  }
+
   const handleTemplatePreview = (templateId, event) => {
     event.stopPropagation() // Prevent card click
     // Route to template preview
@@ -322,13 +417,23 @@ function DashboardPage() {
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
-                          {portfolio.isPublished && (
-                            <span className="px-2 py-1 bg-green-100 text-green-700 text-xs font-medium rounded-full">
-                              Published
-                            </span>
-                          )}
+                          <div className="flex items-center gap-1.5">
+                            {portfolio.isPublished && (
+                              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                                Published
+                              </span>
+                            )}
+                            <button
+                              onClick={() => handleOpenAnalyticsModal(portfolio)}
+                              className="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded-full flex items-center gap-1 border border-purple-200 dark:border-purple-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                              title="View Visitor Analytics"
+                            >
+                              <Eye className="w-3 h-3 text-purple-500" />
+                              <span>{portfolio.views || 0}</span>
+                            </button>
+                          </div>
                           {isPremium ? (
-                            <span className="px-2 py-1 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
+                            <span className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
                               <Crown className="w-3 h-3" />
                               Premium
                             </span>
@@ -336,19 +441,19 @@ function DashboardPage() {
                             const trial = getTrialInfo(portfolio)
                             if (!trial) return null
                             if (trial.expired) return (
-                              <span className="px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 Trial Expired
                               </span>
                             )
                             if (trial.daysLeft <= 3) return (
-                              <span className="px-2 py-1 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 {trial.daysLeft}d left
                               </span>
                             )
                             return (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
+                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
                                 Free: {trial.daysLeft}d left
                               </span>
@@ -357,56 +462,99 @@ function DashboardPage() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2 mb-4 min-h-[24px]">
-                        {getPortfolioUrl(portfolio) ? (
-                          <>
-                            <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
-                            <a 
-                              href={`https://${getPortfolioUrl(portfolio)}`}
+                      {/* URLs Section */}
+                      <div className="space-y-1.5 mb-4">
+                        <div className="flex items-center gap-2 min-h-[24px]">
+                          {getPortfolioUrl(portfolio) ? (
+                            <>
+                              <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
+                              <a 
+                                href={`https://${getPortfolioUrl(portfolio)}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate flex-1 font-mono"
+                              >
+                                {getPortfolioUrl(portfolio)}
+                              </a>
+                              <button
+                                onClick={() => handleCopyLink(portfolio)}
+                                className="flex-shrink-0 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                title="Copy link"
+                              >
+                                {copiedId === portfolio._id
+                                  ? <Check className="w-4 h-4 text-green-500" />
+                                  : <Copy className="w-4 h-4 text-slate-400 dark:text-slate-500" />}
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-sm text-slate-400 dark:text-slate-500 italic">Save portfolio to generate your link</span>
+                          )}
+                        </div>
+
+                        {/* Custom Domain Badge if configured */}
+                        {portfolio.customDomain && (
+                          <div className="flex items-center gap-2 text-xs bg-slate-50 dark:bg-slate-700/50 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
+                            <Globe className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+                            <a
+                              href={`https://${portfolio.customDomain}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate flex-1"
+                              className="font-medium text-slate-700 dark:text-slate-200 hover:underline truncate flex-1"
                             >
-                              {getPortfolioUrl(portfolio)}
+                              {portfolio.customDomain}
                             </a>
-                            <button
-                              onClick={() => handleCopyLink(portfolio)}
-                              className="flex-shrink-0 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-                              title="Copy link"
-                            >
-                              {copiedId === portfolio._id
-                                ? <Check className="w-4 h-4 text-green-500" />
-                                : <Copy className="w-4 h-4 text-slate-400 dark:text-slate-500" />}
-                            </button>
-                          </>
-                        ) : (
-                          <span className="text-sm text-slate-400 dark:text-slate-500 italic">Save portfolio to generate your link</span>
+                            {portfolio.customDomainVerified ? (
+                              <span className="text-[10px] font-semibold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                                <Check className="w-2.5 h-2.5" /> Verified
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" /> DNS Pending
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
                       
-                      <div className="flex gap-3">
+                      <div className="flex gap-2">
                         <button
                           onClick={() => handleEditPortfolio(portfolio)}
-                          className="flex-1 py-2.5 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-2"
+                          className="flex-1 py-2 px-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1.5 text-sm"
                         >
-                          <Edit className="w-4 h-4" />
+                          <Edit className="w-3.5 h-3.5" />
                           Edit
+                        </button>
+                        <button
+                          onClick={() => handleOpenAnalyticsModal(portfolio)}
+                          className="py-2 px-3 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-lg font-medium transition-all duration-300 flex items-center gap-1.5 text-sm border border-purple-200 dark:border-purple-800/60"
+                          title="Visitor Analytics & Insights"
+                        >
+                          <BarChart3 className="w-3.5 h-3.5 text-purple-500" />
+                          <span className="hidden sm:inline">Analytics</span>
+                        </button>
+                        <button
+                          onClick={() => handleOpenDomainModal(portfolio)}
+                          className="py-2 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300 flex items-center gap-1.5 text-sm"
+                          title="Custom Domain Settings"
+                        >
+                          <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                          <span className="hidden sm:inline">Domain</span>
                         </button>
                         {getPortfolioUrl(portfolio) && (
                           <button
                             onClick={() => handleViewPortfolio(portfolio)}
-                            className="py-2.5 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300"
+                            className="py-2 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300"
                             title="View Portfolio"
                           >
-                            <ExternalLink className="w-4 h-4" />
+                            <ExternalLink className="w-3.5 h-3.5" />
                           </button>
                         )}
                         <button
                           onClick={() => handleDeleteClick(portfolio)}
-                          className="py-2.5 px-4 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-300 rounded-lg font-medium transition-all duration-300"
+                          className="py-2 px-3 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-300 rounded-lg font-medium transition-all duration-300"
                           title="Delete Portfolio"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>
@@ -436,92 +584,8 @@ function DashboardPage() {
               {existingPortfolios.length > 0 ? 'Switch Your Template' : 'Choose Your Template'}
             </h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-            {templates.map((template, index) => {
-              const Icon = template.icon
-              return (
-                <motion.div
-                  key={template.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ y: -8 }}
-                  className="group"
-                >
-                  <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-slate-100 dark:border-slate-700">
-                    {/* Image */}
-                    <div className="relative h-52 overflow-hidden bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-700 dark:to-slate-800">
-                      <img 
-                        src={template.image} 
-                        alt={template.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                      />
-                      <div className={`absolute inset-0 bg-gradient-to-br ${template.color} opacity-50 group-hover:opacity-30 transition-opacity`}></div>
-                      
-                      {/* Icon Badge */}
-                      <div className={`absolute top-4 right-4 w-14 h-14 bg-gradient-to-br ${template.badgeColor || 'from-purple-400 to-blue-400'} backdrop-blur-sm rounded-2xl flex items-center justify-center shadow-xl border border-white/30`}>
-                        <Icon className="w-7 h-7 text-white" />
-                      </div>
-
-                      {/* Popular Badge for first 3 */}
-                      {index < 3 && (
-                        <div className="absolute top-4 left-4 px-3 py-1 bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold rounded-full shadow-lg">
-                          POPULAR
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Content */}
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-3 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
-                        {template.name}
-                      </h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">
-                        {template.description}
-                      </p>
-                      
-                      {/* Features */}
-                      <div className="space-y-2.5 mb-6">
-                        {template.features.map((feature, i) => (
-                          <div key={i} className="flex items-center gap-3">
-                            <div className="w-5 h-5 rounded-full bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
-                              <svg className="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                              </svg>
-                            </div>
-                            <span className="text-sm text-slate-600 dark:text-slate-300 font-medium">{feature}</span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Buttons */}
-                      <div className="space-y-3">
-                        <button 
-                          onClick={() => handleTemplateSelect(template.id)}
-                          className="w-full py-3.5 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold group-hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2"
-                        >
-                          Start Building
-                          <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-                          </svg>
-                        </button>
-                        
-                        <button 
-                          onClick={(e) => handleTemplatePreview(template.id, e)}
-                          className="w-full py-2.5 px-4 bg-white dark:bg-slate-700 border-2 border-purple-200 dark:border-purple-500 hover:border-purple-400 dark:hover:border-purple-400 hover:bg-purple-50 dark:hover:bg-slate-600 text-purple-700 dark:text-purple-300 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                          </svg>
-                          Preview Template
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )
-            })}
+          <div className="max-w-7xl mx-auto">
+            <TemplateMosaicGrid isDashboard={true} onSelectTemplate={(t) => handleTemplateSelect(t.id)} />
           </div>
         </div>
       </div>
@@ -660,6 +724,237 @@ function DashboardPage() {
           </motion.div>
         </div>
       )}
+
+      {/* Custom Domain Modal */}
+      {showDomainModal && domainPortfolio && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-xl w-full p-6 sm:p-8 relative transition-colors duration-300 max-h-[90vh] overflow-y-auto"
+          >
+            {/* Close Button */}
+            <button
+              onClick={() => { setShowDomainModal(false); setDomainPortfolio(null); }}
+              className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md">
+                <Globe className="w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Custom Domain</h3>
+                <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                  {domainPortfolio.title} ({domainPortfolio.subdomain}.portiqqo.me)
+                </p>
+              </div>
+            </div>
+
+            {!isPremium ? (
+              /* Non-Premium Locked State */
+              <div className="space-y-6">
+                <div className="bg-gradient-to-br from-purple-900/90 to-indigo-900/90 text-white rounded-2xl p-6 relative overflow-hidden shadow-xl border border-purple-500/30">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Crown className="w-6 h-6 text-yellow-400" />
+                    <h4 className="text-lg font-bold">Premium Feature</h4>
+                  </div>
+                  <p className="text-sm text-purple-100 mb-4 leading-relaxed">
+                    Connect your own branded domain (e.g. <span className="font-mono text-yellow-300 font-bold">yourname.com</span> or <span className="font-mono text-yellow-300 font-bold">portfolio.yourname.design</span>) to stand out to clients with a 100% white-labeled experience.
+                  </p>
+                  
+                  <ul className="space-y-2.5 text-xs sm:text-sm text-purple-200 mb-6">
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <span>Use any custom domain or subdomain</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <span>Automatic SSL security certificate</span>
+                    </li>
+                    <li className="flex items-center gap-2">
+                      <Check className="w-4 h-4 text-green-400 flex-shrink-0" />
+                      <span>Unlimited portfolios & advanced analytics</span>
+                    </li>
+                  </ul>
+
+                  <button
+                    onClick={() => {
+                      setShowDomainModal(false)
+                      navigate('/pricing')
+                    }}
+                    className="w-full py-3 px-6 bg-gradient-to-r from-yellow-400 to-amber-400 hover:from-yellow-300 hover:to-amber-300 text-slate-900 font-bold rounded-xl shadow-lg transition-all duration-300 flex items-center justify-center gap-2"
+                  >
+                    <Crown className="w-5 h-5 text-slate-900" />
+                    Upgrade to Premium (₹81/month)
+                  </button>
+                </div>
+              </div>
+            ) : (
+              /* Premium Active State */
+              <div className="space-y-6">
+                {/* Current Status */}
+                {domainPortfolio.customDomain ? (
+                  <div className={`p-4 rounded-xl border flex items-start gap-3 ${
+                    domainPortfolio.customDomainVerified
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
+                      : 'bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800'
+                  }`}>
+                    {domainPortfolio.customDomainVerified ? (
+                      <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                    ) : (
+                      <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
+                    )}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono font-bold text-slate-800 dark:text-slate-100 text-sm sm:text-base">
+                          {domainPortfolio.customDomain}
+                        </span>
+                        <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
+                          domainPortfolio.customDomainVerified
+                            ? 'bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200'
+                            : 'bg-amber-200 dark:bg-amber-800 text-amber-800 dark:text-amber-200'
+                        }`}>
+                          {domainPortfolio.customDomainVerified ? 'Verified & Live' : 'DNS Pending'}
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 mt-1">
+                        {domainPortfolio.customDomainVerified
+                          ? 'Your custom domain is connected and serving your live portfolio.'
+                          : 'DNS records need to be pointed before this domain can become active.'}
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                    Enter your custom domain name below to connect it to this portfolio.
+                  </div>
+                )}
+
+                {/* Input & Save */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    Custom Domain Name
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customDomainInput}
+                      onChange={(e) => setCustomDomainInput(e.target.value)}
+                      placeholder="e.g. yourname.com or portfolio.yourname.com"
+                      className="flex-1 px-4 py-2.5 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-xl text-slate-800 dark:text-slate-100 text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none font-mono"
+                    />
+                    <button
+                      onClick={handleSaveDomain}
+                      disabled={savingDomain || !customDomainInput.trim()}
+                      className="py-2.5 px-5 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 text-white rounded-xl font-semibold text-sm transition-all duration-200 flex items-center gap-2 flex-shrink-0"
+                    >
+                      {savingDomain ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Saving...
+                        </>
+                      ) : (
+                        'Save Domain'
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* DNS Setup Instructions */}
+                <div className="bg-slate-50 dark:bg-slate-700/60 rounded-xl p-4 border border-slate-200 dark:border-slate-600 space-y-3">
+                  <div className="flex items-center gap-2 text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">
+                    <ShieldCheck className="w-4 h-4 text-purple-600" />
+                    DNS Configuration Instructions
+                  </div>
+                  <p className="text-xs text-slate-600 dark:text-slate-300">
+                    Log in to your domain provider (GoDaddy, Cloudflare, Namecheap, etc.) and add ONE of the following DNS records:
+                  </p>
+
+                  <div className="overflow-x-auto text-xs">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className="border-b border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400">
+                          <th className="py-1.5 px-2 font-medium">Type</th>
+                          <th className="py-1.5 px-2 font-medium">Host / Name</th>
+                          <th className="py-1.5 px-2 font-medium">Value / Target</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 dark:divide-slate-600 font-mono">
+                        <tr>
+                          <td className="py-2 px-2 font-bold text-purple-600 dark:text-purple-400">CNAME</td>
+                          <td className="py-2 px-2">@ or subdomain</td>
+                          <td className="py-2 px-2 text-slate-800 dark:text-slate-200 font-semibold">cname.portiqqo.me</td>
+                        </tr>
+                        <tr>
+                          <td className="py-2 px-2 font-bold text-blue-600 dark:text-blue-400">A</td>
+                          <td className="py-2 px-2">@</td>
+                          <td className="py-2 px-2 text-slate-800 dark:text-slate-200 font-semibold">143.198.128.45</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 italic">
+                    Note: DNS records may take up to 24 hours to propagate across global DNS servers.
+                  </p>
+                </div>
+
+                {/* Verification result messages */}
+                {verificationResult && (
+                  <div className={`p-3 rounded-xl text-xs font-medium ${
+                    verificationResult.success
+                      ? 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300'
+                      : 'bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-300'
+                  }`}>
+                    {verificationResult.message}
+                  </div>
+                )}
+
+                {/* Actions: Verify & Remove */}
+                {domainPortfolio.customDomain && (
+                  <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                    <button
+                      onClick={handleVerifyDomain}
+                      disabled={verifyingDomain}
+                      className="flex-1 py-3 px-4 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 shadow-md disabled:opacity-50"
+                    >
+                      {verifyingDomain ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          Checking DNS Records...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4" />
+                          Check & Verify DNS
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={handleRemoveDomain}
+                      className="py-3 px-4 bg-red-50 hover:bg-red-100 dark:bg-red-900/20 dark:hover:bg-red-900/40 text-red-600 dark:text-red-300 rounded-xl font-semibold text-sm transition-all duration-200 flex items-center justify-center gap-1.5"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </motion.div>
+        </div>
+      )}
+
+      {/* Visitor Analytics Modal */}
+      <PortfolioAnalyticsModal
+        isOpen={showAnalyticsModal}
+        onClose={() => setShowAnalyticsModal(false)}
+        portfolio={analyticsPortfolio}
+      />
     </>
   )
 }
