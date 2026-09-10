@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Eye, Check, Zap, Sparkles, Terminal, TrendingUp, Layout, Film, Camera, Layers, Play } from 'lucide-react'
+import { ArrowRight, Eye, Zap, Sparkles, Terminal, TrendingUp, Layout, Film, Camera, Layers, Play } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 
 // Animated Web Developer Component Illustration
 const WebDevIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-slate-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950 flex items-center justify-center p-4">
     {/* Grid Pattern */}
     <div className="absolute inset-0 opacity-20" style={{
       backgroundImage: 'radial-gradient(#38bdf8 1px, transparent 1px)',
@@ -76,7 +76,7 @@ const WebDevIllustration = ({ isHovered }) => (
     </motion.div>
 
     <motion.div 
-      className="absolute bottom-5 right-5 bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1"
+      className="absolute bottom-16 right-5 bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-[11px] font-mono font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1"
       animate={{ y: [0, 5, 0] }}
       transition={{ duration: 2.5, repeat: Infinity, delay: 0.5 }}
     >
@@ -87,7 +87,7 @@ const WebDevIllustration = ({ isHovered }) => (
 
 // Animated Digital Marketer Component Illustration
 const MarketerIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-zinc-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-stone-900 to-amber-950 flex items-center justify-center p-4">
     {/* Radial Glow */}
     <motion.div 
       className="absolute w-72 h-72 bg-amber-500/10 rounded-full blur-3xl"
@@ -148,7 +148,7 @@ const MarketerIllustration = ({ isHovered }) => (
 
     {/* Floating Badge */}
     <motion.div 
-      className="absolute bottom-5 left-5 bg-zinc-900/90 border border-emerald-500/40 text-emerald-400 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg backdrop-blur-md"
+      className="absolute bottom-16 left-5 bg-zinc-900/90 border border-emerald-500/40 text-emerald-400 text-xs font-bold px-3.5 py-1.5 rounded-full shadow-lg backdrop-blur-md"
       animate={{ y: [0, -4, 0] }}
       transition={{ duration: 3, repeat: Infinity }}
     >
@@ -159,7 +159,7 @@ const MarketerIllustration = ({ isHovered }) => (
 
 // Animated UI/UX Designer Illustration
 const DesignerIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-zinc-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-zinc-900 to-pink-950 flex items-center justify-center p-4">
     {/* Pink Radial Glow */}
     <motion.div 
       className="absolute w-64 h-64 bg-pink-500/10 rounded-full blur-3xl"
@@ -193,7 +193,7 @@ const DesignerIllustration = ({ isHovered }) => (
         <span className="w-2 h-2 rounded-full bg-pink-400 animate-ping" />
       </div>
 
-      {/* Animated Animated Cursor */}
+      {/* Animated Cursor */}
       <motion.div 
         className="absolute top-12 right-12 z-20 pointer-events-none"
         animate={{ 
@@ -222,7 +222,7 @@ const DesignerIllustration = ({ isHovered }) => (
 
 // Animated Video Editor Illustration
 const VideoEditorIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-teal-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-teal-950 to-emerald-950 flex items-center justify-center p-4">
     {/* Teal Glow */}
     <motion.div 
       className="absolute w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl"
@@ -266,7 +266,7 @@ const VideoEditorIllustration = ({ isHovered }) => (
 
     {/* Floating Badge */}
     <motion.div 
-      className="absolute bottom-5 right-5 bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1"
+      className="absolute bottom-16 right-5 bg-slate-900/90 border border-emerald-500/40 text-emerald-300 text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md flex items-center gap-1"
       animate={{ y: [0, 4, 0] }}
       transition={{ duration: 2.8, repeat: Infinity }}
     >
@@ -278,7 +278,7 @@ const VideoEditorIllustration = ({ isHovered }) => (
 
 // Animated Photographer Illustration
 const PhotographerIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-indigo-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-purple-950 flex items-center justify-center p-4">
     {/* Purple Glow */}
     <motion.div 
       className="absolute w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"
@@ -323,7 +323,7 @@ const PhotographerIllustration = ({ isHovered }) => (
 
     {/* Floating Badge */}
     <motion.div 
-      className="absolute bottom-5 left-5 bg-slate-900/90 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold px-3.5 py-1.5 rounded-full shadow-lg backdrop-blur-md"
+      className="absolute bottom-16 left-5 bg-slate-900/90 border border-purple-500/40 text-purple-300 text-xs font-mono font-bold px-3.5 py-1.5 rounded-full shadow-lg backdrop-blur-md"
       animate={{ y: [0, -4, 0] }}
       transition={{ duration: 3, repeat: Infinity }}
     >
@@ -334,10 +334,10 @@ const PhotographerIllustration = ({ isHovered }) => (
 
 // Animated General Portfolio Illustration
 const GeneralIllustration = ({ isHovered }) => (
-  <div className="relative w-full h-full overflow-hidden bg-stone-950 flex items-center justify-center p-4">
+  <div className="relative w-full h-full overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-blue-950 flex items-center justify-center p-4">
     {/* Amber Glow */}
     <motion.div 
-      className="absolute w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"
+      className="absolute w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl"
       animate={{ scale: isHovered ? [1, 1.2, 1] : 1 }}
       transition={{ duration: 3, repeat: Infinity }}
     />
@@ -345,36 +345,36 @@ const GeneralIllustration = ({ isHovered }) => (
     {/* Floating Bento Modules */}
     <div className="relative z-10 grid grid-cols-3 gap-2.5 w-full max-w-[310px]">
       <motion.div 
-        className="col-span-2 bg-stone-900/90 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md"
+        className="col-span-2 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md"
         animate={{ y: isHovered ? -4 : 0 }}
         transition={{ type: 'spring', stiffness: 200 }}
       >
-        <div className="w-16 h-2.5 bg-amber-400/40 rounded-full mb-2" />
-        <div className="w-full h-2 bg-stone-700/50 rounded-full mb-1" />
-        <div className="w-2/3 h-2 bg-stone-700/50 rounded-full" />
+        <div className="w-16 h-2.5 bg-indigo-400/40 rounded-full mb-2" />
+        <div className="w-full h-2 bg-slate-700/50 rounded-full mb-1" />
+        <div className="w-2/3 h-2 bg-slate-700/50 rounded-full" />
       </motion.div>
 
       <motion.div 
-        className="col-span-1 bg-stone-900/90 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md flex items-center justify-center"
+        className="col-span-1 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md flex items-center justify-center"
         animate={{ y: isHovered ? -7 : 0 }}
         transition={{ type: 'spring', stiffness: 200, delay: 0.05 }}
       >
-        <Layers className="w-6 h-6 text-amber-400" />
+        <Layers className="w-6 h-6 text-indigo-400" />
       </motion.div>
 
       <motion.div 
-        className="col-span-3 bg-stone-900/90 border border-amber-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md flex items-center justify-between"
+        className="col-span-3 bg-slate-900/90 border border-indigo-500/30 rounded-xl p-3 shadow-xl backdrop-blur-md flex items-center justify-between"
         animate={{ y: isHovered ? -3 : 0 }}
         transition={{ type: 'spring', stiffness: 200, delay: 0.1 }}
       >
-        <span className="text-xs font-bold text-amber-300">Customizable Layout</span>
-        <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+        <span className="text-xs font-bold text-indigo-300">Customizable Layout</span>
+        <Sparkles className="w-4 h-4 text-indigo-400 animate-pulse" />
       </motion.div>
     </div>
 
     {/* Floating Badge */}
     <motion.div 
-      className="absolute top-5 right-5 bg-stone-900/90 border border-amber-500/40 text-amber-300 text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md"
+      className="absolute top-5 right-5 bg-slate-900/90 border border-indigo-500/40 text-indigo-300 text-xs font-bold px-3 py-1 rounded-full shadow-lg backdrop-blur-md"
       animate={{ y: [0, 4, 0] }}
       transition={{ duration: 3, repeat: Infinity }}
     >
@@ -391,7 +391,7 @@ export const templatesData = [
     name: 'Web Developer',
     subtitle: 'Code, Repos & Tech Stack',
     tag: 'DEVELOPMENT',
-    tagColor: 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40',
+    tagColor: 'bg-cyan-100 text-cyan-800 border-cyan-300 dark:bg-cyan-950/80 dark:text-cyan-300 dark:border-cyan-800',
     accentColor: '#38bdf8',
     description: 'Clean, modern portfolio engineered for software engineers, frontend, backend, and full-stack devs.',
     features: ['GitHub Repos Integration', 'Interactive Tech Stack', 'Live Project Demos'],
@@ -405,7 +405,7 @@ export const templatesData = [
     name: 'Digital Marketer',
     subtitle: 'Campaigns, SEO & Growth',
     tag: 'MARKETING & SEO',
-    tagColor: 'bg-yellow-500/20 text-yellow-300 border-yellow-500/40',
+    tagColor: 'bg-amber-100 text-amber-800 border-amber-300 dark:bg-amber-950/80 dark:text-amber-300 dark:border-amber-800',
     accentColor: '#facc15',
     description: 'Dynamic showcase for growth hackers, SEO experts, performance marketers, and social media managers.',
     features: ['Campaign ROI Metrics', 'SEO Rank Tracking', 'Client Case Studies'],
@@ -419,7 +419,7 @@ export const templatesData = [
     name: 'UI/UX Designer',
     subtitle: 'Figma, Wireframes & UX',
     tag: 'PRODUCT DESIGN',
-    tagColor: 'bg-pink-500/20 text-pink-300 border-pink-500/40',
+    tagColor: 'bg-pink-100 text-pink-800 border-pink-300 dark:bg-pink-950/80 dark:text-pink-300 dark:border-pink-800',
     accentColor: '#ec4899',
     description: 'Crafted for product designers, Figma creators, and design systems architects who value aesthetics.',
     features: ['Interactive Figma Embeds', 'Design Process Breakdown', 'Prototype Links'],
@@ -433,7 +433,7 @@ export const templatesData = [
     name: 'Video Editor',
     subtitle: 'Reels, YouTube & Motion',
     tag: 'MOTION & VIDEO',
-    tagColor: 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40',
+    tagColor: 'bg-emerald-100 text-emerald-800 border-emerald-300 dark:bg-emerald-950/80 dark:text-emerald-300 dark:border-emerald-800',
     accentColor: '#10b981',
     description: 'Built for video creators, animators, reel makers, and film editors with embedded video players.',
     features: ['YouTube & Vimeo Integration', 'Aspect Ratio Grid', 'Showreel Hero Player'],
@@ -447,7 +447,7 @@ export const templatesData = [
     name: 'Photographer',
     subtitle: 'High-Res Galleries & Lightbox',
     tag: 'VISUAL & PHOTO',
-    tagColor: 'bg-purple-500/20 text-purple-300 border-purple-500/40',
+    tagColor: 'bg-purple-100 text-purple-800 border-purple-300 dark:bg-purple-950/80 dark:text-purple-300 dark:border-purple-800',
     accentColor: '#a855f7',
     description: 'Minimalist, distraction-free visual layout designed to let high-resolution photography speak.',
     features: ['Full-Screen Lightbox Mode', 'Masonry Image Grid', 'EXIF Camera Info'],
@@ -461,7 +461,7 @@ export const templatesData = [
     name: 'General Portfolio',
     subtitle: 'Multi-Purpose & Customizable',
     tag: 'ALL CREATORS',
-    tagColor: 'bg-amber-500/20 text-amber-300 border-amber-500/40',
+    tagColor: 'bg-indigo-100 text-indigo-800 border-indigo-300 dark:bg-indigo-950/80 dark:text-indigo-300 dark:border-indigo-800',
     accentColor: '#f59e0b',
     description: 'Versatile, modular layout suitable for consultants, freelancers, writers, architects, and artists.',
     features: ['Custom Sections', 'Multi-Media Support', 'Easy Setup'],
@@ -496,24 +496,24 @@ export default function TemplateMosaicGrid({ onSelectTemplate, isDashboard = fal
   }
 
   return (
-    <div className="w-full max-w-7xl mx-auto rounded-3xl overflow-hidden border border-slate-700/60 shadow-2xl bg-slate-950">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-y md:divide-y-0 divide-slate-800/80">
+    <div className="w-full max-w-7xl mx-auto rounded-3xl overflow-hidden border border-slate-200 dark:border-slate-800 shadow-xl bg-white dark:bg-slate-900 transition-colors duration-300">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 divide-y md:divide-y-0 divide-slate-200 dark:divide-slate-800">
         {templatesData.map((template, idx) => {
           const isHovered = hoveredId === template.id
           const IllustrationComponent = template.illustration
 
           // Clean Seamless Mosaic Grid Dividers
           const borderClasses = `
-            ${idx % 3 !== 2 ? 'lg:border-r border-slate-800/80' : ''}
-            ${idx % 2 === 0 ? 'md:border-r lg:border-r-0 border-slate-800/80' : ''}
-            ${idx < 3 ? 'lg:border-b border-slate-800/80' : ''}
-            ${idx < 4 ? 'md:border-b lg:border-b-0 border-slate-800/80' : ''}
+            ${idx % 3 !== 2 ? 'lg:border-r border-slate-200 dark:border-slate-800' : ''}
+            ${idx % 2 === 0 ? 'md:border-r lg:border-r-0 border-slate-200 dark:border-slate-800' : ''}
+            ${idx < 3 ? 'lg:border-b border-slate-200 dark:border-slate-800' : ''}
+            ${idx < 4 ? 'md:border-b lg:border-b-0 border-slate-200 dark:border-slate-800' : ''}
           `
 
           return (
             <div
               key={template.id}
-              className={`group relative overflow-hidden cursor-pointer bg-slate-950 ${template.height} ${borderClasses}`}
+              className={`group relative overflow-hidden cursor-pointer bg-white dark:bg-slate-900 ${template.height} ${borderClasses}`}
               onMouseEnter={() => setHoveredId(template.id)}
               onMouseLeave={() => setHoveredId(null)}
               onClick={() => handleTemplateClick(template)}
@@ -525,32 +525,32 @@ export default function TemplateMosaicGrid({ onSelectTemplate, isDashboard = fal
 
               {/* Top Tag Badge (Always visible) */}
               <div className="absolute top-4 left-4 z-10">
-                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wider uppercase border backdrop-blur-md shadow-md transition-all duration-300 ${template.tagColor}`}>
+                <span className={`inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full text-xs font-extrabold tracking-wider uppercase border backdrop-blur-md shadow-sm transition-all duration-300 ${template.tagColor}`}>
                   <Zap className="w-3.5 h-3.5" />
                   {template.tag}
                 </span>
               </div>
 
-              {/* Bottom Info Bar (Slides up / expands on hover) */}
-              <div className="absolute inset-x-0 bottom-0 z-20 p-5 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent flex flex-col justify-end transition-all duration-300">
+              {/* Bottom Info Bar (Theme matched light/dark gradient container) */}
+              <div className="absolute inset-x-0 bottom-0 z-20 p-5 bg-gradient-to-t from-white via-white/95 to-transparent dark:from-slate-900 dark:via-slate-900/95 dark:to-transparent flex flex-col justify-end transition-all duration-300">
                 <div className="flex items-center justify-between mb-1">
-                  <h4 className="text-white font-extrabold text-xl tracking-tight group-hover:text-pink-300 transition-colors">
+                  <h4 className="text-slate-900 dark:text-white font-extrabold text-xl tracking-tight group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
                     {template.name}
                   </h4>
-                  <span className="text-xs font-semibold text-slate-400 bg-slate-800/80 px-2.5 py-0.5 rounded-full border border-slate-700">
+                  <span className="text-xs font-semibold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/90 px-2.5 py-0.5 rounded-full border border-slate-200 dark:border-slate-700">
                     {template.subtitle}
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed mb-3">
+                <p className="text-xs text-slate-600 dark:text-slate-300 line-clamp-2 leading-relaxed mb-3">
                   {template.description}
                 </p>
 
-                {/* Animated Glass Control Buttons */}
+                {/* Animated Glass Control Buttons matching App Theme */}
                 <div className="flex items-center gap-2.5">
                   <button
                     onClick={(e) => handlePreviewClick(e, template)}
-                    className="flex-1 py-2 px-3 bg-white/10 hover:bg-white/20 text-white text-xs font-bold rounded-xl border border-white/20 transition-all duration-200 flex items-center justify-center gap-1.5 backdrop-blur-md shadow-sm"
+                    className="flex-1 py-2.5 px-3 bg-slate-100 hover:bg-slate-200 text-slate-700 dark:bg-slate-800 dark:hover:bg-slate-700 dark:text-slate-200 text-xs font-bold rounded-xl border border-slate-200 dark:border-slate-700 transition-all duration-200 flex items-center justify-center gap-1.5 shadow-sm"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     Preview
@@ -558,7 +558,7 @@ export default function TemplateMosaicGrid({ onSelectTemplate, isDashboard = fal
 
                   <button
                     onClick={() => handleTemplateClick(template)}
-                    className="flex-1 py-2 px-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 text-xs font-bold rounded-xl shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5"
+                    className="flex-1 py-2.5 px-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 hover:from-purple-700 hover:via-indigo-700 hover:to-blue-700 text-white text-xs font-bold rounded-xl shadow-md hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-1.5"
                   >
                     <span>Use Template</span>
                     <ArrowRight className="w-3.5 h-3.5" />

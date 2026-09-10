@@ -579,11 +579,13 @@ function DashboardPage() {
           )}
 
           {/* Templates Grid */}
-          <div className="mb-8">
-            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
-              {existingPortfolios.length > 0 ? 'Switch Your Template' : 'Choose Your Template'}
-            </h2>
-          </div>
+          {existingPortfolios.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
+                Switch Your Template
+              </h2>
+            </div>
+          )}
           <div className="max-w-7xl mx-auto">
             <TemplateMosaicGrid isDashboard={true} onSelectTemplate={(t) => handleTemplateSelect(t.id)} />
           </div>
