@@ -1,9 +1,17 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
+const getApiBaseUrl = () => {
+  if (import.meta.env.VITE_API_URL) return import.meta.env.VITE_API_URL
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://portiqqo.onrender.com/api'
+  }
+  return 'http://localhost:5001/api'
+}
+
 // Create axios instance
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5001/api',
+  baseURL: getApiBaseUrl(),
   timeout: 15000,
   headers: {
     'Content-Type': 'application/json',

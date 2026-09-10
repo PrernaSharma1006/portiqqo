@@ -5,9 +5,19 @@ import { UserPlus, LogIn, CheckCircle, Eye, EyeOff, Mail } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
 import { useNavigate } from 'react-router-dom'
 
-const rawApiBase = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL || ''
-const normalizedApiBase = rawApiBase.replace(/\/$/, '').replace(/\/api$/, '')
-const googleAuthUrl = normalizedApiBase ? `${normalizedApiBase}/api/auth/google` : '/api/auth/google'
+const getApiBaseUrl = () => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
+  if (envUrl && envUrl.startsWith('http')) {
+    return envUrl.replace(/\/$/, '').replace(/\/api$/, '')
+  }
+  if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
+    return 'https://portiqqo.onrender.com'
+  }
+  return ''
+}
+
+const apiBase = getApiBaseUrl()
+const googleAuthUrl = apiBase ? `${apiBase}/api/auth/google` : '/api/auth/google'
 
 function UnifiedAuthPage() {
   const [activeCard, setActiveCard] = useState('login')
