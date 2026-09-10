@@ -213,7 +213,13 @@ function SignupPage() {
         password: formData.password,
         name: formData.name
       });
-      navigate('/dashboard');
+      const redirectPath = localStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        localStorage.removeItem('redirectAfterAuth');
+        navigate(redirectPath);
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       setErrors({ submit: error.message || 'Registration failed' });
     } finally {

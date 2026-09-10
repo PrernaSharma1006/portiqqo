@@ -159,7 +159,7 @@ function UnifiedAuthPage() {
           localStorage.removeItem('redirectAfterAuth')
           navigate(redirectPath)
         } else {
-          navigate('/dashboard')
+          navigate('/')
         }
       }, 2000)
     } catch (error) {
@@ -266,7 +266,7 @@ function UnifiedAuthPage() {
           localStorage.removeItem('redirectAfterAuth')
           navigate(redirectPath)
         } else {
-          navigate('/dashboard')
+          navigate('/')
         }
       }, 2000)
     } catch (error) {

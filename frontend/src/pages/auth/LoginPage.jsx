@@ -141,7 +141,13 @@ function LoginPage() {
 
     try {
       await login(formData.email, formData.password);
-      navigate('/dashboard');
+      const redirectPath = localStorage.getItem('redirectAfterAuth');
+      if (redirectPath) {
+        localStorage.removeItem('redirectAfterAuth');
+        navigate(redirectPath);
+      } else {
+        navigate('/');
+      }
     } catch (error) {
       setErrors({ submit: error.message || 'Login failed' });
     } finally {

@@ -80,9 +80,8 @@ function Header() {
           scrollToSection('pricing')
         }
       }
-    },
-    ...(isAuthenticated ? [{ label: 'Dashboard', href: '/dashboard' }] : [])
-  ], [location.pathname, isAuthenticated])
+    }
+  ], [location.pathname])
 
   return (
     <header className="sticky top-0 z-50 py-1.5 bg-[#f9f6f0]/95 dark:bg-[#141210]/95 backdrop-blur-md border-b border-[#e6ccb2]/80 dark:border-stone-800 transition-colors duration-300">
@@ -161,12 +160,15 @@ function Header() {
                       </div>
                       
                       <Link
-                        to="/dashboard"
+                        to="/#templates"
                         className="flex items-center px-5 py-3 text-sm font-medium text-stone-800 dark:text-stone-200 hover:bg-[#f5ebe0] dark:hover:bg-stone-800 transition-all"
-                        onClick={() => setShowUserMenu(false)}
+                        onClick={() => {
+                          setShowUserMenu(false)
+                          scrollToSection('templates')
+                        }}
                       >
                         <User className="w-4 h-4 mr-3 text-pink-500" />
-                        Dashboard
+                        Explore Templates
                       </Link>
                       
                       <Link

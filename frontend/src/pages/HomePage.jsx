@@ -3,6 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Palette, Globe, Upload, Zap, Users, Star, Check, ExternalLink, Eye, Quote, CheckCircle2, Heart, MessageSquare, Bot, BarChart3, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
+import { useAuth } from '../contexts/AuthContext'
 import TemplateSelectionModal, { professionTemplates } from '../components/modals/TemplateSelectionModal'
 import FeedbackModal from '../components/modals/FeedbackModal'
 import { markFeedbackGiven } from '../utils/feedbackHelper'
@@ -28,6 +29,7 @@ const staggerChildren = {
 }
 
 function HomePage() {
+  const { user, isAuthenticated } = useAuth()
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
   const [testimonials, setTestimonials] = useState([
@@ -113,23 +115,28 @@ function HomePage() {
   }, [])
 
   const handleProfessionSelect = (profession) => {
-    console.log('Selected profession:', profession)
-    
-    // Navigate directly to template editors for profession-specific templates
     const routeMap = {
       'developer': '/editor/web-developer',
+      'web-developer': '/editor/web-developer',
       'designer': '/editor/ui-ux-designer',
+      'uiux-designer': '/editor/ui-ux-designer',
       'photographer': '/editor/photographer',
       'videographer': '/editor/video-editor',
+      'video-editor': '/editor/video-editor',
+      'digital-marketer': '/editor/digital-marketer',
       'general': '/editor/general-portfolio'
     }
-    
-    if (routeMap[profession.id] && !routeMap[profession.id].includes('coming-soon')) {
-      navigate(routeMap[profession.id])
-    } else {
-      // For templates not yet created, show coming soon message
-      alert(`Template for ${profession.name} coming soon! We're working on it.`)
+
+    const targetRoute = routeMap[profession.id] || '/editor/general-portfolio'
+
+    if (!isAuthenticated) {
+      // Prompt user to login first before editing/exploring templates
+      localStorage.setItem('redirectAfterAuth', targetRoute)
+      navigate('/auth')
+      return
     }
+
+    navigate(targetRoute)
   }
 
   const handleFeedbackSubmit = async (feedbackData) => {

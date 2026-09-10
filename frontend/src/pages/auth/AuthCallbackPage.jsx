@@ -44,10 +44,10 @@ export default function AuthCallbackPage() {
           if (redirectPath.startsWith('/') && !redirectPath.startsWith('//')) {
             navigate(redirectPath);
           } else {
-            navigate('/dashboard');
+            navigate('/');
           }
         } else {
-          navigate('/dashboard');
+          navigate('/');
         }
       } catch (error) {
         console.error('Callback error:', error);
