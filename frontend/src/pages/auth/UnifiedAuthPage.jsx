@@ -650,7 +650,7 @@ function UnifiedAuthPage() {
                           className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
                             errors.firstName ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
-                          placeholder="John"
+                          placeholder="Enter your first name"
                         />
                         {errors.firstName && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.firstName}</p>}
                       </div>
@@ -668,7 +668,7 @@ function UnifiedAuthPage() {
                           className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
                             errors.lastName ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
-                          placeholder="Doe"
+                          placeholder="Enter your last name"
                         />
                         {errors.lastName && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.lastName}</p>}
                       </div>
@@ -687,7 +687,7 @@ function UnifiedAuthPage() {
                         className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
                           errors.email ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                         }`}
-                        placeholder="name@domain.com"
+                        placeholder="Enter your email"
                       />
                       {errors.email && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.email}</p>}
                     </div>
@@ -706,7 +706,7 @@ function UnifiedAuthPage() {
                           className={`w-full px-3.5 py-2 pr-10 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
                             errors.password ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
-                          placeholder="Create password"
+                          placeholder="Enter your password"
                         />
                         <button
                           type="button"
@@ -786,7 +786,7 @@ function UnifiedAuthPage() {
                         value={otpData.otp}
                         onChange={(e) => setOtpData(prev => ({ ...prev, otp: e.target.value }))}
                         className="w-full text-center text-xl font-bold tracking-[0.4em] py-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-700 outline-none focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20"
-                        placeholder="123456"
+                        placeholder="Enter 6-digit code"
                         maxLength="6"
                         disabled={otpData.blocked}
                       />
