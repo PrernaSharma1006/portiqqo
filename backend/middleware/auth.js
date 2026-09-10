@@ -12,7 +12,8 @@ const auth = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const secret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
+    const decoded = jwt.verify(token, secret);
     const user = await User.findById(decoded.id || decoded.userId).select('-password');
 
     if (!user) {
@@ -46,7 +47,8 @@ const optionalAuth = async (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
 
     if (token) {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const secret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
+      const decoded = jwt.verify(token, secret);
       const user = await User.findById(decoded.id || decoded.userId).select('-password');
       if (user && user.isActive) {
         req.user = user;

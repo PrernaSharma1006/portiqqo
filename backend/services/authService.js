@@ -4,14 +4,16 @@ const crypto = require('crypto');
 class AuthService {
   // Generate JWT token
   generateToken(payload) {
-    return jwt.sign(payload, process.env.JWT_SECRET, {
+    const secret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
+    return jwt.sign(payload, secret, {
       expiresIn: process.env.JWT_EXPIRE || '1d',
     });
   }
 
   // Generate refresh token
   generateRefreshToken(payload) {
-    return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+    const refreshSecret = process.env.JWT_REFRESH_SECRET || 'dev_super_secret_refresh_jwt_key_for_development_only';
+    return jwt.sign(payload, refreshSecret, {
       expiresIn: process.env.JWT_REFRESH_EXPIRE || '30d',
     });
   }
@@ -19,7 +21,8 @@ class AuthService {
   // Verify JWT token
   verifyToken(token) {
     try {
-      return jwt.verify(token, process.env.JWT_SECRET);
+      const secret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
+      return jwt.verify(token, secret);
     } catch (error) {
       throw new Error('Invalid or expired token');
     }
@@ -28,7 +31,8 @@ class AuthService {
   // Verify refresh token
   verifyRefreshToken(token) {
     try {
-      return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
+      const refreshSecret = process.env.JWT_REFRESH_SECRET || 'dev_super_secret_refresh_jwt_key_for_development_only';
+      return jwt.verify(token, refreshSecret);
     } catch (error) {
       throw new Error('Invalid or expired refresh token');
     }

@@ -44,8 +44,8 @@ app.use('/api', limiter);
 
 // CORS configuration
 const allowedOrigins = process.env.ALLOWED_ORIGINS 
-  ? process.env.ALLOWED_ORIGINS.split(',')
-  : [process.env.APP_URL || 'http://localhost:3000', 'http://localhost:3001'];
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+  : [process.env.APP_URL || 'https://portiqqo.vercel.app', 'http://localhost:3000', 'http://localhost:5173'];
 
 app.use(cors({
   origin: function (origin, callback) {
@@ -83,15 +83,15 @@ app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
 // Session middleware for passport
 app.use(session({
-  secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
+  secret: process.env.SESSION_SECRET || 'portiqqo-session-secret-2026-random-string-for-sessions',
   resave: false,
-  saveUninitialized: false,
-  name: 'sessionId', // Change default session cookie name
+  saveUninitialized: true, // Required for Passport OAuth state persistence
+  name: 'sessionId',
   cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    httpOnly: true, // Prevent XSS attacks
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // CSRF protection
+    secure: process.env.NODE_ENV === 'production',
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
   }
 }));
 

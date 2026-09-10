@@ -108,6 +108,7 @@ router.get('/google/callback', (req, res, next) => {
 
       const token = jwt.sign(
         { 
+          id: user._id,
           userId: user._id,
           email: user.email,
           type: 'google_oauth'
