@@ -10,8 +10,8 @@ function SubdomainRouter() {
   // Check main domains, vercel hosts, and local dev hosts
   const isMainDomain = hostname === 'portiqqo.me' || 
                        hostname === 'www.portiqqo.me' || 
-                       hostname.endsWith('.vercel.app') ||
-                       hostname === 'localhost' || 
+                       hostname.includes('vercel.app') ||
+                       hostname.includes('localhost') || 
                        hostname === '127.0.0.1';
 
   // Check if we're on a portiqqo.me subdomain (e.g., username.portiqqo.me)

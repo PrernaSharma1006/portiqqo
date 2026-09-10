@@ -32,8 +32,8 @@ function PublicPortfolioPage() {
     // If it's an external custom domain
     const isMainOrLocal = hostname === 'portiqqo.me' || 
                           hostname === 'www.portiqqo.me' || 
-                          hostname.endsWith('.vercel.app') ||
-                          hostname === 'localhost' || 
+                          hostname.includes('vercel.app') ||
+                          hostname.includes('localhost') || 
                           hostname === '127.0.0.1';
     if (!isMainOrLocal && !hostname.endsWith('.portiqqo.me')) {
       return hostname;
