@@ -143,8 +143,8 @@ function UnifiedAuthPage() {
     if (score <= 1) return 'bg-red-500'
     if (score <= 2) return 'bg-orange-500'
     if (score <= 3) return 'bg-yellow-500'
-    if (score <= 4) return 'bg-blue-500'
-    return 'bg-green-500'
+    if (score <= 4) return 'bg-pink-400'
+    return 'bg-emerald-500'
   }
 
   const getPasswordStrengthText = (score) => {
@@ -216,7 +216,7 @@ function UnifiedAuthPage() {
     }
 
     setIsLoading(true)
-    setErrors({}) // Clear any previous errors
+    setErrors({})
     
     try {
       console.log('Checking if email exists:', formData.email)
@@ -239,7 +239,7 @@ function UnifiedAuthPage() {
         blocked: false,
         lastResendTime: Date.now()
       })
-      setResendTimer(60) // 60 second cooldown
+      setResendTimer(60)
       setActiveCard('otp')
     } catch (error) {
       console.error('Signup error:', error)
@@ -348,43 +348,41 @@ function UnifiedAuthPage() {
     setResendTimer(0)
   }
 
-  const isSignupMode = activeCard === 'signup' || activeCard === 'otp'
-
   return (
     <>
       <Helmet>
         <title>Portiqqo - Sign In & Registration</title>
       </Helmet>
 
-      {/* Main Page Container */}
-      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#12100e] text-stone-900 dark:text-stone-100 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative overflow-hidden transition-colors duration-300">
+      {/* Outer Page Container - Warm Editorial Cream Theme */}
+      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#141210] text-stone-900 dark:text-stone-100 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative overflow-hidden transition-colors duration-300">
         
-        {/* Decorative Background Glows */}
-        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-indigo-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
+        {/* Soft Warm Glowing Accents */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-[#f472b6]/15 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-[#e6ccb2]/30 dark:bg-stone-800/40 blur-3xl pointer-events-none" />
 
-        {/* 50 / 50 Half & Half Split Card Container */}
-        <div className="w-full max-w-4xl min-h-[580px] rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col md:flex-row my-auto z-10">
+        {/* 50/50 Split Container - Brand Dark Stone Left, Editorial Warm Cream Right */}
+        <div className="w-full max-w-4xl min-h-[580px] rounded-3xl overflow-hidden shadow-2xl bg-[#fdfbf7] dark:bg-[#181614] border border-[#e6ccb2] dark:border-stone-800 flex flex-col md:flex-row my-auto z-10">
           
-          {/* LEFT SIDE (50%): Brand Welcome & Mode Switcher */}
-          <div className="w-full md:w-1/2 bg-gradient-to-br from-[#4f46e5] via-[#5851db] to-[#db2777] text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden min-h-[300px] md:min-h-[580px]">
+          {/* LEFT SIDE (50%): Brand Dark Theme Panel */}
+          <div className="w-full md:w-1/2 bg-[#141210] text-stone-100 p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden min-h-[300px] md:min-h-[580px] border-b md:border-b-0 md:border-r border-[#e6ccb2]/20 dark:border-stone-800">
             
-            {/* Background Accent Shapes */}
-            <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
-            <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
+            {/* Subtle Gradient & Card Overlays */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#f472b6]/10 rounded-full blur-2xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-64 h-64 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
 
-            {/* Top Brand Header */}
+            {/* Brand Logo & Home Link */}
             <div className="flex items-center justify-between z-10">
-              <Link to="/" className="font-heading font-black text-2xl tracking-tight text-white flex items-center gap-1.5 hover:opacity-90 transition-opacity">
-                <span>porti<span className="text-pink-300">qqo</span></span>
+              <Link to="/" className="font-heading font-black text-2xl tracking-tight text-stone-100 flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+                <span>porti<span className="text-[#f472b6]">qqo</span></span>
               </Link>
-              <Link to="/" className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all">
+              <Link to="/" className="inline-flex items-center gap-1.5 text-xs font-bold px-3.5 py-1.5 rounded-full bg-stone-800/80 hover:bg-stone-700 text-stone-200 border border-stone-700/80 transition-all">
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Home</span>
               </Link>
             </div>
 
-            {/* Middle Welcome & Action Text */}
+            {/* Middle Welcome Text & Action Pill */}
             <div className="my-auto py-8 z-10 space-y-4">
               <AnimatePresence mode="wait">
                 {activeCard === 'login' ? (
@@ -396,21 +394,21 @@ function UnifiedAuthPage() {
                     transition={{ duration: 0.2 }}
                     className="space-y-4"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold tracking-wide uppercase backdrop-blur-sm border border-white/20">
-                      <Sparkles className="w-3.5 h-3.5 text-pink-300" />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold tracking-wide uppercase">
+                      <Sparkles className="w-3.5 h-3.5 text-[#f472b6]" />
                       <span>Join 2,500+ Creators</span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight">
+                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight text-stone-50">
                       Don't have an account?
                     </h2>
-                    <p className="text-indigo-100 text-sm leading-relaxed max-w-sm">
+                    <p className="text-stone-400 text-sm leading-relaxed max-w-sm font-normal">
                       Create an account to explore our curated portfolio templates and build your custom showcase.
                     </p>
                     <div className="pt-2">
                       <button
                         type="button"
                         onClick={() => handleSwitchCard('signup')}
-                        className="px-8 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold text-sm rounded-full shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="px-8 py-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black text-sm rounded-full shadow-lg shadow-pink-500/20 transition-all duration-300 hover:scale-105 active:scale-95"
                       >
                         Create Account
                       </button>
@@ -425,21 +423,21 @@ function UnifiedAuthPage() {
                     transition={{ duration: 0.2 }}
                     className="space-y-4"
                   >
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold tracking-wide uppercase backdrop-blur-sm border border-white/20">
-                      <LogIn className="w-3.5 h-3.5 text-pink-300" />
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-300 text-xs font-bold tracking-wide uppercase">
+                      <LogIn className="w-3.5 h-3.5 text-[#f472b6]" />
                       <span>Already Registered?</span>
                     </div>
-                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight">
+                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight text-stone-50">
                       Have an account?
                     </h2>
-                    <p className="text-indigo-100 text-sm leading-relaxed max-w-sm">
+                    <p className="text-stone-400 text-sm leading-relaxed max-w-sm font-normal">
                       Sign in with your email and password to manage your portfolio and editor settings.
                     </p>
                     <div className="pt-2">
                       <button
                         type="button"
                         onClick={() => handleSwitchCard('login')}
-                        className="px-8 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold text-sm rounded-full shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="px-8 py-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black text-sm rounded-full shadow-lg shadow-pink-500/20 transition-all duration-300 hover:scale-105 active:scale-95"
                       >
                         Sign In
                       </button>
@@ -450,24 +448,24 @@ function UnifiedAuthPage() {
             </div>
 
             {/* Bottom Footer Note */}
-            <div className="text-xs text-indigo-200 font-medium z-10">
+            <div className="text-xs text-stone-400 font-medium z-10">
               Showcase your work professionally with Portiqqo
             </div>
           </div>
 
-          {/* RIGHT SIDE (50%): Interactive Form Fields */}
-          <div className="w-full md:w-1/2 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 p-6 sm:p-10 flex flex-col justify-center">
+          {/* RIGHT SIDE (50%): Form Fields Container */}
+          <div className="w-full md:w-1/2 bg-[#fdfbf7] dark:bg-[#181614] text-stone-900 dark:text-stone-100 p-6 sm:p-10 flex flex-col justify-center">
             
-            {/* Top Form Mode Switcher Pill */}
+            {/* Top Form Segmented Mode Switcher */}
             {activeCard !== 'otp' && activeCard !== 'success' && (
-              <div className="flex items-center justify-center p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl mb-6 max-w-xs mx-auto w-full">
+              <div className="flex items-center justify-center p-1 bg-[#f5ebe0] dark:bg-stone-800/80 border border-[#e6ccb2] dark:border-stone-700 rounded-2xl mb-6 max-w-xs mx-auto w-full">
                 <button
                   type="button"
                   onClick={() => handleSwitchCard('login')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                  className={`flex-1 py-2 text-xs font-extrabold rounded-xl transition-all ${
                     activeCard === 'login' 
                       ? 'bg-[#f472b6] text-stone-950 shadow-md' 
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
                   }`}
                 >
                   Sign In
@@ -475,10 +473,10 @@ function UnifiedAuthPage() {
                 <button
                   type="button"
                   onClick={() => handleSwitchCard('signup')}
-                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                  className={`flex-1 py-2 text-xs font-extrabold rounded-xl transition-all ${
                     activeCard === 'signup' 
                       ? 'bg-[#f472b6] text-stone-950 shadow-md' 
-                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
+                      : 'text-stone-700 dark:text-stone-300 hover:text-stone-900'
                   }`}
                 >
                   Create Account
@@ -502,7 +500,7 @@ function UnifiedAuthPage() {
                     <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
                       Log In
                     </h1>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
                       Enter your credentials to access your account
                     </p>
                   </div>
@@ -512,7 +510,7 @@ function UnifiedAuthPage() {
                     <button
                       type="button"
                       onClick={() => window.location.href = googleAuthUrl}
-                      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-xs text-stone-700 dark:text-stone-200 shadow-sm"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white dark:bg-stone-800 border border-[#e6ccb2] dark:border-stone-700 rounded-2xl hover:bg-[#f5ebe0] dark:hover:bg-stone-700 transition-colors font-semibold text-xs text-stone-800 dark:text-stone-200 shadow-sm"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -525,15 +523,15 @@ function UnifiedAuthPage() {
 
                     <div className="relative my-2">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-stone-200 dark:border-stone-800" />
+                        <div className="w-full border-t border-[#e6ccb2] dark:border-stone-800" />
                       </div>
                       <div className="relative flex justify-center text-[10px] uppercase">
-                        <span className="bg-white dark:bg-stone-900 px-3 text-stone-400 font-bold">OR</span>
+                        <span className="bg-[#fdfbf7] dark:bg-[#181614] px-3 text-stone-400 font-bold">OR</span>
                       </div>
                     </div>
 
                     <div>
-                      <label htmlFor="login-email" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="login-email" className="block text-xs font-bold text-stone-800 dark:text-stone-300 mb-1">
                         Email Address
                       </label>
                       <input
@@ -542,8 +540,8 @@ function UnifiedAuthPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                          errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                        className={`w-full px-4 py-3 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                          errors.email ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                         }`}
                         placeholder="Enter your email"
                       />
@@ -551,7 +549,7 @@ function UnifiedAuthPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="login-password" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="login-password" className="block text-xs font-bold text-stone-800 dark:text-stone-300 mb-1">
                         Password
                       </label>
                       <div className="relative">
@@ -561,8 +559,8 @@ function UnifiedAuthPage() {
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className={`w-full px-4 py-3 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                            errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          className={`w-full px-4 py-3 pr-10 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                            errors.password ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
                           placeholder="Enter your password"
                         />
@@ -608,7 +606,7 @@ function UnifiedAuthPage() {
                     <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
                       Create Account
                     </h1>
-                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
                       Fill out your details to get started
                     </p>
                   </div>
@@ -618,7 +616,7 @@ function UnifiedAuthPage() {
                     <button
                       type="button"
                       onClick={() => window.location.href = googleAuthUrl}
-                      className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-xs text-stone-700 dark:text-stone-200 shadow-sm"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-2.5 bg-white dark:bg-stone-800 border border-[#e6ccb2] dark:border-stone-700 rounded-2xl hover:bg-[#f5ebe0] dark:hover:bg-stone-700 transition-colors font-semibold text-xs text-stone-800 dark:text-stone-200 shadow-sm"
                     >
                       <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -631,16 +629,16 @@ function UnifiedAuthPage() {
 
                     <div className="relative my-1">
                       <div className="absolute inset-0 flex items-center">
-                        <div className="w-full border-t border-stone-200 dark:border-stone-800" />
+                        <div className="w-full border-t border-[#e6ccb2] dark:border-stone-800" />
                       </div>
                       <div className="relative flex justify-center text-[10px] uppercase">
-                        <span className="bg-white dark:bg-stone-900 px-2 text-stone-400 font-bold">OR</span>
+                        <span className="bg-[#fdfbf7] dark:bg-[#181614] px-2 text-stone-400 font-bold">OR</span>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label htmlFor="signup-firstName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        <label htmlFor="signup-firstName" className="block text-[11px] font-bold text-stone-800 dark:text-stone-300 mb-1">
                           First Name
                         </label>
                         <input
@@ -649,8 +647,8 @@ function UnifiedAuthPage() {
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                            errors.firstName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                            errors.firstName ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
                           placeholder="John"
                         />
@@ -658,7 +656,7 @@ function UnifiedAuthPage() {
                       </div>
 
                       <div>
-                        <label htmlFor="signup-lastName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        <label htmlFor="signup-lastName" className="block text-[11px] font-bold text-stone-800 dark:text-stone-300 mb-1">
                           Last Name
                         </label>
                         <input
@@ -667,8 +665,8 @@ function UnifiedAuthPage() {
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                            errors.lastName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                            errors.lastName ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
                           placeholder="Doe"
                         />
@@ -677,7 +675,7 @@ function UnifiedAuthPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="signup-email" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="signup-email" className="block text-[11px] font-bold text-stone-800 dark:text-stone-300 mb-1">
                         Email Address
                       </label>
                       <input
@@ -686,8 +684,8 @@ function UnifiedAuthPage() {
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                          errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                        className={`w-full px-3.5 py-2 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                          errors.email ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                         }`}
                         placeholder="name@domain.com"
                       />
@@ -695,7 +693,7 @@ function UnifiedAuthPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="signup-password" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="signup-password" className="block text-[11px] font-bold text-stone-800 dark:text-stone-300 mb-1">
                         Password
                       </label>
                       <div className="relative">
@@ -705,8 +703,8 @@ function UnifiedAuthPage() {
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
-                            errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          className={`w-full px-3.5 py-2 pr-10 rounded-2xl bg-white dark:bg-stone-900 border text-xs focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 outline-none transition-all ${
+                            errors.password ? 'border-red-500' : 'border-[#e6ccb2] dark:border-stone-700'
                           }`}
                           placeholder="Create password"
                         />
@@ -720,7 +718,7 @@ function UnifiedAuthPage() {
                       </div>
 
                       {formData.password && (
-                        <div className="mt-2 p-2 bg-stone-50 dark:bg-stone-800/80 rounded-xl border border-stone-200 dark:border-stone-700">
+                        <div className="mt-2 p-2 bg-[#f5ebe0] dark:bg-stone-800/80 rounded-xl border border-[#e6ccb2] dark:border-stone-700">
                           <div className="flex items-center justify-between text-[10px] font-bold mb-1">
                             <span>Strength:</span>
                             <span className={
@@ -776,8 +774,8 @@ function UnifiedAuthPage() {
                     <h1 className="text-2xl font-heading font-black tracking-tight">
                       Verify Your Email
                     </h1>
-                    <p className="text-xs text-stone-500 mt-1">
-                      We've sent a 6-digit code to <span className="font-bold text-stone-800 dark:text-stone-200">{otpData.email}</span>
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
+                      We've sent a 6-digit code to <span className="font-bold text-stone-900 dark:text-stone-100">{otpData.email}</span>
                     </p>
                   </div>
 
@@ -787,7 +785,7 @@ function UnifiedAuthPage() {
                         type="text"
                         value={otpData.otp}
                         onChange={(e) => setOtpData(prev => ({ ...prev, otp: e.target.value }))}
-                        className="w-full text-center text-xl font-bold tracking-[0.4em] py-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none focus:ring-2 focus:ring-pink-500"
+                        className="w-full text-center text-xl font-bold tracking-[0.4em] py-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-700 outline-none focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20"
                         placeholder="123456"
                         maxLength="6"
                         disabled={otpData.blocked}
@@ -815,14 +813,14 @@ function UnifiedAuthPage() {
                         type="button"
                         onClick={handleResendOTP}
                         disabled={resendTimer > 0 || isLoading}
-                        className="text-pink-600 font-bold hover:underline disabled:opacity-50"
+                        className="text-[#f472b6] font-bold hover:underline disabled:opacity-50"
                       >
                         {resendTimer > 0 ? `Resend (${resendTimer}s)` : 'Resend code'}
                       </button>
                       <button
                         type="button"
                         onClick={goBack}
-                        className="text-stone-500 hover:text-stone-800 font-bold"
+                        className="text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 font-bold"
                       >
                         Back
                       </button>
@@ -848,7 +846,7 @@ function UnifiedAuthPage() {
                   <p className="text-xs text-stone-500">
                     You're all set! Redirecting...
                   </p>
-                  <div className="w-6 h-6 border-2 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mt-4" />
+                  <div className="w-6 h-6 border-2 border-[#f472b6] border-t-transparent rounded-full animate-spin mx-auto mt-4" />
                 </motion.div>
               )}
 
