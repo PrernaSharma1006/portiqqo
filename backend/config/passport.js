@@ -24,14 +24,23 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
+          const email = profile.emails && profile.emails[0] ? profile.emails[0].value.toLowerCase() : null;
+          if (!email) {
+            return done(new Error('No email found in Google profile'), null);
+          }
+
           // Check if user already exists
-          let user = await User.findOne({ email: profile.emails[0].value });
+          let user = await User.findOne({ email });
 
           if (user) {
-            // User exists, check if they have googleId
-            if (!user.googleId) {
+            // User exists, update googleId and isEmailVerified if needed
+            if (!user.googleId || !user.isEmailVerified) {
+              await User.updateOne(
+                { _id: user._id },
+                { $set: { googleId: profile.id, isEmailVerified: true } }
+              );
               user.googleId = profile.id;
-              await user.save();
+              user.isEmailVerified = true;
             }
             return done(null, user);
           }
@@ -42,16 +51,16 @@ if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
 
           // Create new user
           user = await User.create({
-            email: profile.emails[0].value,
+            email,
             googleId: profile.id,
             firstName,
             lastName,
-            emailVerified: true, // Google emails are already verified
+            isEmailVerified: true,
             subscription: {
               type: 'trial',
               status: 'active',
               trialStartDate: new Date(),
-              trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) // 7 days from now
+              trialEndDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
             }
           });
 

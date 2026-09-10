@@ -78,8 +78,12 @@ router.get('/google', passport.authenticate('google', {
 // @desc    Google OAuth callback
 // @access  Public
 const getFrontendUrl = () => {
-  if (process.env.APP_URL) return process.env.APP_URL;
-  if (process.env.NODE_ENV === 'production' || process.env.RENDER) return 'https://portiqqo.vercel.app';
+  if (process.env.APP_URL && !process.env.APP_URL.includes('onrender.com')) {
+    return process.env.APP_URL.replace(/\/$/, '');
+  }
+  if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+    return 'https://portiqqo.vercel.app';
+  }
   return 'http://localhost:3000';
 };
 
@@ -95,8 +99,10 @@ router.get('/google/callback',
     try {
       // Validate user object
       if (!req.user || !req.user._id) {
-        throw new Error('User data not found');
+        throw new Error('User data not found from Passport Google authentication');
       }
+
+      const jwtSecret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
 
       // Generate JWT token
       const token = jwt.sign(
@@ -105,27 +111,18 @@ router.get('/google/callback',
           email: req.user.email,
           type: 'google_oauth'
         },
-        process.env.JWT_SECRET,
+        jwtSecret,
         { expiresIn: '7d' }
       );
 
       // Redirect to frontend with token
       const frontendUrl = getFrontendUrl();
-      
-      // Sanitize redirect URL to prevent open redirect vulnerabilities
-      const allowedDomains = process.env.ALLOWED_ORIGINS 
-        ? process.env.ALLOWED_ORIGINS.split(',').map(d => d.trim()) 
-        : [frontendUrl, 'https://portiqqo.vercel.app', 'https://portiqqo.me'];
-      
-      if (!allowedDomains.some(domain => frontendUrl.startsWith(domain))) {
-        throw new Error('Invalid redirect URL');
-      }
 
       res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`);
     } catch (error) {
       console.error('Google callback error:', error);
       const frontendUrl = getFrontendUrl();
-      res.redirect(`${frontendUrl}/auth?error=authentication_failed`);
+      res.redirect(`${frontendUrl}/auth?error=authentication_failed&details=${encodeURIComponent(error.message)}`);
     }
   }
 );
