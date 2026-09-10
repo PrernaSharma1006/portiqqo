@@ -3,13 +3,23 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
+const getCallbackURL = () => {
+  if (process.env.GOOGLE_CALLBACK_URL && !process.env.GOOGLE_CALLBACK_URL.includes('localhost')) {
+    return process.env.GOOGLE_CALLBACK_URL;
+  }
+  if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+    return 'https://portiqqo.onrender.com/api/auth/google/callback';
+  }
+  return process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5001/api/auth/google/callback';
+};
+
 if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
   passport.use(
     new GoogleStrategy(
       {
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: process.env.GOOGLE_CALLBACK_URL || `${process.env.API_URL || process.env.APP_URL || (process.env.NODE_ENV === 'production' || process.env.RENDER ? 'https://portiqqo.onrender.com' : 'http://localhost:5001')}/api/auth/google/callback`,
+        callbackURL: getCallbackURL(),
         proxy: true
       },
       async (accessToken, refreshToken, profile, done) => {
