@@ -48,8 +48,32 @@ function UnifiedAuthPage() {
   const { login, checkEmailExists, sendOTP, verifyOTP, signup } = useAuth()
   const navigate = useNavigate()
 
-  // Catch URL error params from OAuth callbacks
+  const handleSwitchCard = (card) => {
+    setActiveCard(card)
+    setErrors({})
+    setFormData({
+      email: '',
+      password: '',
+      firstName: '',
+      lastName: ''
+    })
+    setShowPassword(false)
+    setPasswordStrength({
+      score: 0,
+      feedback: [],
+      isValid: false
+    })
+  }
+
+  // Catch URL error params from OAuth callbacks & handle mode params
   useEffect(() => {
+    const modeParam = searchParams.get('mode')
+    if (modeParam === 'signup' || modeParam === 'register') {
+      handleSwitchCard('signup')
+    } else if (modeParam === 'login' || modeParam === 'signin') {
+      handleSwitchCard('login')
+    }
+
     const errorParam = searchParams.get('error')
     const msgParam = searchParams.get('msg') || searchParams.get('details')
     if (errorParam) {
@@ -370,7 +394,7 @@ function UnifiedAuthPage() {
 
                 <motion.div 
                   className="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-primary-200"
-                  onClick={() => setActiveCard('login')}
+                  onClick={() => handleSwitchCard('login')}
                   whileHover={{ scale: 1.02 }}
                 >
                   <div className="flex items-center space-x-4">
@@ -390,7 +414,7 @@ function UnifiedAuthPage() {
 
                 <motion.div 
                   className="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-mint-200"
-                  onClick={() => setActiveCard('signup')}
+                  onClick={() => handleSwitchCard('signup')}
                   whileHover={{ scale: 1.02 }}
                 >
                   <div className="flex items-center space-x-4">
@@ -513,7 +537,7 @@ function UnifiedAuthPage() {
 
                     <button
                       type="button"
-                      onClick={() => setActiveCard('signup')}
+                      onClick={() => handleSwitchCard('signup')}
                       className="btn-ghost w-full"
                     >
                       Don't have an account? Create one
@@ -801,7 +825,7 @@ function UnifiedAuthPage() {
 
                     <button
                       type="button"
-                      onClick={() => setActiveCard('login')}
+                      onClick={() => handleSwitchCard('login')}
                       className="btn-ghost w-full"
                     >
                       Already have an account? Sign In
@@ -825,7 +849,7 @@ function UnifiedAuthPage() {
                   Welcome to Portiqqo!
                 </h1>
                 <p className="text-secondary-600 mb-6">
-                  You're all set! Redirecting to dashboard...
+                  You're all set! Redirecting...
                 </p>
                 <div className="loading-spinner mx-auto"></div>
               </motion.div>
