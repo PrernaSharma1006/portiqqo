@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { setAuthToken } from '../services/api';
+import { setAuthToken, getApiUrl } from '../services/api';
 
 const AuthContext = createContext({});
 
@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('authToken');
       if (token) {
         try {
-          const response = await fetch('/api/auth/me', {
+          const response = await fetch(getApiUrl('/api/auth/me'), {
             headers: { 
               'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
           
           if (response.ok) {
             const data = await response.json();
-            setUser(data.data.user || data.data);
+            setUser(data.data?.user || data.data);
             setIsAuthenticated(true);
             setAuthToken(token);
           } else {
@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       
       // If password is provided, use email/password login
       if (password) {
-        const response = await fetch('/api/auth/login-password', {
+        const response = await fetch(getApiUrl('/api/auth/login-password'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -87,7 +87,7 @@ export const AuthProvider = ({ children }) => {
         return { success: true, user: data.data.user };
       } else {
         // OTP-based login (existing functionality)
-        const response = await fetch('/api/auth/login', {
+        const response = await fetch(getApiUrl('/api/auth/login'), {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -119,7 +119,7 @@ export const AuthProvider = ({ children }) => {
 
   const verifyOTP = async (email, otp) => {
     try {
-      const response = await fetch('/api/auth/verify-otp', {
+      const response = await fetch(getApiUrl('/api/auth/verify-otp'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -144,7 +144,7 @@ export const AuthProvider = ({ children }) => {
     try {
       setIsLoading(true);
       
-      const response = await fetch('/api/auth/signup', {
+      const response = await fetch(getApiUrl('/api/auth/signup'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -179,7 +179,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('authToken');
       if (!token) return null;
 
-      const response = await fetch('/api/auth/me', {
+      const response = await fetch(getApiUrl('/api/auth/me'), {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -188,9 +188,9 @@ export const AuthProvider = ({ children }) => {
 
       if (response.ok) {
         const data = await response.json();
-        setUser(data.data);
+        setUser(data.data?.user || data.data);
         setIsAuthenticated(true);
-        return data.data;
+        return data.data?.user || data.data;
       } else {
         // Token is invalid
         logout();
@@ -213,7 +213,7 @@ export const AuthProvider = ({ children }) => {
 
   const sendOTP = async (email) => {
     try {
-      const response = await fetch('/api/auth/send-otp', {
+      const response = await fetch(getApiUrl('/api/auth/send-otp'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkEmailExists = async (email) => {
     try {
-      const response = await fetch('/api/auth/check-email', {
+      const response = await fetch(getApiUrl('/api/auth/check-email'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -266,7 +266,7 @@ export const AuthProvider = ({ children }) => {
       setIsLoading(true);
       
       const token = localStorage.getItem('authToken');
-      const response = await fetch('/api/auth/profile', {
+      const response = await fetch(getApiUrl('/api/auth/profile'), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -294,7 +294,7 @@ export const AuthProvider = ({ children }) => {
   const loginWithToken = async (token) => {
     localStorage.setItem('authToken', token);
     setAuthToken(token);
-    const response = await fetch('/api/auth/me', {
+    const response = await fetch(getApiUrl('/api/auth/me'), {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
     });
     if (!response.ok) throw new Error('Failed to fetch user data');

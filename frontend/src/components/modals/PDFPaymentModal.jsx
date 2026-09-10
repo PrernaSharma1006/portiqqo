@@ -13,6 +13,7 @@ import {
   Lock
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getApiUrl } from '../../services/api'
 
 const loadRazorpayScript = () => {
   return new Promise((resolve) => {
@@ -44,7 +45,7 @@ function PDFPaymentModal({ isOpen, onClose, onPaymentSuccess, portfolioName = 'M
 
       if (token) {
         try {
-          const res = await fetch('/api/subscriptions/create-order', {
+          const res = await fetch(getApiUrl('/api/subscriptions/create-order'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
             body: JSON.stringify({ plan: 'pdf_export' })
@@ -70,7 +71,7 @@ function PDFPaymentModal({ isOpen, onClose, onPaymentSuccess, portfolioName = 'M
           handler: async (response) => {
             try {
               if (token) {
-                await fetch('/api/subscriptions/verify-payment', {
+                await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
                   method: 'POST',
                   headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
                   body: JSON.stringify({

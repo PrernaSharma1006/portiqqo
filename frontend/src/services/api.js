@@ -1,15 +1,24 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-const getApiBaseUrl = () => {
+export const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_URL
   if (envUrl && envUrl.startsWith('http') && !envUrl.includes('your-render-url')) {
-    return envUrl
+    return envUrl.replace(/\/$/, '')
   }
   if (typeof window !== 'undefined' && window.location.hostname !== 'localhost') {
     return 'https://portiqqo.onrender.com/api'
   }
   return 'http://localhost:5001/api'
+}
+
+export const getApiUrl = (endpoint = '') => {
+  const baseUrl = getApiBaseUrl().replace(/\/$/, '')
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`
+  if (cleanEndpoint.startsWith('/api/')) {
+    return `${baseUrl}${cleanEndpoint.substring(4)}`
+  }
+  return `${baseUrl}${cleanEndpoint}`
 }
 
 // Create axios instance
