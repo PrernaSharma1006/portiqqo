@@ -13,12 +13,15 @@ const getCallbackURL = () => {
   return process.env.GOOGLE_CALLBACK_URL || 'http://localhost:5001/api/auth/google/callback';
 };
 
-if (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET) {
+const clientID = (process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_ID.trim()) || '53886906609-b4teterlvc4pna4dkgfr1j3namrn395e.apps.googleusercontent.com';
+const clientSecret = (process.env.GOOGLE_CLIENT_SECRET && process.env.GOOGLE_CLIENT_SECRET.trim()) || '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';
+
+if (clientID && clientSecret) {
   passport.use(
     new GoogleStrategy(
       {
-        clientID: process.env.GOOGLE_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+        clientID,
+        clientSecret,
         callbackURL: getCallbackURL(),
         proxy: true
       },

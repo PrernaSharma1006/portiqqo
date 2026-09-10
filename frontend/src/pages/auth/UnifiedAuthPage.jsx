@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'framer-motion'
 import { UserPlus, LogIn, CheckCircle, Eye, EyeOff, Mail } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
@@ -20,6 +20,7 @@ const apiBase = getApiBaseUrl()
 const googleAuthUrl = apiBase ? `${apiBase}/api/auth/google` : '/api/auth/google'
 
 function UnifiedAuthPage() {
+  const [searchParams] = useSearchParams()
   const [activeCard, setActiveCard] = useState('login')
   const [formData, setFormData] = useState({
     email: '',
@@ -46,6 +47,18 @@ function UnifiedAuthPage() {
   
   const { login, checkEmailExists, sendOTP, verifyOTP, signup } = useAuth()
   const navigate = useNavigate()
+
+  // Catch URL error params from OAuth callbacks
+  useEffect(() => {
+    const errorParam = searchParams.get('error')
+    const msgParam = searchParams.get('msg') || searchParams.get('details')
+    if (errorParam) {
+      const displayMsg = msgParam
+        ? `Authentication Error (${errorParam}): ${msgParam}`
+        : `Authentication failed (${errorParam}). Please try again.`
+      setErrors(prev => ({ ...prev, submit: displayMsg }))
+    }
+  }, [searchParams])
 
   // Timer effect for resend cooldown
   useEffect(() => {

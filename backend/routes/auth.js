@@ -87,44 +87,41 @@ const getFrontendUrl = () => {
   return 'http://localhost:3000';
 };
 
-router.get('/google/callback', 
-  (req, res, next) => {
-    const defaultRedirect = getFrontendUrl();
-    passport.authenticate('google', { 
-      failureRedirect: `${defaultRedirect}/auth?error=google_auth_failed`,
-      session: false 
-    })(req, res, next);
-  },
-  (req, res) => {
-    try {
-      // Validate user object
-      if (!req.user || !req.user._id) {
-        throw new Error('User data not found from Passport Google authentication');
-      }
+router.get('/google/callback', (req, res, next) => {
+  const frontendUrl = getFrontendUrl();
 
+  passport.authenticate('google', { session: false }, (err, user, info) => {
+    if (err) {
+      console.error('Passport Google Strategy Error:', err);
+      const msg = err.message || 'Passport strategy error';
+      return res.redirect(`${frontendUrl}/auth?error=google_strategy_error&msg=${encodeURIComponent(msg)}`);
+    }
+
+    if (!user) {
+      console.error('Passport Google Strategy No User:', info);
+      const msg = (info && info.message) || 'Could not verify user account from Google';
+      return res.redirect(`${frontendUrl}/auth?error=google_no_user&msg=${encodeURIComponent(msg)}`);
+    }
+
+    try {
       const jwtSecret = process.env.JWT_SECRET || 'dev_super_secret_jwt_key_for_development_only';
 
-      // Generate JWT token
       const token = jwt.sign(
         { 
-          userId: req.user._id,
-          email: req.user.email,
+          userId: user._id,
+          email: user.email,
           type: 'google_oauth'
         },
         jwtSecret,
         { expiresIn: '7d' }
       );
 
-      // Redirect to frontend with token
-      const frontendUrl = getFrontendUrl();
-
-      res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`);
-    } catch (error) {
-      console.error('Google callback error:', error);
-      const frontendUrl = getFrontendUrl();
-      res.redirect(`${frontendUrl}/auth?error=authentication_failed&details=${encodeURIComponent(error.message)}`);
+      return res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`);
+    } catch (jwtErr) {
+      console.error('Google Callback JWT Error:', jwtErr);
+      return res.redirect(`${frontendUrl}/auth?error=jwt_signing_error&msg=${encodeURIComponent(jwtErr.message)}`);
     }
-  }
-);
+  })(req, res, next);
+});
 
 module.exports = router;
