@@ -22,7 +22,6 @@ const googleAuthUrl = apiBase ? `${apiBase}/api/auth/google` : '/api/auth/google
 function UnifiedAuthPage() {
   const [searchParams] = useSearchParams()
   const [activeCard, setActiveCard] = useState('login')
-  const [isDesktop, setIsDesktop] = useState(true)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -48,15 +47,6 @@ function UnifiedAuthPage() {
   
   const { login, checkEmailExists, sendOTP, verifyOTP, signup } = useAuth()
   const navigate = useNavigate()
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktop(window.innerWidth >= 768)
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   const handleSwitchCard = (card) => {
     setActiveCard(card)
@@ -366,92 +356,132 @@ function UnifiedAuthPage() {
         <title>Portiqqo - Sign In & Registration</title>
       </Helmet>
 
-      {/* Outer Wrapper */}
-      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#12100e] text-stone-900 dark:text-stone-100 flex flex-col justify-between p-4 sm:p-6 md:p-10 relative overflow-hidden transition-colors duration-300">
+      {/* Main Page Container */}
+      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#12100e] text-stone-900 dark:text-stone-100 flex flex-col justify-center items-center p-4 sm:p-6 md:p-8 relative overflow-hidden transition-colors duration-300">
         
-        {/* Soft Background Glows */}
+        {/* Decorative Background Glows */}
         <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-indigo-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
 
-        {/* Top Header */}
-        <div className="w-full max-w-5xl mx-auto flex items-center justify-between z-20 mb-4 sm:mb-6">
-          <Link to="/" className="flex items-center gap-2 group text-stone-800 dark:text-stone-100 hover:text-pink-600 transition-colors">
-            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-            <span className="font-heading font-black text-2xl tracking-tight">porti<span className="text-[#f472b6]">qqo</span></span>
-          </Link>
-          <Link to="/" className="text-xs font-bold px-4 py-2 rounded-full bg-[#f5ebe0] dark:bg-stone-800 border border-[#e6ccb2] dark:border-stone-700 hover:bg-[#e6ccb2] transition-all">
-            Back to Home
-          </Link>
-        </div>
-
-        {/* Main Sliding Card Container */}
-        <div className="w-full max-w-4xl mx-auto relative min-h-[640px] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#4f46e5] via-[#5851db] to-[#db2777] border border-indigo-400/30 flex flex-col md:flex-row my-auto">
+        {/* 50 / 50 Half & Half Split Card Container */}
+        <div className="w-full max-w-4xl min-h-[580px] rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 flex flex-col md:flex-row my-auto z-10">
           
-          {/* Static Background Panel (Desktop 2-Column Text & Buttons) */}
-          <div className="hidden md:grid grid-cols-2 absolute inset-0 w-full h-full pointer-events-auto">
+          {/* LEFT SIDE (50%): Brand Welcome & Mode Switcher */}
+          <div className="w-full md:w-1/2 bg-gradient-to-br from-[#4f46e5] via-[#5851db] to-[#db2777] text-white p-8 sm:p-12 flex flex-col justify-between relative overflow-hidden min-h-[300px] md:min-h-[580px]">
             
-            {/* Left Background Section (Visible when White Panel slides Right to Signup) */}
-            <div className="flex flex-col justify-center items-center p-8 sm:p-12 text-center text-white z-10 space-y-5">
-              <h2 className="text-3xl font-heading font-extrabold tracking-tight">Have an account?</h2>
-              <p className="text-indigo-100 text-sm max-w-xs leading-relaxed">
-                Log in with your credentials to explore and edit your custom portfolio templates.
-              </p>
-              <button 
-                onClick={() => handleSwitchCard('login')}
-                className="px-8 py-3 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-indigo-700 transition-all duration-300 shadow-md hover:scale-105"
-              >
-                Log In
-              </button>
+            {/* Background Accent Shapes */}
+            <div className="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
+            <div className="absolute -bottom-12 -right-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none" />
+
+            {/* Top Brand Header */}
+            <div className="flex items-center justify-between z-10">
+              <Link to="/" className="font-heading font-black text-2xl tracking-tight text-white flex items-center gap-1.5 hover:opacity-90 transition-opacity">
+                <span>porti<span className="text-pink-300">qqo</span></span>
+              </Link>
+              <Link to="/" className="inline-flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white backdrop-blur-md transition-all">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Home</span>
+              </Link>
             </div>
 
-            {/* Right Background Section (Visible when White Panel slides Left to Login) */}
-            <div className="flex flex-col justify-center items-center p-8 sm:p-12 text-center text-white z-10 space-y-5">
-              <h2 className="text-3xl font-heading font-extrabold tracking-tight">Don't have an account?</h2>
-              <p className="text-indigo-100 text-sm max-w-xs leading-relaxed">
-                Create your free account today and build a high-converting portfolio website.
-              </p>
-              <button 
-                onClick={() => handleSwitchCard('signup')}
-                className="px-8 py-3 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-indigo-700 transition-all duration-300 shadow-md hover:scale-105"
-              >
-                Sign Up
-              </button>
+            {/* Middle Welcome & Action Text */}
+            <div className="my-auto py-8 z-10 space-y-4">
+              <AnimatePresence mode="wait">
+                {activeCard === 'login' ? (
+                  <motion.div
+                    key="login-banner"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-4"
+                  >
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold tracking-wide uppercase backdrop-blur-sm border border-white/20">
+                      <Sparkles className="w-3.5 h-3.5 text-pink-300" />
+                      <span>Join 2,500+ Creators</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight">
+                      Don't have an account?
+                    </h2>
+                    <p className="text-indigo-100 text-sm leading-relaxed max-w-sm">
+                      Create an account to explore our curated portfolio templates and build your custom showcase.
+                    </p>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSwitchCard('signup')}
+                        className="px-8 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold text-sm rounded-full shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                      >
+                        Create Account
+                      </button>
+                    </div>
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="signup-banner"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2 }}
+                    className="space-y-4"
+                  >
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-xs font-bold tracking-wide uppercase backdrop-blur-sm border border-white/20">
+                      <LogIn className="w-3.5 h-3.5 text-pink-300" />
+                      <span>Already Registered?</span>
+                    </div>
+                    <h2 className="text-3xl sm:text-4xl font-heading font-black tracking-tight leading-tight">
+                      Have an account?
+                    </h2>
+                    <p className="text-indigo-100 text-sm leading-relaxed max-w-sm">
+                      Sign in with your email and password to manage your portfolio and editor settings.
+                    </p>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSwitchCard('login')}
+                        className="px-8 py-3 bg-white text-indigo-700 hover:bg-indigo-50 font-extrabold text-sm rounded-full shadow-lg transition-all duration-300 hover:scale-105 active:scale-95"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+
+            {/* Bottom Footer Note */}
+            <div className="text-xs text-indigo-200 font-medium z-10">
+              Showcase your work professionally with Portiqqo
             </div>
           </div>
 
-          {/* Floating White Sliding Form Card */}
-          <motion.div
-            className="w-full md:w-1/2 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 z-20 shadow-2xl p-6 sm:p-10 flex flex-col justify-center rounded-3xl min-h-[640px]"
-            initial={false}
-            animate={{
-              x: isDesktop ? (isSignupMode ? '100%' : '0%') : '0%'
-            }}
-            transition={{
-              type: 'spring',
-              stiffness: 200,
-              damping: 24
-            }}
-          >
-            {/* Mobile Switcher Bar (< 768px screens) */}
-            {!isDesktop && activeCard !== 'otp' && activeCard !== 'success' && (
-              <div className="flex items-center justify-center p-1 bg-stone-100 dark:bg-stone-800 rounded-full mb-6 max-w-xs mx-auto">
+          {/* RIGHT SIDE (50%): Interactive Form Fields */}
+          <div className="w-full md:w-1/2 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 p-6 sm:p-10 flex flex-col justify-center">
+            
+            {/* Top Form Mode Switcher Pill */}
+            {activeCard !== 'otp' && activeCard !== 'success' && (
+              <div className="flex items-center justify-center p-1 bg-stone-100 dark:bg-stone-800 rounded-2xl mb-6 max-w-xs mx-auto w-full">
                 <button
                   type="button"
                   onClick={() => handleSwitchCard('login')}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
-                    activeCard === 'login' ? 'bg-[#f472b6] text-stone-950 shadow-sm' : 'text-stone-600 dark:text-stone-400'
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                    activeCard === 'login' 
+                      ? 'bg-[#f472b6] text-stone-950 shadow-md' 
+                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
                   }`}
                 >
-                  Log In
+                  Sign In
                 </button>
                 <button
                   type="button"
                   onClick={() => handleSwitchCard('signup')}
-                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
-                    activeCard === 'signup' ? 'bg-[#f472b6] text-stone-950 shadow-sm' : 'text-stone-600 dark:text-stone-400'
+                  className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
+                    activeCard === 'signup' 
+                      ? 'bg-[#f472b6] text-stone-950 shadow-md' 
+                      : 'text-stone-600 dark:text-stone-400 hover:text-stone-900'
                   }`}
                 >
-                  Sign Up
+                  Create Account
                 </button>
               </div>
             )}
@@ -461,33 +491,30 @@ function UnifiedAuthPage() {
               {/* LOGIN FORM VIEW */}
               {activeCard === 'login' && (
                 <motion.div
-                  key="login-form"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-6"
+                  key="login-form-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-5"
                 >
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-3">
-                      <LogIn className="w-6 h-6 text-[#f472b6]" />
-                    </div>
                     <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
-                      Log in to Portiqqo
+                      Log In
                     </h1>
                     <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                      Welcome back! Enter your details to continue.
+                      Enter your credentials to access your account
                     </p>
                   </div>
 
                   <form onSubmit={handleLoginSubmit} className="space-y-4">
-                    {/* Google Login Button */}
+                    {/* Google Auth Button */}
                     <button
                       type="button"
                       onClick={() => window.location.href = googleAuthUrl}
-                      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-sm text-stone-700 dark:text-stone-200 shadow-sm"
+                      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-xs text-stone-700 dark:text-stone-200 shadow-sm"
                     >
-                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
                         <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
@@ -500,44 +527,44 @@ function UnifiedAuthPage() {
                       <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-stone-200 dark:border-stone-800" />
                       </div>
-                      <div className="relative flex justify-center text-xs uppercase">
-                        <span className="bg-white dark:bg-stone-900 px-3 text-stone-400 font-semibold">OR</span>
+                      <div className="relative flex justify-center text-[10px] uppercase">
+                        <span className="bg-white dark:bg-stone-900 px-3 text-stone-400 font-bold">OR</span>
                       </div>
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="login-email" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
                         Email Address
                       </label>
                       <input
                         type="email"
-                        id="email"
+                        id="login-email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-sm focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                        className={`w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                           errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                         }`}
-                        placeholder="name@domain.com"
+                        placeholder="Enter your email"
                       />
                       {errors.email && <p className="mt-1 text-xs text-red-500 font-medium">{errors.email}</p>}
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="login-password" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
                         Password
                       </label>
                       <div className="relative">
                         <input
                           type={showPassword ? 'text' : 'password'}
-                          id="password"
+                          id="login-password"
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className={`w-full px-4 py-3 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-sm focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          className={`w-full px-4 py-3 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                             errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                           }`}
-                          placeholder="••••••••"
+                          placeholder="Enter your password"
                         />
                         <button
                           type="button"
@@ -559,7 +586,7 @@ function UnifiedAuthPage() {
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="w-full py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
+                      className="w-full py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 text-xs"
                     >
                       {isLoading ? 'Signing In...' : 'Log In'}
                     </button>
@@ -567,30 +594,27 @@ function UnifiedAuthPage() {
                 </motion.div>
               )}
 
-              {/* SIGNUP FORM VIEW */}
+              {/* CREATE ACCOUNT FORM VIEW */}
               {activeCard === 'signup' && (
                 <motion.div
-                  key="signup-form"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-5"
+                  key="signup-form-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-4"
                 >
                   <div className="text-center">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-2">
-                      <UserPlus className="w-6 h-6 text-[#f472b6]" />
-                    </div>
                     <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
                       Create Account
                     </h1>
                     <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
-                      Join Portiqqo today and customize your templates
+                      Fill out your details to get started
                     </p>
                   </div>
 
-                  <form onSubmit={handleSignupSubmit} className="space-y-3.5">
-                    {/* Google Signup Button */}
+                  <form onSubmit={handleSignupSubmit} className="space-y-3">
+                    {/* Google Auth Button */}
                     <button
                       type="button"
                       onClick={() => window.location.href = googleAuthUrl}
@@ -614,18 +638,18 @@ function UnifiedAuthPage() {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-2 gap-2.5">
                       <div>
-                        <label htmlFor="firstName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        <label htmlFor="signup-firstName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
                           First Name
                         </label>
                         <input
                           type="text"
-                          id="firstName"
+                          id="signup-firstName"
                           name="firstName"
                           value={formData.firstName}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                             errors.firstName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                           }`}
                           placeholder="John"
@@ -634,16 +658,16 @@ function UnifiedAuthPage() {
                       </div>
 
                       <div>
-                        <label htmlFor="lastName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        <label htmlFor="signup-lastName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
                           Last Name
                         </label>
                         <input
                           type="text"
-                          id="lastName"
+                          id="signup-lastName"
                           name="lastName"
                           value={formData.lastName}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                             errors.lastName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                           }`}
                           placeholder="Doe"
@@ -653,16 +677,16 @@ function UnifiedAuthPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="email" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="signup-email" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
                         Email Address
                       </label>
                       <input
                         type="email"
-                        id="email"
+                        id="signup-email"
                         name="email"
                         value={formData.email}
                         onChange={handleChange}
-                        className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                        className={`w-full px-3.5 py-2 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                           errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                         }`}
                         placeholder="name@domain.com"
@@ -671,17 +695,17 @@ function UnifiedAuthPage() {
                     </div>
 
                     <div>
-                      <label htmlFor="password" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                      <label htmlFor="signup-password" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
                         Password
                       </label>
                       <div className="relative">
                         <input
                           type={showPassword ? 'text' : 'password'}
-                          id="password"
+                          id="signup-password"
                           name="password"
                           value={formData.password}
                           onChange={handleChange}
-                          className={`w-full px-3.5 py-2.5 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          className={`w-full px-3.5 py-2 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
                             errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
                           }`}
                           placeholder="Create password"
@@ -738,12 +762,12 @@ function UnifiedAuthPage() {
               {/* OTP VERIFICATION VIEW */}
               {activeCard === 'otp' && (
                 <motion.div
-                  key="otp-form"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.25 }}
-                  className="space-y-6 text-center"
+                  key="otp-form-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-5 text-center"
                 >
                   <div>
                     <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-3">
@@ -757,7 +781,7 @@ function UnifiedAuthPage() {
                     </p>
                   </div>
 
-                  <form onSubmit={(e) => { e.preventDefault(); handleOTPSubmit(otpData.otp); }} className="space-y-5">
+                  <form onSubmit={(e) => { e.preventDefault(); handleOTPSubmit(otpData.otp); }} className="space-y-4">
                     <div>
                       <input
                         type="text"
@@ -810,7 +834,7 @@ function UnifiedAuthPage() {
               {/* SUCCESS VIEW */}
               {activeCard === 'success' && (
                 <motion.div
-                  key="success-view"
+                  key="success-view-card"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   className="text-center space-y-4 py-8"
@@ -822,18 +846,18 @@ function UnifiedAuthPage() {
                     Welcome to Portiqqo!
                   </h1>
                   <p className="text-xs text-stone-500">
-                    You're all set! Redirecting to templates...
+                    You're all set! Redirecting...
                   </p>
                   <div className="w-6 h-6 border-2 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mt-4" />
                 </motion.div>
               )}
 
             </AnimatePresence>
-          </motion.div>
+          </div>
         </div>
 
-        {/* Footer */}
-        <div className="text-center text-xs text-stone-500 dark:text-stone-400 z-20 mt-4 sm:mt-6">
+        {/* Footer Note */}
+        <div className="text-center text-xs text-stone-500 dark:text-stone-400 z-10 mt-4">
           &copy; {new Date().getFullYear()} Portiqqo. All rights reserved.
         </div>
       </div>
