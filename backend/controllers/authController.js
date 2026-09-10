@@ -19,51 +19,58 @@ const sendOTP = async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check rate limiting & find user
-    let user = null;
+    // Rate limiting check
     try {
-      user = await User.findOne({ email: cleanEmail });
-    } catch (dbErr) {
-      console.error('DB FindOne Error in sendOTP:', dbErr);
-    }
-
-    if (user && user.lastOtpRequest && user.lastOtpRequest instanceof Date) {
-      const timeSinceLastRequest = Date.now() - user.lastOtpRequest.getTime();
-      if (timeSinceLastRequest < 60000) { // 1 minute cooldown
-        return res.status(429).json({
-          success: false,
-          error: 'Please wait 1 minute before requesting another OTP',
-          waitTime: Math.ceil((60000 - timeSinceLastRequest) / 1000)
-        });
+      const existingUser = await User.findOne({ email: cleanEmail }).select('lastOtpRequest').lean();
+      if (existingUser && existingUser.lastOtpRequest) {
+        const lastReqTime = new Date(existingUser.lastOtpRequest).getTime();
+        const timeSinceLastRequest = Date.now() - lastReqTime;
+        if (timeSinceLastRequest < 30000) { // 30 second cooldown
+          return res.status(429).json({
+            success: false,
+            error: 'Please wait 30 seconds before requesting another code',
+            waitTime: Math.ceil((30000 - timeSinceLastRequest) / 1000)
+          });
+        }
       }
+    } catch (checkErr) {
+      console.warn('Rate limit check warning:', checkErr.message);
     }
 
-    // Generate and store OTP
-    if (!user) {
-      user = new User({
-        email: cleanEmail,
-        firstName: cleanEmail.split('@')[0] || 'User',
-        lastName: '',
-        isTemporary: true,
-        isEmailVerified: false
-      });
-    }
+    // Generate 6-digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+    const lastOtpRequest = new Date();
 
-    const otp = user.generateOTP ? user.generateOTP() : Math.floor(100000 + Math.random() * 900000).toString();
-    user.otpCode = otp;
-    user.otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-    user.lastOtpRequest = new Date();
-    user.otpAttempts = 0;
-
+    // Upsert OTP fields atomically into MongoDB to avoid schema/index validation errors
     try {
-      await user.save();
+      await User.updateOne(
+        { email: cleanEmail },
+        { 
+          $set: { 
+            email: cleanEmail,
+            otpCode: otp, 
+            otpExpires: otpExpires, 
+            lastOtpRequest: lastOtpRequest, 
+            otpAttempts: 0 
+          },
+          $setOnInsert: {
+            firstName: cleanEmail.split('@')[0] || 'User',
+            lastName: '',
+            isTemporary: true,
+            isEmailVerified: false
+          }
+        },
+        { upsert: true }
+      );
+      console.log(`✅ OTP ${otp} stored in MongoDB for ${cleanEmail}`);
     } catch (saveErr) {
-      console.error('User save warning during OTP generation:', saveErr.message);
+      console.error('User updateOne warning during OTP generation:', saveErr.message);
     }
 
     // Send OTP email with dev fallback
     try {
-      await emailService.sendOTP(cleanEmail, otp, user.firstName);
+      await emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]);
       console.log(`📧 OTP sent successfully to: ${cleanEmail}`);
 
       return res.status(200).json({
