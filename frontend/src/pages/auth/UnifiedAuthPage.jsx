@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Helmet } from 'react-helmet-async'
 import { motion, AnimatePresence } from 'framer-motion'
-import { UserPlus, LogIn, CheckCircle, Eye, EyeOff, Mail } from 'lucide-react'
+import { UserPlus, LogIn, CheckCircle, Eye, EyeOff, Mail, ArrowLeft, Sparkles } from 'lucide-react'
 import { useAuth } from '../../contexts/AuthContext'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams, Link } from 'react-router-dom'
 
 const getApiBaseUrl = () => {
   const envUrl = import.meta.env.VITE_API_BASE_URL || import.meta.env.VITE_API_URL
@@ -22,6 +22,7 @@ const googleAuthUrl = apiBase ? `${apiBase}/api/auth/google` : '/api/auth/google
 function UnifiedAuthPage() {
   const [searchParams] = useSearchParams()
   const [activeCard, setActiveCard] = useState('login')
+  const [isDesktop, setIsDesktop] = useState(true)
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -47,6 +48,15 @@ function UnifiedAuthPage() {
   
   const { login, checkEmailExists, sendOTP, verifyOTP, signup } = useAuth()
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth >= 768)
+    }
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
 
   const handleSwitchCard = (card) => {
     setActiveCard(card)
@@ -177,7 +187,6 @@ function UnifiedAuthPage() {
       console.log('Login successful!')
       setActiveCard('success')
       setTimeout(() => {
-        // Check if there's a redirect path stored
         const redirectPath = localStorage.getItem('redirectAfterAuth')
         if (redirectPath) {
           localStorage.removeItem('redirectAfterAuth')
@@ -230,7 +239,6 @@ function UnifiedAuthPage() {
         return
       }
       
-      // Send OTP for verification
       console.log('Sending OTP to:', formData.email)
       await sendOTP(formData.email)
       setOtpData({ 
@@ -252,14 +260,13 @@ function UnifiedAuthPage() {
   }
 
   const handleOTPSubmit = async (otp) => {
-    // Check if user is blocked
     if (otpData.blocked) {
       setErrors({ submit: 'Too many failed attempts. Please wait and resend a new OTP.' })
       return
     }
 
     setIsLoading(true)
-    setErrors({}) // Clear any previous errors
+    setErrors({})
     
     try {
       console.log('Verifying OTP:', otp, 'for email:', otpData.email)
@@ -271,10 +278,8 @@ function UnifiedAuthPage() {
       
       console.log('OTP verified successfully, completing signup...')
       
-      // Mark OTP as verified and reset attempts
       setOtpData(prev => ({ ...prev, verified: true, attempts: 0, blocked: false }))
       
-      // Complete signup with user details only after OTP is verified
       await signup({
         email: formData.email,
         password: formData.password,
@@ -284,7 +289,6 @@ function UnifiedAuthPage() {
       
       setActiveCard('success')
       setTimeout(() => {
-        // Check if there's a redirect path stored
         const redirectPath = localStorage.getItem('redirectAfterAuth')
         if (redirectPath) {
           localStorage.removeItem('redirectAfterAuth')
@@ -296,7 +300,6 @@ function UnifiedAuthPage() {
     } catch (error) {
       console.error('OTP verification error:', error)
       
-      // Increment failed attempts
       const newAttempts = otpData.attempts + 1
       const isBlocked = newAttempts >= 5
       
@@ -321,25 +324,20 @@ function UnifiedAuthPage() {
   }
 
   const handleResendOTP = async () => {
-    if (resendTimer > 0) {
-      return // Still in cooldown
-    }
+    if (resendTimer > 0) return
 
     try {
       setIsLoading(true)
       await sendOTP(otpData.email)
       
-      // Reset attempts and blocking, start new cooldown
       setOtpData(prev => ({ 
         ...prev, 
         attempts: 0, 
         blocked: false, 
         lastResendTime: Date.now()
       }))
-      setResendTimer(60) // 60 second cooldown
-      setErrors({}) // Clear any errors
-      
-      console.log('OTP resent successfully')
+      setResendTimer(60)
+      setErrors({})
     } catch (error) {
       console.error('Resend OTP error:', error)
       setErrors({ submit: 'Failed to resend OTP. Please try again.' })
@@ -349,12 +347,7 @@ function UnifiedAuthPage() {
   }
 
   const goBack = () => {
-    if (activeCard === 'login' || activeCard === 'signup') {
-      navigate(-1)
-      return
-    }
-    setActiveCard('login')
-    setErrors({})
+    handleSwitchCard('login')
     setOtpData({ 
       email: '', 
       otp: '', 
@@ -365,497 +358,483 @@ function UnifiedAuthPage() {
     setResendTimer(0)
   }
 
+  const isSignupMode = activeCard === 'signup' || activeCard === 'otp'
+
   return (
     <>
       <Helmet>
-        <title>Sign In / Sign Up - Portiqqo</title>
+        <title>Portiqqo - Sign In & Registration</title>
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-lavender-50 via-mint-50 to-peach-50 flex items-center justify-center p-4">
-        <div className="w-full max-w-md">
-          <AnimatePresence mode="wait">
+      {/* Outer Wrapper */}
+      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#12100e] text-stone-900 dark:text-stone-100 flex flex-col justify-between p-4 sm:p-6 md:p-10 relative overflow-hidden transition-colors duration-300">
+        
+        {/* Soft Background Glows */}
+        <div className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-br from-purple-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[500px] h-[500px] rounded-full bg-gradient-to-tl from-indigo-500/20 via-pink-500/15 to-transparent blur-3xl pointer-events-none" />
+
+        {/* Top Header */}
+        <div className="w-full max-w-5xl mx-auto flex items-center justify-between z-20 mb-4 sm:mb-6">
+          <Link to="/" className="flex items-center gap-2 group text-stone-800 dark:text-stone-100 hover:text-pink-600 transition-colors">
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+            <span className="font-heading font-black text-2xl tracking-tight">porti<span className="text-[#f472b6]">qqo</span></span>
+          </Link>
+          <Link to="/" className="text-xs font-bold px-4 py-2 rounded-full bg-[#f5ebe0] dark:bg-stone-800 border border-[#e6ccb2] dark:border-stone-700 hover:bg-[#e6ccb2] transition-all">
+            Back to Home
+          </Link>
+        </div>
+
+        {/* Main Sliding Card Container */}
+        <div className="w-full max-w-4xl mx-auto relative min-h-[640px] rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#4f46e5] via-[#5851db] to-[#db2777] border border-indigo-400/30 flex flex-col md:flex-row my-auto">
+          
+          {/* Static Background Panel (Desktop 2-Column Text & Buttons) */}
+          <div className="hidden md:grid grid-cols-2 absolute inset-0 w-full h-full pointer-events-auto">
             
-            {activeCard === 'choice' && (
-              <motion.div
-                key="choice"
-                className="space-y-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+            {/* Left Background Section (Visible when White Panel slides Right to Signup) */}
+            <div className="flex flex-col justify-center items-center p-8 sm:p-12 text-center text-white z-10 space-y-5">
+              <h2 className="text-3xl font-heading font-extrabold tracking-tight">Have an account?</h2>
+              <p className="text-indigo-100 text-sm max-w-xs leading-relaxed">
+                Log in with your credentials to explore and edit your custom portfolio templates.
+              </p>
+              <button 
+                onClick={() => handleSwitchCard('login')}
+                className="px-8 py-3 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-indigo-700 transition-all duration-300 shadow-md hover:scale-105"
               >
-                <div className="text-center mb-8">
-                  <h1 className="text-3xl font-heading font-bold text-secondary-900 mb-2">
-                    Portiqqo
-                  </h1>
-                  <p className="text-secondary-600">
-                    Choose how you'd like to continue
-                  </p>
-                </div>
+                Log In
+              </button>
+            </div>
 
-                <motion.div 
-                  className="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-primary-200"
+            {/* Right Background Section (Visible when White Panel slides Left to Login) */}
+            <div className="flex flex-col justify-center items-center p-8 sm:p-12 text-center text-white z-10 space-y-5">
+              <h2 className="text-3xl font-heading font-extrabold tracking-tight">Don't have an account?</h2>
+              <p className="text-indigo-100 text-sm max-w-xs leading-relaxed">
+                Create your free account today and build a high-converting portfolio website.
+              </p>
+              <button 
+                onClick={() => handleSwitchCard('signup')}
+                className="px-8 py-3 border-2 border-white rounded-full font-bold text-white hover:bg-white hover:text-indigo-700 transition-all duration-300 shadow-md hover:scale-105"
+              >
+                Sign Up
+              </button>
+            </div>
+          </div>
+
+          {/* Floating White Sliding Form Card */}
+          <motion.div
+            className="w-full md:w-1/2 bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 z-20 shadow-2xl p-6 sm:p-10 flex flex-col justify-center rounded-3xl min-h-[640px]"
+            initial={false}
+            animate={{
+              x: isDesktop ? (isSignupMode ? '100%' : '0%') : '0%'
+            }}
+            transition={{
+              type: 'spring',
+              stiffness: 200,
+              damping: 24
+            }}
+          >
+            {/* Mobile Switcher Bar (< 768px screens) */}
+            {!isDesktop && activeCard !== 'otp' && activeCard !== 'success' && (
+              <div className="flex items-center justify-center p-1 bg-stone-100 dark:bg-stone-800 rounded-full mb-6 max-w-xs mx-auto">
+                <button
+                  type="button"
                   onClick={() => handleSwitchCard('login')}
-                  whileHover={{ scale: 1.02 }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
+                    activeCard === 'login' ? 'bg-[#f472b6] text-stone-950 shadow-sm' : 'text-stone-600 dark:text-stone-400'
+                  }`}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center">
-                      <LogIn className="w-6 h-6 text-primary-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-secondary-900 mb-1">
-                        Sign In
-                      </h3>
-                      <p className="text-secondary-600 text-sm">
-                        Already have an account? Sign in with email and password.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-
-                <motion.div 
-                  className="card p-6 cursor-pointer hover:shadow-lg transition-all duration-300 border-2 border-transparent hover:border-mint-200"
+                  Log In
+                </button>
+                <button
+                  type="button"
                   onClick={() => handleSwitchCard('signup')}
-                  whileHover={{ scale: 1.02 }}
+                  className={`flex-1 py-1.5 text-xs font-bold rounded-full transition-all ${
+                    activeCard === 'signup' ? 'bg-[#f472b6] text-stone-950 shadow-sm' : 'text-stone-600 dark:text-stone-400'
+                  }`}
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-mint-100 rounded-full flex items-center justify-center">
-                      <UserPlus className="w-6 h-6 text-mint-600" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-secondary-900 mb-1">
-                        Create Account
-                      </h3>
-                      <p className="text-secondary-600 text-sm">
-                        New user? Create account with email verification.
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
-              </motion.div>
+                  Sign Up
+                </button>
+              </div>
             )}
 
-            {activeCard === 'login' && (
-              <motion.div
-                key="login"
-                className="card p-8"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-              >
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
-                    <LogIn className="w-8 h-8" />
-                  </div>
-                  <h1 className="text-2xl font-heading font-bold text-secondary-900 mb-2">
-                    Welcome Back
-                  </h1>
-                  <p className="text-secondary-600">
-                    Sign in to your account
-                  </p>
-                </div>
-
-                <form onSubmit={handleLoginSubmit} className="space-y-6">
-                  {/* Google Login Button */}
-                  <button
-                    type="button"
-                    onClick={() => window.location.href = googleAuthUrl}
-                    className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Continue with Google</span>
-                  </button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
+            <AnimatePresence mode="wait">
+              
+              {/* LOGIN FORM VIEW */}
+              {activeCard === 'login' && (
+                <motion.div
+                  key="login-form"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-6"
+                >
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-3">
+                      <LogIn className="w-6 h-6 text-[#f472b6]" />
                     </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">OR</span>
+                    <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
+                      Log in to Portiqqo
+                    </h1>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                      Welcome back! Enter your details to continue.
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleLoginSubmit} className="space-y-4">
+                    {/* Google Login Button */}
+                    <button
+                      type="button"
+                      onClick={() => window.location.href = googleAuthUrl}
+                      className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-sm text-stone-700 dark:text-stone-200 shadow-sm"
+                    >
+                      <svg className="w-5 h-5" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      <span>Continue with Google</span>
+                    </button>
+
+                    <div className="relative my-2">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-stone-200 dark:border-stone-800" />
+                      </div>
+                      <div className="relative flex justify-center text-xs uppercase">
+                        <span className="bg-white dark:bg-stone-900 px-3 text-stone-400 font-semibold">OR</span>
+                      </div>
                     </div>
-                  </div>
 
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`input-field ${errors.email ? 'border-red-500' : ''}`}
-                      placeholder="Enter your email"
-                    />
-                    {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
-                  </div>
-
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
+                    <div>
+                      <label htmlFor="email" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        Email Address
+                      </label>
                       <input
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        name="password"
-                        value={formData.password}
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
                         onChange={handleChange}
-                        className={`input-field pr-10 ${errors.password ? 'border-red-500' : ''}`}
-                        placeholder="Enter your password"
+                        className={`w-full px-4 py-3 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-sm focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                        }`}
+                        placeholder="name@domain.com"
                       />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
+                      {errors.email && <p className="mt-1 text-xs text-red-500 font-medium">{errors.email}</p>}
                     </div>
-                    {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
-                  </div>
 
-                  {errors.submit && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-600">{errors.submit}</p>
+                    <div>
+                      <label htmlFor="password" className="block text-xs font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className={`w-full px-4 py-3 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-sm focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                            errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          }`}
+                          placeholder="••••••••"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                        >
+                          {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                      {errors.password && <p className="mt-1 text-xs text-red-500 font-medium">{errors.password}</p>}
                     </div>
-                  )}
 
-                  <div className="space-y-4">
+                    {errors.submit && (
+                      <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl">
+                        <p className="text-xs text-red-600 dark:text-red-400 font-medium">{errors.submit}</p>
+                      </div>
+                    )}
+
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="btn-primary w-full"
+                      className="w-full py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50"
                     >
-                      {isLoading ? 'Signing In...' : 'Sign In'}
+                      {isLoading ? 'Signing In...' : 'Log In'}
                     </button>
+                  </form>
+                </motion.div>
+              )}
 
+              {/* SIGNUP FORM VIEW */}
+              {activeCard === 'signup' && (
+                <motion.div
+                  key="signup-form"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-5"
+                >
+                  <div className="text-center">
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-2">
+                      <UserPlus className="w-6 h-6 text-[#f472b6]" />
+                    </div>
+                    <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
+                      Create Account
+                    </h1>
+                    <p className="text-xs text-stone-500 dark:text-stone-400 mt-1">
+                      Join Portiqqo today and customize your templates
+                    </p>
+                  </div>
+
+                  <form onSubmit={handleSignupSubmit} className="space-y-3.5">
+                    {/* Google Signup Button */}
                     <button
                       type="button"
-                      onClick={() => handleSwitchCard('signup')}
-                      className="btn-ghost w-full"
+                      onClick={() => window.location.href = googleAuthUrl}
+                      className="w-full flex items-center justify-center gap-3 px-4 py-2.5 border border-stone-200 dark:border-stone-700 rounded-2xl hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors font-medium text-xs text-stone-700 dark:text-stone-200 shadow-sm"
                     >
-                      Don't have an account? Create one
+                      <svg className="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                      </svg>
+                      <span>Continue with Google</span>
                     </button>
-                  </div>
-                </form>
-              </motion.div>
-            )}
 
-            {activeCard === 'otp' && (
-              <motion.div
-                key="otp"
-                className="card p-8"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-              >
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-primary-100 text-primary-600 rounded-full mb-4">
-                    <Mail className="w-8 h-8" />
-                  </div>
-                  <h1 className="text-2xl font-heading font-bold text-secondary-900 mb-2">
-                    Verify Your Email
-                  </h1>
-                  <p className="text-secondary-600 mb-2">
-                    We've sent a 6-digit code to
-                  </p>
-                  <p className="text-primary-600 font-medium">{otpData.email}</p>
-                </div>
+                    <div className="relative my-1">
+                      <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-stone-200 dark:border-stone-800" />
+                      </div>
+                      <div className="relative flex justify-center text-[10px] uppercase">
+                        <span className="bg-white dark:bg-stone-900 px-2 text-stone-400 font-bold">OR</span>
+                      </div>
+                    </div>
 
-                <form onSubmit={(e) => { e.preventDefault(); handleOTPSubmit(otpData.otp); }} className="space-y-6">
-                  <div>
-                    <label className="block text-sm font-medium text-secondary-700 mb-3 text-center">
-                      Enter verification code
-                    </label>
-                    <input
-                      type="text"
-                      value={otpData.otp}
-                      onChange={(e) => setOtpData(prev => ({ ...prev, otp: e.target.value }))}
-                      className={`input-field text-center text-lg font-semibold tracking-widest ${
-                        otpData.blocked ? 'bg-gray-100 cursor-not-allowed' : ''
-                      }`}
-                      placeholder="123456"
-                      maxLength="6"
-                      disabled={otpData.blocked}
-                    />
-                    
-                    {/* Attempt counter */}
-                    {otpData.attempts > 0 && !otpData.blocked && (
-                      <p className="mt-2 text-sm text-center text-orange-600">
-                        {5 - otpData.attempts} attempts remaining
-                      </p>
-                    )}
-                    
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label htmlFor="firstName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                          First Name
+                        </label>
+                        <input
+                          type="text"
+                          id="firstName"
+                          name="firstName"
+                          value={formData.firstName}
+                          onChange={handleChange}
+                          className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                            errors.firstName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          }`}
+                          placeholder="John"
+                        />
+                        {errors.firstName && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.firstName}</p>}
+                      </div>
+
+                      <div>
+                        <label htmlFor="lastName" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                          Last Name
+                        </label>
+                        <input
+                          type="text"
+                          id="lastName"
+                          name="lastName"
+                          value={formData.lastName}
+                          onChange={handleChange}
+                          className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                            errors.lastName ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          }`}
+                          placeholder="Doe"
+                        />
+                        {errors.lastName && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.lastName}</p>}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label htmlFor="email" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        id="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        className={`w-full px-3.5 py-2.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                          errors.email ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                        }`}
+                        placeholder="name@domain.com"
+                      />
+                      {errors.email && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.email}</p>}
+                    </div>
+
+                    <div>
+                      <label htmlFor="password" className="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <input
+                          type={showPassword ? 'text' : 'password'}
+                          id="password"
+                          name="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          className={`w-full px-3.5 py-2.5 pr-10 rounded-2xl bg-stone-50 dark:bg-stone-800 border text-xs focus:ring-2 focus:ring-pink-500 outline-none transition-all ${
+                            errors.password ? 'border-red-500' : 'border-stone-200 dark:border-stone-700'
+                          }`}
+                          placeholder="Create password"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3.5 top-1/2 transform -translate-y-1/2 text-stone-400 hover:text-stone-600"
+                        >
+                          {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                        </button>
+                      </div>
+
+                      {formData.password && (
+                        <div className="mt-2 p-2 bg-stone-50 dark:bg-stone-800/80 rounded-xl border border-stone-200 dark:border-stone-700">
+                          <div className="flex items-center justify-between text-[10px] font-bold mb-1">
+                            <span>Strength:</span>
+                            <span className={
+                              passwordStrength.score <= 2 ? 'text-red-500' :
+                              passwordStrength.score <= 3 ? 'text-amber-500' : 'text-emerald-500'
+                            }>
+                              {getPasswordStrengthText(passwordStrength.score)}
+                            </span>
+                          </div>
+                          <div className="w-full bg-stone-200 dark:bg-stone-700 rounded-full h-1.5">
+                            <div 
+                              className={`h-1.5 rounded-full transition-all duration-300 ${getPasswordStrengthColor(passwordStrength.score)}`}
+                              style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                            />
+                          </div>
+                        </div>
+                      )}
+
+                      {errors.password && <p className="mt-1 text-[10px] text-red-500 font-medium">{errors.password}</p>}
+                    </div>
+
                     {errors.submit && (
-                      <p className="mt-3 text-sm text-center text-red-600">
-                        {errors.submit}
-                      </p>
+                      <div className="p-2.5 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl">
+                        <p className="text-[11px] text-red-600 dark:text-red-400 font-medium">{errors.submit}</p>
+                      </div>
                     )}
+
+                    <button
+                      type="submit"
+                      disabled={isLoading || (formData.password && !passwordStrength.isValid)}
+                      className="w-full py-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 text-xs"
+                    >
+                      {isLoading ? 'Creating Account...' : 'Sign Up'}
+                    </button>
+                  </form>
+                </motion.div>
+              )}
+
+              {/* OTP VERIFICATION VIEW */}
+              {activeCard === 'otp' && (
+                <motion.div
+                  key="otp-form"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.25 }}
+                  className="space-y-6 text-center"
+                >
+                  <div>
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-3">
+                      <Mail className="w-6 h-6 text-[#f472b6]" />
+                    </div>
+                    <h1 className="text-2xl font-heading font-black tracking-tight">
+                      Verify Your Email
+                    </h1>
+                    <p className="text-xs text-stone-500 mt-1">
+                      We've sent a 6-digit code to <span className="font-bold text-stone-800 dark:text-stone-200">{otpData.email}</span>
+                    </p>
                   </div>
 
-                  <div className="space-y-4">
+                  <form onSubmit={(e) => { e.preventDefault(); handleOTPSubmit(otpData.otp); }} className="space-y-5">
+                    <div>
+                      <input
+                        type="text"
+                        value={otpData.otp}
+                        onChange={(e) => setOtpData(prev => ({ ...prev, otp: e.target.value }))}
+                        className="w-full text-center text-xl font-bold tracking-[0.4em] py-3.5 rounded-2xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 outline-none focus:ring-2 focus:ring-pink-500"
+                        placeholder="123456"
+                        maxLength="6"
+                        disabled={otpData.blocked}
+                      />
+                      {otpData.attempts > 0 && !otpData.blocked && (
+                        <p className="mt-2 text-xs text-amber-600 font-medium">
+                          {5 - otpData.attempts} attempts remaining
+                        </p>
+                      )}
+                      {errors.submit && (
+                        <p className="mt-2 text-xs text-red-500 font-medium">{errors.submit}</p>
+                      )}
+                    </div>
+
                     <button
                       type="submit"
                       disabled={isLoading || otpData.otp.length !== 6 || otpData.blocked}
-                      className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all text-xs disabled:opacity-50"
                     >
                       {isLoading ? 'Verifying...' : otpData.blocked ? 'Blocked - Resend OTP' : 'Verify Email'}
                     </button>
 
-                    <div className="text-center">
+                    <div className="flex items-center justify-between text-xs pt-2">
                       <button
                         type="button"
                         onClick={handleResendOTP}
                         disabled={resendTimer > 0 || isLoading}
-                        className={`text-sm ${
-                          resendTimer > 0 || isLoading
-                            ? 'text-gray-400 cursor-not-allowed'
-                            : 'text-primary-600 hover:text-primary-700'
-                        }`}
+                        className="text-pink-600 font-bold hover:underline disabled:opacity-50"
                       >
-                        {resendTimer > 0 
-                          ? `Resend code (${resendTimer}s)`
-                          : isLoading
-                          ? 'Sending...'
-                          : 'Resend code'
-                        }
+                        {resendTimer > 0 ? `Resend (${resendTimer}s)` : 'Resend code'}
                       </button>
-                    </div>
-
-                    <button
-                      type="button"
-                      onClick={goBack}
-                      className="btn-ghost w-full"
-                    >
-                      Back
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            )}
-
-            {activeCard === 'signup' && (
-              <motion.div
-                key="signup"
-                className="card p-8"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -50 }}
-              >
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-mint-100 text-mint-600 rounded-full mb-4">
-                    <UserPlus className="w-8 h-8" />
-                  </div>
-                  <h1 className="text-2xl font-heading font-bold text-secondary-900 mb-2">
-                    Create Account
-                  </h1>
-                  <p className="text-secondary-600">
-                    Join Portiqqo
-                  </p>
-                </div>
-
-                <form onSubmit={handleSignupSubmit} className="space-y-6">
-                  {/* Google Signup Button */}
-                  <button
-                    type="button"
-                    onClick={() => window.location.href = googleAuthUrl}
-                    className="w-full flex items-center justify-center gap-3 px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200 group"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                      <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                      <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                      <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                    </svg>
-                    <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Continue with Google</span>
-                  </button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-gray-300"></div>
-                    </div>
-                    <div className="relative flex justify-center text-sm">
-                      <span className="px-2 bg-white text-gray-500">OR</span>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="firstName" className="block text-sm font-medium text-secondary-700 mb-2">
-                      First name
-                    </label>
-                    <input
-                      type="text"
-                      id="firstName"
-                      name="firstName"
-                      value={formData.firstName}
-                      onChange={handleChange}
-                      className={`input-field ${errors.firstName ? 'border-red-500' : ''}`}
-                      placeholder="Enter your first name"
-                    />
-                    {errors.firstName && <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>}
-                  </div>
-
-                  <div>
-                    <label htmlFor="lastName" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Last name
-                    </label>
-                    <input
-                      type="text"
-                      id="lastName"
-                      name="lastName"
-                      value={formData.lastName}
-                      onChange={handleChange}
-                      className={`input-field ${errors.lastName ? 'border-red-500' : ''}`}
-                      placeholder="Enter your last name"
-                    />
-                    {errors.lastName && <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>}
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleChange}
-                      className={`input-field ${errors.email ? 'border-red-500' : ''}`}
-                      placeholder="Enter your email"
-                    />
-                    {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
-                  </div>
-
-                  <div>
-                    <label htmlFor="password" className="block text-sm font-medium text-secondary-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        id="password"
-                        name="password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        className={`input-field pr-10 ${errors.password ? 'border-red-500' : ''}`}
-                        placeholder="Create a password"
-                      />
                       <button
                         type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-secondary-400"
+                        onClick={goBack}
+                        className="text-stone-500 hover:text-stone-800 font-bold"
                       >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        Back
                       </button>
                     </div>
-                    
-                    {/* Password Strength Indicator */}
-                    {formData.password && (
-                      <div className="mt-3">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium text-secondary-700">Password Strength:</span>
-                          <span className={`text-sm font-semibold ${
-                            passwordStrength.score <= 2 ? 'text-red-600' :
-                            passwordStrength.score <= 3 ? 'text-yellow-600' :
-                            passwordStrength.score <= 4 ? 'text-blue-600' : 'text-green-600'
-                          }`}>
-                            {getPasswordStrengthText(passwordStrength.score)}
-                          </span>
-                        </div>
-                        
-                        {/* Strength Progress Bar */}
-                        <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                          <div 
-                            className={`h-2 rounded-full transition-all duration-300 ${
-                              getPasswordStrengthColor(passwordStrength.score)
-                            }`}
-                            style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
-                          ></div>
-                        </div>
-                        
-                        {/* Password Requirements */}
-                        <div className="space-y-1">
-                          <div className="text-xs text-secondary-600 mb-1">Password must contain:</div>
-                          {[
-                            { key: 'length', text: 'At least 8 characters', check: formData.password.length >= 8 },
-                            { key: 'uppercase', text: 'One uppercase letter (A-Z)', check: /[A-Z]/.test(formData.password) },
-                            { key: 'lowercase', text: 'One lowercase letter (a-z)', check: /[a-z]/.test(formData.password) },
-                            { key: 'number', text: 'One number (0-9)', check: /\d/.test(formData.password) },
-                            { key: 'special', text: 'One special character (!@#$%^&*)', check: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password) }
-                          ].map((requirement) => (
-                            <div key={requirement.key} className="flex items-center space-x-2">
-                              <div className={`w-2 h-2 rounded-full ${
-                                requirement.check ? 'bg-green-500' : 'bg-gray-300'
-                              }`}></div>
-                              <span className={`text-xs ${
-                                requirement.check ? 'text-green-600' : 'text-secondary-500'
-                              }`}>
-                                {requirement.text}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                    
-                    {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password}</p>}
+                  </form>
+                </motion.div>
+              )}
+
+              {/* SUCCESS VIEW */}
+              {activeCard === 'success' && (
+                <motion.div
+                  key="success-view"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-center space-y-4 py-8"
+                >
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 rounded-3xl">
+                    <CheckCircle className="w-8 h-8" />
                   </div>
+                  <h1 className="text-2xl font-heading font-black tracking-tight">
+                    Welcome to Portiqqo!
+                  </h1>
+                  <p className="text-xs text-stone-500">
+                    You're all set! Redirecting to templates...
+                  </p>
+                  <div className="w-6 h-6 border-2 border-pink-500 border-t-transparent rounded-full animate-spin mx-auto mt-4" />
+                </motion.div>
+              )}
 
-                  {errors.submit && (
-                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                      <p className="text-sm text-red-600">{errors.submit}</p>
-                    </div>
-                  )}
+            </AnimatePresence>
+          </motion.div>
+        </div>
 
-                  <div className="space-y-4">
-                    <button
-                      type="submit"
-                      disabled={isLoading || (formData.password && !passwordStrength.isValid)}
-                      className="btn-primary w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isLoading ? 'Creating Account...' : 'Sign Up'}
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleSwitchCard('login')}
-                      className="btn-ghost w-full"
-                    >
-                      Already have an account? Sign In
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            )}
-
-            {activeCard === 'success' && (
-              <motion.div
-                key="success"
-                className="card p-8 text-center"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 text-green-600 rounded-full mb-4">
-                  <CheckCircle className="w-8 h-8" />
-                </div>
-                <h1 className="text-2xl font-heading font-bold text-secondary-900 mb-2">
-                  Welcome to Portiqqo!
-                </h1>
-                <p className="text-secondary-600 mb-6">
-                  You're all set! Redirecting...
-                </p>
-                <div className="loading-spinner mx-auto"></div>
-              </motion.div>
-            )}
-
-          </AnimatePresence>
+        {/* Footer */}
+        <div className="text-center text-xs text-stone-500 dark:text-stone-400 z-20 mt-4 sm:mt-6">
+          &copy; {new Date().getFullYear()} Portiqqo. All rights reserved.
         </div>
       </div>
     </>
