@@ -5,11 +5,12 @@ import PublicPortfolioPage from '../../pages/PublicPortfolioPage';
 import Layout from '../layout/Layout';
 
 function SubdomainRouter() {
-  const hostname = window.location.hostname;
+  const hostname = window.location.hostname.toLowerCase();
   
-  // Check main domains and local dev hosts
+  // Check main domains, vercel hosts, and local dev hosts
   const isMainDomain = hostname === 'portiqqo.me' || 
                        hostname === 'www.portiqqo.me' || 
+                       hostname.endsWith('.vercel.app') ||
                        hostname === 'localhost' || 
                        hostname === '127.0.0.1';
 
