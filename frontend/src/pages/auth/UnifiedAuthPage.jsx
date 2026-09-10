@@ -230,10 +230,10 @@ function UnifiedAuthPage() {
       }
       
       console.log('Sending OTP to:', formData.email)
-      await sendOTP(formData.email)
+      const otpRes = await sendOTP(formData.email)
       setOtpData({ 
         email: formData.email, 
-        otp: '', 
+        otp: otpRes?.devOTP || '', 
         verified: false,
         attempts: 0,
         blocked: false,

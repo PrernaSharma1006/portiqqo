@@ -72,8 +72,8 @@ function App() {
             <Route path="/auth" element={<UnifiedAuthPage />} />
             <Route path="/auth/callback" element={<AuthCallbackPage />} />
             <Route path="/register" element={<UnifiedAuthPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/signup" element={<SignupPage />} />
+            <Route path="/login" element={<UnifiedAuthPage />} />
+            <Route path="/signup" element={<UnifiedAuthPage />} />
             
             {/* Information pages */}
             <Route path="/help-center" element={<Layout><HelpCenterPage /></Layout>} />

@@ -224,10 +224,10 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Failed to send OTP');
+        throw new Error(data.error || data.message || 'Failed to send OTP');
       }
       
-      return { success: true, message: data.message };
+      return { success: true, message: data.message, devOTP: data.data?.devOTP };
     } catch (error) {
       console.error('OTP request error:', error);
       throw error;

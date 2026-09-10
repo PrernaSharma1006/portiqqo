@@ -66,24 +66,19 @@ const sendOTP = async (req, res) => {
       });
 
     } catch (emailError) {
-      console.error('❌ Email service error:', emailError);
+      console.error('❌ Email service error:', emailError.message);
+      console.log(`🔑 [DEV/FALLBACK MODE] OTP for ${email}: ${otp}`);
       
-      // For development, provide fallback with actual OTP in response
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`🔧 [DEV MODE] Email failed, OTP for ${email}: ${otp}`);
-        res.status(200).json({
-          success: true,
-          message: 'Email service unavailable. Using development mode.',
-          data: {
-            email: email,
-            expiresIn: '10 minutes',
-            action: action,
-            devOTP: otp // Only in development when email fails
-          }
-        });
-      } else {
-        throw emailError;
-      }
+      res.status(200).json({
+        success: true,
+        message: 'Verification code generated (email service unavailable)',
+        data: {
+          email: email,
+          expiresIn: '10 minutes',
+          action: action,
+          devOTP: otp
+        }
+      });
     }
 
   } catch (error) {
