@@ -77,11 +77,20 @@ router.get('/google', passport.authenticate('google', {
 // @route   GET /api/auth/google/callback
 // @desc    Google OAuth callback
 // @access  Public
+const getFrontendUrl = () => {
+  if (process.env.APP_URL) return process.env.APP_URL;
+  if (process.env.NODE_ENV === 'production' || process.env.RENDER) return 'https://portiqqo.vercel.app';
+  return 'http://localhost:3000';
+};
+
 router.get('/google/callback', 
-  passport.authenticate('google', { 
-    failureRedirect: `${process.env.APP_URL || 'http://localhost:3000'}/auth?error=google_auth_failed`,
-    session: false 
-  }),
+  (req, res, next) => {
+    const defaultRedirect = getFrontendUrl();
+    passport.authenticate('google', { 
+      failureRedirect: `${defaultRedirect}/auth?error=google_auth_failed`,
+      session: false 
+    })(req, res, next);
+  },
   (req, res) => {
     try {
       // Validate user object
@@ -101,12 +110,12 @@ router.get('/google/callback',
       );
 
       // Redirect to frontend with token
-      const frontendUrl = process.env.APP_URL || 'http://localhost:3000';
+      const frontendUrl = getFrontendUrl();
       
       // Sanitize redirect URL to prevent open redirect vulnerabilities
       const allowedDomains = process.env.ALLOWED_ORIGINS 
-        ? process.env.ALLOWED_ORIGINS.split(',') 
-        : [frontendUrl];
+        ? process.env.ALLOWED_ORIGINS.split(',').map(d => d.trim()) 
+        : [frontendUrl, 'https://portiqqo.vercel.app', 'https://portiqqo.me'];
       
       if (!allowedDomains.some(domain => frontendUrl.startsWith(domain))) {
         throw new Error('Invalid redirect URL');
@@ -115,7 +124,7 @@ router.get('/google/callback',
       res.redirect(`${frontendUrl}/auth/callback?token=${encodeURIComponent(token)}`);
     } catch (error) {
       console.error('Google callback error:', error);
-      const frontendUrl = process.env.APP_URL || 'http://localhost:3000';
+      const frontendUrl = getFrontendUrl();
       res.redirect(`${frontendUrl}/auth?error=authentication_failed`);
     }
   }
