@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../contexts/AuthContext';
 
 const OTPVerification = ({ 
   email, 
@@ -14,6 +15,7 @@ const OTPVerification = ({
   const [canResend, setCanResend] = useState(false);
   const [error, setError] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const { verifyOTP } = useAuth();
   
   const inputRefs = useRef([]);
   const maxAttempts = 4;
@@ -67,39 +69,25 @@ const OTPVerification = ({
     setError('');
 
     try {
-      const response = await fetch('/api/auth/verify-otp', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          otp: otpCode
-        })
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        onVerifySuccess(data);
-      } else {
-        const newAttempts = attempts + 1;
-        setAttempts(newAttempts);
-        
-        if (newAttempts >= maxAttempts) {
-          setError(`Maximum attempts exceeded. Please request a new OTP.`);
-          setCanResend(true);
-          setTimeRemaining(0);
-        } else {
-          setError(`Invalid OTP. ${maxAttempts - newAttempts} attempts remaining.`);
-        }
-        
-        // Clear OTP inputs
-        setOtp(['', '', '', '', '', '']);
-        inputRefs.current[0]?.focus();
+      const res = await verifyOTP(email, otpCode);
+      if (res.success) {
+        onVerifySuccess(res.data);
       }
     } catch (err) {
-      setError('Failed to verify OTP. Please try again.');
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      
+      if (newAttempts >= maxAttempts) {
+        setError(`Maximum attempts exceeded. Please request a new OTP.`);
+        setCanResend(true);
+        setTimeRemaining(0);
+      } else {
+        setError(err.message || `Invalid OTP. ${maxAttempts - newAttempts} attempts remaining.`);
+      }
+      
+      // Clear OTP inputs
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
     } finally {
       setIsVerifying(false);
     }
