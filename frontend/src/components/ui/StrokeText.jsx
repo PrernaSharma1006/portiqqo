@@ -51,7 +51,7 @@ const StrokeText = ({
 
   const [box, setBox] = useState(defaultBox);
 
-  const dash = Math.max(fontSize * 7, 300);
+  const dash = Math.max(fontSize * 40, 3000);
 
   const fontStyle = useMemo(
     () => ({

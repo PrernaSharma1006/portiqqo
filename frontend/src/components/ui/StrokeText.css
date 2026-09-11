@@ -6,7 +6,7 @@
   vertical-align: top;
   max-width: 100%;
   box-sizing: border-box;
-  overflow: hidden;
+  overflow: hidden !important;
 }
 
 .stroke-text--hover {
@@ -18,7 +18,7 @@
   height: 1em;
   width: auto;
   max-width: 100%;
-  overflow: hidden;
+  overflow: hidden !important;
   vertical-align: top;
 }
 

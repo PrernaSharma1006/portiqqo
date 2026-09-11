@@ -109,20 +109,35 @@ function Header() {
             <span className="text-stone-900 dark:text-stone-100 transition-colors">o</span>
           </Link>
 
-          {/* PillNav Center Component */}
-          <div className="flex-1 flex justify-center min-w-0">
-            <PillNav
-              items={navItems}
-              activeHref={location.pathname}
-              baseColor={isDark ? '#26221f' : '#f5ebe0'}
-              pillColor={isDark ? '#141210' : '#1c1917'}
-              hoveredPillTextColor="#1c1917"
-              pillTextColor={isDark ? '#fdfbf7' : '#fdfbf7'}
-              initialLoadAnimation={false}
-            />
+          {/* PillNav Center Component on Desktop / Get Started on Mobile */}
+          <div className="flex-1 flex justify-center items-center min-w-0">
+            {/* Desktop Navigation */}
+            <div className="hidden md:block">
+              <PillNav
+                items={navItems}
+                activeHref={location.pathname}
+                baseColor={isDark ? '#26221f' : '#f5ebe0'}
+                pillColor={isDark ? '#141210' : '#1c1917'}
+                hoveredPillTextColor="#1c1917"
+                pillTextColor={isDark ? '#fdfbf7' : '#fdfbf7'}
+                initialLoadAnimation={false}
+              />
+            </div>
+
+            {/* Mobile Center: Get Started Button */}
+            <div className="block md:hidden">
+              {!isAuthenticated && (
+                <Link
+                  to="/auth"
+                  className="px-4 py-1.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs shadow-md shadow-pink-500/20 transition-all duration-300 active:scale-95"
+                >
+                  Get Started
+                </Link>
+              )}
+            </div>
           </div>
 
-          {/* Right Actions: Theme Toggle + Auth */}
+          {/* Right Actions: Theme Toggle + Mobile 3-Lines Menu / Desktop Auth */}
           <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             {/* Theme Toggle Button */}
             <button
@@ -210,13 +225,28 @@ function Header() {
                 </AnimatePresence>
               </div>
             ) : (
-              <Link
-                to="/auth"
-                className="px-5 py-2 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5"
-              >
-                Get Started
-              </Link>
+              <div className="hidden md:block">
+                <Link
+                  to="/auth"
+                  className="px-5 py-2 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  Get Started
+                </Link>
+              </div>
             )}
+
+            {/* Mobile 3-Lines Menu Button at Right Corner */}
+            <div className="block md:hidden">
+              <PillNav
+                items={navItems}
+                activeHref={location.pathname}
+                baseColor={isDark ? '#26221f' : '#f5ebe0'}
+                pillColor={isDark ? '#141210' : '#1c1917'}
+                hoveredPillTextColor="#1c1917"
+                pillTextColor={isDark ? '#fdfbf7' : '#fdfbf7'}
+                initialLoadAnimation={false}
+              />
+            </div>
           </div>
         </div>
       </div>

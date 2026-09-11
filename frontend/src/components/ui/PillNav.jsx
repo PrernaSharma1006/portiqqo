@@ -15,7 +15,8 @@ const PillNav = ({
   hoveredPillTextColor = '#1c1917',
   pillTextColor,
   onMobileMenuClick,
-  initialLoadAnimation = true
+  initialLoadAnimation = true,
+  mobileMenuOnly = false
 }) => {
   const resolvedPillTextColor = pillTextColor ?? baseColor;
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -165,12 +166,16 @@ const PillNav = ({
 
     if (hamburger) {
       const lines = hamburger.querySelectorAll('.hamburger-line');
-      if (newState) {
-        gsap.to(lines[0], { rotation: 45, y: 3, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: -45, y: -3, duration: 0.3, ease });
-      } else {
-        gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
-        gsap.to(lines[1], { rotation: 0, y: 0, duration: 0.3, ease });
+      if (lines.length >= 3) {
+        if (newState) {
+          gsap.to(lines[0], { rotation: 45, y: 5, duration: 0.3, ease });
+          gsap.to(lines[1], { opacity: 0, scaleX: 0, duration: 0.2, ease });
+          gsap.to(lines[2], { rotation: -45, y: -5, duration: 0.3, ease });
+        } else {
+          gsap.to(lines[0], { rotation: 0, y: 0, duration: 0.3, ease });
+          gsap.to(lines[1], { opacity: 1, scaleX: 1, duration: 0.2, ease });
+          gsap.to(lines[2], { rotation: 0, y: 0, duration: 0.3, ease });
+        }
       }
     }
 
@@ -329,6 +334,7 @@ const PillNav = ({
           aria-label="Toggle menu"
           ref={hamburgerRef}
         >
+          <span className="hamburger-line" />
           <span className="hamburger-line" />
           <span className="hamburger-line" />
         </button>
