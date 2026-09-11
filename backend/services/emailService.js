@@ -65,7 +65,7 @@ class EmailService {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          from: process.env.EMAIL_FROM || 'Portfolio Builder <onboarding@resend.dev>',
+          from: process.env.RESEND_FROM || 'Portfolio Builder <onboarding@resend.dev>',
           to: [email],
           subject: 'Your Portfolio Builder Verification Code',
           html: this.getOTPHtml(otp, firstName),
