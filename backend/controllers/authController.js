@@ -494,6 +494,44 @@ const logout = (req, res) => {
   });
 };
 
+// @desc    Check if email is available
+// @route   POST /api/auth/check-email
+// @access  Public
+const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const existingUser = await User.findOne({ 
+      email: cleanEmail,
+      isEmailVerified: true,
+      isTemporary: { $ne: true }
+    }).select('_id email').lean();
+
+    return res.status(200).json({
+      success: true,
+      exists: !!existingUser,
+      data: {
+        email: cleanEmail,
+        exists: !!existingUser
+      }
+    });
+  } catch (error) {
+    console.error('CheckEmail error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to check email'
+    });
+  }
+};
+
 module.exports = {
   sendOTP,
   verifyOTP,

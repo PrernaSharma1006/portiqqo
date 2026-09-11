@@ -68,36 +68,23 @@ const sendOTP = async (req, res) => {
       console.error('User updateOne warning during OTP generation:', saveErr.message);
     }
 
-    // Send OTP email with dev fallback
-    try {
-      await emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]);
-      console.log(`📧 OTP sent successfully to: ${cleanEmail}`);
+    // Send OTP email in background (non-blocking) so request completes instantly
+    emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]).catch(err => {
+      console.warn('Background email send note:', err.message || err);
+    });
 
-      return res.status(200).json({
-        success: true,
-        message: 'Verification code sent to your email',
-        data: {
-          email: cleanEmail,
-          expiresIn: '10 minutes',
-          action: action,
-          devOTP: otp
-        }
-      });
-    } catch (emailError) {
-      console.error('❌ Email service error:', emailError.message || emailError);
-      console.log(`🔑 [DEV/FALLBACK MODE] OTP for ${cleanEmail}: ${otp}`);
-      
-      return res.status(200).json({
-        success: true,
-        message: 'Verification code generated (email service unavailable)',
-        data: {
-          email: cleanEmail,
-          expiresIn: '10 minutes',
-          action: action,
-          devOTP: otp
-        }
-      });
-    }
+    console.log(`🔑 OTP generated for ${cleanEmail}: ${otp}`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Verification code sent to your email',
+      data: {
+        email: cleanEmail,
+        expiresIn: '10 minutes',
+        action: action,
+        devOTP: otp
+      }
+    });
 
   } catch (error) {
     console.error('SendOTP critical error:', error);
@@ -528,6 +515,44 @@ const logout = (req, res) => {
     success: true,
     message: 'Logged out successfully'
   });
+};
+
+// @desc    Check if email is available
+// @route   POST /api/auth/check-email
+// @access  Public
+const checkEmail = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is required'
+      });
+    }
+
+    const cleanEmail = email.toLowerCase().trim();
+    const existingUser = await User.findOne({ 
+      email: cleanEmail,
+      isEmailVerified: true,
+      isTemporary: { $ne: true }
+    }).select('_id email').lean();
+
+    return res.status(200).json({
+      success: true,
+      exists: !!existingUser,
+      data: {
+        email: cleanEmail,
+        exists: !!existingUser
+      }
+    });
+  } catch (error) {
+    console.error('CheckEmail error:', error);
+    return res.status(500).json({
+      success: false,
+      error: 'Failed to check email'
+    });
+  }
 };
 
 module.exports = {
