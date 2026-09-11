@@ -1,7 +1,7 @@
 const User = require('../models/User');
 const authService = require('../services/authService');
 
-// Clean in-memory OTP store (email -> { otp, expiresAt, attempts, lastRequest })
+// In-memory OTP store (email -> { otp, expiresAt, attempts, lastRequest })
 const otpStore = new Map();
 
 // Periodic cleanup of expired OTPs every 10 minutes
@@ -51,12 +51,12 @@ const checkEmail = async (req, res) => {
   }
 };
 
-// @desc    Send 6-digit OTP for verification
+// @desc    Send 6-digit OTP for registration
 // @route   POST /api/auth/send-otp
 // @access  Public
 const sendOTP = async (req, res) => {
   try {
-    const { email, action = 'signup' } = req.body || {};
+    const { email } = req.body || {};
 
     if (!email || !authService.validateEmail(email)) {
       return res.status(400).json({
@@ -66,6 +66,20 @@ const sendOTP = async (req, res) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
+
+    // Check if email is already registered
+    const existingUser = await User.findOne({
+      email: cleanEmail,
+      isEmailVerified: true,
+      isTemporary: { $ne: true }
+    }).select('_id').lean();
+
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email is already registered. Please sign in instead.'
+      });
+    }
 
     // 30-second rate limit cooldown per email
     const existingRecord = otpStore.get(cleanEmail);
@@ -91,7 +105,17 @@ const sendOTP = async (req, res) => {
       lastRequest: Date.now()
     });
 
-    console.log(`🔑 OTP code generated for ${cleanEmail}: ${otp}`);
+    console.log(`🔑 OTP generated for ${cleanEmail}: ${otp}`);
+
+    // Asynchronous background email dispatch (non-blocking)
+    try {
+      const emailService = require('../services/emailService');
+      emailService.sendOTP(cleanEmail, otp).catch(err => {
+        console.error('Background email error:', err.message);
+      });
+    } catch (e) {
+      console.warn('Could not trigger background emailService:', e.message);
+    }
 
     return res.status(200).json({
       success: true,
@@ -99,7 +123,6 @@ const sendOTP = async (req, res) => {
       data: {
         email: cleanEmail,
         expiresIn: '10 minutes',
-        action: action,
         devOTP: otp
       }
     });
@@ -112,12 +135,12 @@ const sendOTP = async (req, res) => {
   }
 };
 
-// @desc    Verify 6-digit OTP code
+// @desc    Verify 6-digit OTP code & complete account creation
 // @route   POST /api/auth/verify-otp
 // @access  Public
 const verifyOTP = async (req, res) => {
   try {
-    const { email, otp } = req.body || {};
+    const { email, otp, password, firstName, lastName } = req.body || {};
 
     if (!email || !otp) {
       return res.status(400).json({
@@ -170,25 +193,54 @@ const verifyOTP = async (req, res) => {
 
     console.log(`✅ OTP verified for ${cleanEmail}`);
 
+    // Create or update user record in MongoDB
+    let user = await User.findOne({ email: cleanEmail });
+    if (user) {
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
+      if (password) user.password = password;
+      user.isEmailVerified = true;
+      user.isTemporary = false;
+      user.lastLogin = new Date();
+      user.loginCount = (user.loginCount || 0) + 1;
+      await user.save();
+    } else {
+      user = new User({
+        email: cleanEmail,
+        firstName: firstName || cleanEmail.split('@')[0] || 'User',
+        lastName: lastName || '',
+        password: password || 'DefaultPass123!',
+        isEmailVerified: true,
+        isTemporary: false,
+        lastLogin: new Date(),
+        loginCount: 1
+      });
+      await user.save();
+    }
+
+    // Clean up OTP from memory
+    otpStore.delete(cleanEmail);
+
+    // Create JWT token response
+    const tokenResponse = authService.createTokenResponse(user);
+
+    console.log(`🎉 User registered via OTP: ${cleanEmail}`);
+
     return res.status(200).json({
       success: true,
-      message: 'Email verified successfully',
-      data: {
-        email: cleanEmail,
-        verified: true,
-        verifiedAt: new Date()
-      }
+      message: 'Account created successfully',
+      data: tokenResponse
     });
   } catch (error) {
     console.error('VerifyOTP error:', error);
     return res.status(500).json({
       success: false,
-      error: 'Verification failed'
+      error: error.message || 'Verification failed'
     });
   }
 };
 
-// @desc    Complete Signup with verified email and password
+// @desc    Complete Signup directly
 // @route   POST /api/auth/signup
 // @access  Public
 const signup = async (req, res) => {
@@ -204,7 +256,6 @@ const signup = async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check if user exists or create new one
     let user = await User.findOne({ email: cleanEmail });
 
     if (user) {
@@ -230,10 +281,6 @@ const signup = async (req, res) => {
       await user.save();
     }
 
-    // Clean up OTP after registration
-    otpStore.delete(cleanEmail);
-
-    // Create JWT token response
     const tokenResponse = authService.createTokenResponse(user);
 
     console.log(`🎉 User registered & logged in: ${cleanEmail}`);
@@ -270,19 +317,18 @@ const login = async (req, res) => {
     const user = await User.findOne({ email: cleanEmail }).select('+password');
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(404).json({
         success: false,
-        error: 'Invalid email or password'
+        error: 'Account not found. Please register first.'
       });
     }
 
-    // Check password if set
     if (user.password) {
       const isMatch = await user.comparePassword(password);
       if (!isMatch) {
         return res.status(401).json({
           success: false,
-          error: 'Invalid email or password'
+          error: 'Invalid password. Please check your credentials.'
         });
       }
     }

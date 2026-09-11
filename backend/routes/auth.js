@@ -4,6 +4,8 @@ const passport = require('../config/passport');
 const jwt = require('jsonwebtoken');
 const { auth } = require('../middleware/auth');
 const {
+  sendOTP,
+  verifyOTP,
   login,
   loginWithPassword,
   signup,
@@ -13,6 +15,16 @@ const {
   updateProfile,
   checkEmail
 } = require('../controllers/authController');
+
+// @route   POST /api/auth/send-otp
+// @desc    Send OTP for registration
+// @access  Public
+router.post('/send-otp', sendOTP);
+
+// @route   POST /api/auth/verify-otp
+// @desc    Verify OTP and complete registration
+// @access  Public
+router.post('/verify-otp', verifyOTP);
 
 // @route   POST /api/auth/login
 // @desc    Login with email and password

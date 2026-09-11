@@ -36,7 +36,16 @@ function UnifiedAuthPage() {
     feedback: [],
     isValid: false
   })
-  const { login, checkEmailExists, signup } = useAuth()
+  const [otpData, setOtpData] = useState({ 
+    email: '', 
+    otp: '',
+    attempts: 0,
+    blocked: false,
+    lastResendTime: 0
+  })
+  const [resendTimer, setResendTimer] = useState(0)
+
+  const { login, checkEmailExists, sendOTP, verifyOTP, signup } = useAuth()
   const navigate = useNavigate()
 
   const handleSwitchCard = (card) => {
@@ -210,18 +219,40 @@ function UnifiedAuthPage() {
     setErrors({})
     
     try {
-      console.log('Checking if email exists:', formData.email)
-      const result = await checkEmailExists(formData.email)
-      
-      if (result.exists) {
-        setErrors({ email: 'Email is already registered. Please sign in instead.' })
-        setIsLoading(false)
-        return
-      }
-      
-      console.log('Creating account for:', formData.email)
-      await signup({
+      console.log('Sending OTP to:', formData.email)
+      const otpRes = await sendOTP(formData.email)
+      setOtpData({ 
+        email: formData.email, 
+        otp: otpRes?.devOTP || '', 
+        verified: false,
+        attempts: 0,
+        blocked: false,
+        lastResendTime: Date.now()
+      })
+      setResendTimer(60)
+      setActiveCard('otp')
+    } catch (error) {
+      console.error('Signup error:', error)
+      setErrors({ submit: error.message || 'Failed to send verification code. Please try again.' })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleOTPSubmit = async (otp) => {
+    if (otpData.blocked) {
+      setErrors({ submit: 'Too many failed attempts. Please wait and resend a new code.' })
+      return
+    }
+
+    setIsLoading(true)
+    setErrors({})
+    
+    try {
+      console.log('Verifying OTP & creating account for:', formData.email)
+      await verifyOTP({
         email: formData.email,
+        otp: otp,
         password: formData.password,
         firstName: formData.firstName,
         lastName: formData.lastName
@@ -238,8 +269,50 @@ function UnifiedAuthPage() {
         }
       }, 2000)
     } catch (error) {
-      console.error('Signup error:', error)
-      setErrors({ submit: error.message || 'Something went wrong. Please try again.' })
+      console.error('OTP verification error:', error)
+      
+      const newAttempts = otpData.attempts + 1
+      const isBlocked = newAttempts >= 5
+      
+      setOtpData(prev => ({ 
+        ...prev, 
+        attempts: newAttempts,
+        blocked: isBlocked
+      }))
+      
+      if (isBlocked) {
+        setErrors({ 
+          submit: `Too many failed attempts (${newAttempts}/5). Please resend a new code.` 
+        })
+      } else {
+        setErrors({ 
+          submit: error.message || `Invalid verification code. ${5 - newAttempts} attempts remaining.` 
+        })
+      }
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendOTP = async () => {
+    if (resendTimer > 0) return
+
+    try {
+      setIsLoading(true)
+      const otpRes = await sendOTP(formData.email)
+      
+      setOtpData(prev => ({ 
+        ...prev, 
+        otp: otpRes?.devOTP || '', 
+        attempts: 0, 
+        blocked: false, 
+        lastResendTime: Date.now()
+      }))
+      setResendTimer(60)
+      setErrors({})
+    } catch (error) {
+      console.error('Resend OTP error:', error)
+      setErrors({ submit: 'Failed to resend code. Please try again.' })
     } finally {
       setIsLoading(false)
     }
@@ -485,8 +558,17 @@ function UnifiedAuthPage() {
                     </div>
 
                     {errors.submit && (
-                      <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl">
+                      <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800/40 rounded-xl space-y-2">
                         <p className="text-xs text-red-600 dark:text-red-400 font-medium">{errors.submit}</p>
+                        {(errors.submit.includes('not found') || errors.submit.includes('register')) && (
+                          <button
+                            type="button"
+                            onClick={() => handleSwitchCard('signup')}
+                            className="text-xs font-bold text-[#f472b6] underline hover:text-[#ec4899] block"
+                          >
+                            Click here to Register
+                          </button>
+                        )}
                       </div>
                     )}
 
@@ -660,8 +742,80 @@ function UnifiedAuthPage() {
                       disabled={isLoading || (formData.password && !passwordStrength.isValid)}
                       className="w-full py-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99] disabled:opacity-50 text-xs"
                     >
-                      {isLoading ? 'Creating Account...' : 'Sign Up'}
+                      {isLoading ? 'Sending Verification Code...' : 'Send Verification Code'}
                     </button>
+                  </form>
+                </motion.div>
+              )}
+
+              {/* OTP VERIFICATION VIEW */}
+              {activeCard === 'otp' && (
+                <motion.div
+                  key="otp-form-view"
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.2 }}
+                  className="space-y-5 text-center"
+                >
+                  <div>
+                    <div className="inline-flex items-center justify-center w-12 h-12 bg-pink-500/10 text-pink-600 rounded-2xl mb-3">
+                      <Mail className="w-6 h-6 text-[#f472b6]" />
+                    </div>
+                    <h1 className="text-2xl font-heading font-black text-stone-900 dark:text-stone-100 tracking-tight">
+                      Verify Your Email
+                    </h1>
+                    <p className="text-xs text-stone-600 dark:text-stone-400 mt-1">
+                      We've sent a 6-digit code to <span className="font-bold text-stone-900 dark:text-stone-100">{formData.email}</span>
+                    </p>
+                  </div>
+
+                  <form onSubmit={(e) => { e.preventDefault(); handleOTPSubmit(otpData.otp); }} className="space-y-4">
+                    <div>
+                      <input
+                        type="text"
+                        value={otpData.otp}
+                        onChange={(e) => setOtpData(prev => ({ ...prev, otp: e.target.value }))}
+                        className="w-full text-center text-xl font-bold tracking-[0.4em] py-3.5 rounded-2xl bg-white dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-700 outline-none focus:border-[#f472b6] focus:ring-2 focus:ring-[#f472b6]/20 text-stone-900 dark:text-stone-100"
+                        placeholder="Enter 6-digit code"
+                        maxLength="6"
+                        disabled={otpData.blocked}
+                      />
+                      {otpData.attempts > 0 && !otpData.blocked && (
+                        <p className="mt-2 text-xs text-amber-600 font-medium">
+                          {5 - otpData.attempts} attempts remaining
+                        </p>
+                      )}
+                      {errors.submit && (
+                        <p className="mt-2 text-xs text-red-500 font-medium">{errors.submit}</p>
+                      )}
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={isLoading || otpData.otp.length !== 6 || otpData.blocked}
+                      className="w-full py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-black rounded-2xl shadow-lg shadow-pink-500/20 transition-all text-xs disabled:opacity-50"
+                    >
+                      {isLoading ? 'Verifying & Creating Account...' : otpData.blocked ? 'Blocked - Resend Code' : 'Verify & Create Account'}
+                    </button>
+
+                    <div className="flex items-center justify-between text-xs pt-2">
+                      <button
+                        type="button"
+                        onClick={handleResendOTP}
+                        disabled={resendTimer > 0 || isLoading}
+                        className="text-[#f472b6] font-bold hover:underline disabled:opacity-50"
+                      >
+                        {resendTimer > 0 ? `Resend (${resendTimer}s)` : 'Resend code'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setActiveCard('signup')}
+                        className="text-stone-500 hover:text-stone-800 dark:hover:text-stone-200 font-bold"
+                      >
+                        Back to Edit Details
+                      </button>
+                    </div>
                   </form>
                 </motion.div>
               )}

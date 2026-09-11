@@ -255,6 +255,66 @@ export const AuthProvider = ({ children }) => {
     return userData;
   };
 
+  const sendOTP = async (email) => {
+    try {
+      const response = await fetch(getApiUrl('/api/auth/send-otp'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'Failed to send verification code');
+      }
+
+      return { success: true, message: data.message, devOTP: data.data?.devOTP };
+    } catch (error) {
+      console.error('OTP request error:', error);
+      throw error;
+    }
+  };
+
+  const verifyOTP = async ({ email, otp, password, firstName, lastName }) => {
+    try {
+      setIsLoading(true);
+      const response = await fetch(getApiUrl('/api/auth/verify-otp'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, otp, password, firstName, lastName })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || data.message || 'OTP verification failed');
+      }
+
+      const token = data.data?.token || data.token;
+      if (token) {
+        localStorage.setItem('authToken', token);
+        if (data.data?.refreshToken) {
+          localStorage.setItem('refreshToken', data.data.refreshToken);
+        }
+        setAuthToken(token);
+        setUser(data.data?.user || data.user);
+        setIsAuthenticated(true);
+      }
+
+      return { success: true, data: data.data };
+    } catch (error) {
+      console.error('OTP verification error:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const value = {
     user,
     isAuthenticated,
@@ -262,6 +322,8 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
+    sendOTP,
+    verifyOTP,
     checkEmailExists,
     updateProfile,
     getCurrentUser,
