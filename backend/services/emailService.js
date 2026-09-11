@@ -2,27 +2,30 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
-    // Check if email configuration is provided or if running on Render (where outbound SMTP port 587 is blocked)
-    if (process.env.RENDER || process.env.DISABLE_SMTP === 'true' || 
+    // Check if email configuration is provided
+    if (process.env.DISABLE_SMTP === 'true' || 
         !process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
         process.env.EMAIL_USER === 'your_email@gmail.com' || 
         process.env.EMAIL_PASS === 'your_app_password') {
-      console.warn('⚠️ Direct SMTP disabled or running on Render. Using fast in-memory OTP mode.');
+      console.warn('⚠️ Direct SMTP disabled or missing credentials. Using fallback mode.');
       this.isConfigured = false;
       return;
     }
 
+    const cleanPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
+    const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
+
     this.isConfigured = true;
     this.transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.EMAIL_PORT) || 587,
-      secure: false, // true for 465, false for other ports
-      connectionTimeout: 4000,
-      greetingTimeout: 4000,
-      socketTimeout: 4000,
+      port: emailPort,
+      secure: emailPort === 465, // true for 465, false for 587/other
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
+        pass: cleanPass
       },
       tls: {
         rejectUnauthorized: false
@@ -39,14 +42,13 @@ class EmailService {
     try {
       const verifyPromise = this.transporter.verify();
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('SMTP verify timeout')), 3000)
+        setTimeout(() => reject(new Error('SMTP verify timeout')), 8000)
       );
       await Promise.race([verifyPromise, timeoutPromise]);
       console.log('✅ Email service is ready');
       return true;
     } catch (error) {
       console.error('❌ Email service error:', error.message);
-      this.isConfigured = false; // Disable SMTP if connection check fails so sockets don't hang
       return false;
     }
   }
@@ -144,14 +146,13 @@ class EmailService {
     try {
       const sendPromise = this.transporter.sendMail(mailOptions);
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Email send connection timeout')), 3000)
+        setTimeout(() => reject(new Error('Email send connection timeout')), 10000)
       );
       const result = await Promise.race([sendPromise, timeoutPromise]);
       console.log('✅ OTP email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('❌ Failed to send OTP email (disabling SMTP transporter):', error.message);
-      this.isConfigured = false; // Disable SMTP if sending fails so sockets don't hang
+      console.error('❌ Failed to send OTP email via SMTP:', error.message);
       return { success: true, messageId: 'fallback-otp-' + Date.now(), isFallback: true };
     }
   }
