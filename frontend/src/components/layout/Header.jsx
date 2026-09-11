@@ -122,16 +122,8 @@ function Header() {
             />
           </div>
 
-          {/* Mobile Center: Get Started Button + Theme Toggle */}
-          <div className="flex md:hidden flex-1 justify-center items-center gap-1.5 min-w-0">
-            <button
-              onClick={toggleTheme}
-              className="p-1.5 rounded-full bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-[#e6ccb2] dark:border-stone-700 hover:scale-105 transition-all duration-200"
-              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {isDark ? <Sun className="w-3.5 h-3.5 text-pink-400" /> : <Moon className="w-3.5 h-3.5 text-stone-700" />}
-            </button>
-
+          {/* Mobile Center: Get Started Button */}
+          <div className="flex md:hidden flex-1 justify-center items-center min-w-0">
             {isAuthenticated && user ? (
               <Link
                 to="/dashboard"
@@ -244,8 +236,15 @@ function Header() {
             )}
           </div>
 
-          {/* Mobile Right: Menu Icon (=) in the Far Right Corner */}
-          <div className="flex md:hidden items-center flex-shrink-0">
+          {/* Mobile Right: Theme Toggle (left of menu) + Menu Icon (=) */}
+          <div className="flex md:hidden items-center gap-1.5 flex-shrink-0">
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-[#e6ccb2] dark:border-stone-700 hover:scale-105 transition-all duration-200"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? <Sun className="w-4 h-4 text-pink-400" /> : <Moon className="w-4 h-4 text-stone-700" />}
+            </button>
             <PillNav
               items={navItems}
               activeHref={location.pathname}
