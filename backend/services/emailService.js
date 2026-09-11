@@ -13,8 +13,9 @@ class EmailService {
     }
 
     const cleanPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
-    // Default to Port 465 (SSL) which is open on cloud hosting providers like Render
-    const emailPort = parseInt(process.env.EMAIL_PORT) || 465;
+    // Force Port 465 (SSL) on cloud servers (Render) where port 587 is blocked
+    const rawPort = parseInt(process.env.EMAIL_PORT);
+    const emailPort = (process.env.RENDER || process.env.NODE_ENV === 'production' || !rawPort) ? 465 : rawPort;
     const isSecure = emailPort === 465 || process.env.EMAIL_SECURE === 'true';
 
     this.isConfigured = true;
