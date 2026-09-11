@@ -94,12 +94,12 @@ function Header() {
 
   return (
     <header className="sticky top-0 z-50 py-1.5 bg-[#f9f6f0]/95 dark:bg-[#141210]/95 backdrop-blur-md border-b border-[#e6ccb2]/80 dark:border-stone-800 transition-colors duration-300">
-      <div className="container-width px-4 sm:px-6 md:px-8">
-        <div className="flex justify-between items-center gap-4">
+      <div className="container-width px-3 sm:px-6 md:px-8">
+        <div className="flex justify-between items-center gap-2 sm:gap-4">
           {/* Logo - Left */}
           <Link 
             to="/" 
-            className="text-2xl sm:text-3xl font-heading font-extrabold hover:opacity-85 transition-all duration-300 flex items-center group flex-shrink-0"
+            className="text-xl sm:text-3xl font-heading font-extrabold hover:opacity-85 transition-all duration-300 flex items-center group flex-shrink-0"
           >
             <span className="text-stone-900 dark:text-stone-100 transition-colors">porti</span>
             <span className="text-pink-500 inline-flex group-hover:text-pink-600 transition-colors">
@@ -110,7 +110,7 @@ function Header() {
           </Link>
 
           {/* PillNav Center Component */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center min-w-0">
             <PillNav
               items={navItems}
               activeHref={location.pathname}
@@ -123,7 +123,7 @@ function Header() {
           </div>
 
           {/* Right Actions: Theme Toggle + Auth */}
-          <div className="flex items-center gap-3 flex-shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
             {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}

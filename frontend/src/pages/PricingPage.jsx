@@ -168,99 +168,101 @@ export default function PricingPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950 text-slate-900 dark:text-white transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-[#f9f6f0] via-[#fdfbf7] to-[#f9f6f0] dark:from-[#141210] dark:via-stone-900 dark:to-[#141210] text-stone-900 dark:text-stone-100 transition-colors">
       {/* Header */}
       <div className="max-w-5xl mx-auto px-4 pt-8 pb-4">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-500 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white transition-colors mb-8">
+        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-white transition-colors mb-8">
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
 
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-3">Simple, Transparent Pricing</h1>
-          <p className="text-lg text-gray-500 dark:text-slate-400">Start for free. Upgrade when you need more.</p>
+          <h1 className="text-3xl sm:text-4xl font-bold text-stone-900 dark:text-stone-100 mb-3">Simple, Transparent Pricing</h1>
+          <p className="text-base sm:text-lg text-stone-500 dark:text-stone-400">Start for free. Upgrade when you need more.</p>
 
           {/* Billing toggle */}
-          <div className="inline-flex items-center bg-gray-100 dark:bg-slate-800 rounded-full p-1 mt-6 border border-transparent dark:border-slate-700">
+          <div className="inline-flex items-center bg-[#f5ebe0] dark:bg-stone-800 rounded-full p-1 mt-6 border border-[#e6ccb2] dark:border-stone-700">
             <button
               onClick={() => setBillingCycle('monthly')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly' ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-slate-400'}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'monthly' ? 'bg-white dark:bg-stone-700 shadow text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400'}`}
             >
               Monthly
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
-              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'yearly' ? 'bg-white dark:bg-slate-700 shadow text-gray-900 dark:text-white' : 'text-gray-500 dark:text-slate-400'}`}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-all ${billingCycle === 'yearly' ? 'bg-white dark:bg-stone-700 shadow text-stone-900 dark:text-white' : 'text-stone-500 dark:text-stone-400'}`}
             >
-              Yearly <span className="text-green-600 dark:text-green-400 font-semibold ml-1">Billed annually</span>
+              Yearly <span className="text-pink-600 dark:text-pink-400 font-semibold ml-1">Save 28%</span>
             </button>
           </div>
         </div>
 
         {/* Plans */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-3xl mx-auto">
 
           {/* Free Plan */}
-          <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md border border-gray-200 dark:border-slate-700 p-8">
+          <div className="bg-[#fdfbf7] dark:bg-stone-900 rounded-2xl shadow-md border border-[#e6ccb2] dark:border-stone-800 p-6 sm:p-8">
             <div className="flex items-center gap-2 mb-4">
-              <Zap className="w-5 h-5 text-gray-500 dark:text-slate-400" />
-              <h2 className="text-xl font-bold text-gray-800 dark:text-white">Free</h2>
+              <Zap className="w-5 h-5 text-stone-500 dark:text-stone-400" />
+              <h2 className="text-xl font-bold text-stone-800 dark:text-stone-100">Free</h2>
             </div>
             <div className="mb-6">
-              <span className="text-4xl font-bold text-gray-900 dark:text-white">₹0</span>
-              <span className="text-gray-400 dark:text-slate-500 ml-1">/ forever</span>
+              <span className="text-4xl font-bold text-stone-900 dark:text-stone-100">₹0</span>
+              <span className="text-stone-400 dark:text-stone-500 ml-1">/ forever</span>
             </div>
             <ul className="space-y-3 mb-8">
               {freeFeatures.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-gray-600 dark:text-slate-300 text-sm">
-                  <Check className="w-4 h-4 text-green-500 flex-shrink-0" /> {f}
+                <li key={f} className="flex items-center gap-2 text-stone-600 dark:text-stone-300 text-sm">
+                  <Check className="w-4 h-4 text-pink-500 flex-shrink-0" /> {f}
                 </li>
               ))}
             </ul>
             <button
               onClick={() => navigate(isAuthenticated ? '/dashboard' : '/auth')}
-              className="w-full py-3 rounded-xl border-2 border-gray-200 dark:border-slate-700 text-gray-700 dark:text-slate-200 font-semibold hover:border-gray-300 dark:hover:border-slate-600 transition-colors"
+              className="w-full py-3 rounded-xl border-2 border-[#e6ccb2] dark:border-stone-700 text-stone-700 dark:text-stone-200 font-semibold hover:border-[#d4a574] dark:hover:border-stone-600 hover:bg-[#f5ebe0] dark:hover:bg-stone-800 transition-all"
             >
               {isAuthenticated ? 'Go to Dashboard' : 'Get Started Free'}
             </button>
           </div>
 
           {/* Premium Plan */}
-          <div className="bg-gradient-to-br from-purple-600 to-violet-700 rounded-2xl shadow-xl p-8 text-white relative overflow-hidden">
-            <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full">
+          <div className="bg-gradient-to-br from-[#1c1917] via-stone-900 to-[#141210] rounded-2xl shadow-xl p-6 sm:p-8 text-white relative overflow-hidden border border-pink-500/20">
+            {/* Glow */}
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent pointer-events-none" />
+            <div className="absolute top-4 right-4 bg-[#f472b6] text-stone-950 text-xs font-black px-3 py-1 rounded-full shadow-md shadow-pink-500/20 z-10">
               POPULAR
             </div>
-            <div className="flex items-center gap-2 mb-4">
-              <Crown className="w-5 h-5 text-yellow-300" />
-              <h2 className="text-xl font-bold">Premium</h2>
+            <div className="flex items-center gap-2 mb-4 relative z-10">
+              <Crown className="w-5 h-5 text-pink-400" />
+              <h2 className="text-xl font-bold text-stone-100">Premium</h2>
             </div>
-            <div className="mb-6">
-              <span className="text-4xl font-bold">
+            <div className="mb-6 relative z-10">
+              <span className="text-4xl font-bold text-stone-100">
                 ₹{billingCycle === 'monthly' ? MONTHLY_AMOUNT : YEARLY_AMOUNT}
               </span>
-              <span className="text-purple-200 ml-1">
+              <span className="text-stone-400 ml-1">
                 / {billingCycle === 'monthly' ? 'month' : 'year'}
               </span>
               {billingCycle === 'yearly' && (
-                <p className="text-purple-200 text-sm mt-1">That's just ₹{Math.round(YEARLY_AMOUNT / 12)}/month</p>
+                <p className="text-pink-400 text-sm mt-1 font-medium">That's just ₹{Math.round(YEARLY_AMOUNT / 12)}/month</p>
               )}
             </div>
-            <ul className="space-y-3 mb-8">
+            <ul className="space-y-3 mb-8 relative z-10">
               {premiumFeatures.map((f) => (
-                <li key={f} className="flex items-center gap-2 text-purple-100 text-sm">
-                  <Check className="w-4 h-4 text-yellow-300 flex-shrink-0" /> {f}
+                <li key={f} className="flex items-center gap-2 text-stone-300 text-sm">
+                  <Check className="w-4 h-4 text-pink-400 flex-shrink-0" /> {f}
                 </li>
               ))}
             </ul>
 
             {isPremium ? (
-              <div className="w-full py-3 rounded-xl bg-white/20 text-white font-semibold text-center">
+              <div className="w-full py-3 rounded-xl bg-stone-800/60 border border-pink-500/30 text-stone-100 font-semibold text-center relative z-10">
                 ✓ Active until {new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN')}
               </div>
             ) : (
               <button
                 onClick={handleUpgrade}
                 disabled={loading}
-                className="w-full py-3 rounded-xl bg-white text-purple-700 font-bold hover:bg-purple-50 transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                className="w-full py-3 rounded-xl bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-extrabold hover:scale-[1.02] transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed shadow-lg shadow-pink-500/25 relative z-10"
               >
                 {loading ? 'Processing...' : `Upgrade to Premium`}
               </button>
@@ -269,7 +271,7 @@ export default function PricingPage() {
         </div>
 
         {/* Trust line */}
-        <p className="text-center text-gray-400 dark:text-slate-500 text-sm mt-8">
+        <p className="text-center text-stone-400 dark:text-stone-500 text-sm mt-8">
           Secure payments via Razorpay · Cancel anytime · Instant activation
         </p>
       </div>

@@ -128,7 +128,7 @@ function PDFPaymentModal({ isOpen, onClose, onPaymentSuccess, portfolioName = 'M
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.25 }}
-          className="relative w-full max-w-md bg-[#f9f6f0] dark:bg-[#141210] border border-[#e6ccb2] dark:border-stone-800 rounded-3xl p-6 sm:p-7 shadow-2xl overflow-hidden text-stone-900 dark:text-stone-100"
+          className="relative w-full max-w-md max-h-[90vh] overflow-y-auto bg-[#f9f6f0] dark:bg-[#141210] border border-[#e6ccb2] dark:border-stone-800 rounded-3xl p-5 sm:p-7 shadow-2xl text-stone-900 dark:text-stone-100"
         >
           {/* Top Decorative Header */}
           <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-pink-400 via-amber-300 to-pink-500" />

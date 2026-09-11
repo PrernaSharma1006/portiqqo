@@ -33,8 +33,8 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-      <div className="bg-white rounded-lg shadow-2xl max-w-md w-full p-6 animate-fadeIn">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-3 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 animate-fadeIn">
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center space-x-3">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -112,20 +112,20 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
               <span className="font-medium">View Live Portfolio</span>
             </a>
             
-            <div className="flex space-x-3">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
               <button
                 onClick={() => {
                   onClose();
                   navigate('/dashboard');
                 }}
-                className="flex-1 flex items-center justify-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium"
+                className="flex-1 flex items-center justify-center space-x-2 px-4 py-2.5 sm:py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium text-xs sm:text-sm"
               >
                 <Home className="w-4 h-4" />
                 <span>Back to Dashboard</span>
               </button>
               <button
                 onClick={onClose}
-                className="flex-1 px-6 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700"
+                className="flex-1 px-4 sm:px-6 py-2.5 sm:py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors font-medium text-gray-700 text-xs sm:text-sm"
               >
                 Continue Editing
               </button>

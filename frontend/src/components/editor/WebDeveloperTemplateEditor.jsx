@@ -759,36 +759,36 @@ function WebDeveloperTemplateEditor() {
     <div className="min-h-screen bg-gray-50">
       {/* Editor Header */}
       <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
+        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-between items-center py-3 sm:py-4 gap-2 sm:gap-4">
             <button
               onClick={() => navigate('/')}
-              className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-1.5 text-xs sm:text-sm text-gray-600 hover:text-gray-900 transition-colors"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               <span>Back to Templates</span>
             </button>
             
-            <div className="flex space-x-4">
+            <div className="flex items-center flex-wrap gap-2 sm:gap-4">
               <button
                 onClick={() => setIsPreview(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 bg-blue-600 text-white text-xs sm:text-sm rounded-lg hover:bg-blue-700 transition-colors font-medium"
               >
-                <Eye className="w-4 h-4" />
+                <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 <span>Preview</span>
               </button>
               <button
                 onClick={() => setShowPDFPaymentModal(true)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm"
+                className="flex items-center space-x-1.5 px-3 sm:px-4 py-2 bg-gradient-to-r from-stone-800 to-stone-900 text-white text-xs sm:text-sm rounded-lg hover:from-stone-900 hover:to-black transition-colors shadow-sm font-medium"
               >
-                <Download className="w-4 h-4 text-pink-400" />
-                <span>Download PDF (₹30)</span>
+                <Download className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-pink-400" />
+                <span>PDF (₹30)</span>
               </button>
               <button
                 onClick={publishPortfolio}
-                className="flex items-center space-x-2 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex items-center space-x-1.5 px-4 sm:px-6 py-2 bg-purple-600 text-white text-xs sm:text-sm rounded-lg hover:bg-purple-700 transition-colors font-bold"
               >
-                <span>Publish Portfolio</span>
+                <span>Publish</span>
               </button>
             </div>
           </div>
@@ -1849,7 +1849,7 @@ function WebDeveloperTemplateEditor() {
 
       {/* Panel */}
       {isAIPanelOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-96 bg-white rounded-2xl shadow-2xl border border-purple-100 flex flex-col overflow-hidden" style={{ maxHeight: '520px' }}>
+        <div className="fixed bottom-20 sm:bottom-24 right-3 sm:right-6 z-50 w-[calc(100vw-1.5rem)] max-w-sm bg-white rounded-2xl shadow-2xl border border-purple-100 flex flex-col overflow-hidden" style={{ maxHeight: '520px' }}>
           {/* Header */}
           <div className="bg-gradient-to-r from-violet-600 to-purple-600 px-5 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2 text-white">

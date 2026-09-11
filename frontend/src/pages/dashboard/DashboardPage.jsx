@@ -554,10 +554,10 @@ function DashboardPage() {
                         )}
                       </div>
                       
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
                         <button
                           onClick={() => handleEditPortfolio(portfolio)}
-                          className="flex-1 py-2.5 px-3 bg-stone-900 hover:bg-stone-800 text-stone-100 dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 rounded-xl font-extrabold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm shadow-sm"
+                          className="flex-1 min-w-[120px] py-2.5 px-3 bg-stone-900 hover:bg-stone-800 text-stone-100 dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 rounded-xl font-extrabold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm shadow-sm"
                         >
                           <Edit className="w-3.5 h-3.5" />
                           Edit Portfolio
@@ -568,7 +568,7 @@ function DashboardPage() {
                           title="Visitor Analytics & Insights"
                         >
                           <BarChart3 className="w-3.5 h-3.5 text-pink-500" />
-                          <span className="hidden sm:inline">Analytics</span>
+                          <span>Analytics</span>
                         </button>
                         <button
                           onClick={() => handleOpenDomainModal(portfolio)}
@@ -576,7 +576,7 @@ function DashboardPage() {
                           title="Custom Domain Settings"
                         >
                           <Globe className="w-3.5 h-3.5 text-pink-500" />
-                          <span className="hidden sm:inline">Domain</span>
+                          <span>Domain</span>
                         </button>
                         {getPortfolioUrl(portfolio) && (
                           <button

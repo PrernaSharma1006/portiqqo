@@ -449,39 +449,39 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
-        <div className="relative container-width section-padding">
+      <section className="relative overflow-x-hidden max-w-full w-full bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
+        <div className="relative container-width section-padding max-w-full overflow-x-hidden">
           <motion.div 
-            className="max-w-7xl mx-auto"
+            className="max-w-7xl mx-auto w-full"
             initial="initial"
             animate="animate"
             variants={staggerChildren}
           >
             {/* Main Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center w-full">
               {/* Left Content */}
-              <div className="space-y-4 sm:space-y-5">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1 bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm">
-                  <Zap className="w-3.5 h-3.5 text-pink-500" />
-                  <span>No Coding Required • Launch in Minutes</span>
+              <div className="space-y-4 sm:space-y-5 w-full max-w-full overflow-x-hidden">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-[11px] sm:text-xs font-semibold tracking-wide uppercase shadow-sm">
+                  <Zap className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
+                  <span className="truncate">No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
-                <motion.div variants={fadeInUp}>
-                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2">
+                <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
+                  <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
                     <span>Build Your</span>
                     <StrokeText 
                       text="Dream Portfolio"
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={100}
+                      fontSize={64}
                       fontWeight={900}
                       letterSpacing={-1}
                       trigger="loop"
                       repeatDelay={2.5}
                       fillMode="wipe"
                       drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6]"
+                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full"
                     />
                     <span>Today</span>
                   </h1>
@@ -577,7 +577,7 @@ function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-24 bg-gradient-to-b from-purple-50/50 via-white to-violet-50/40 dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 transition-colors duration-300 relative overflow-hidden">
+      <section id="features" className="py-24 bg-gradient-to-b from-[#f9f6f0] via-[#fdfbf7] to-[#f9f6f0] dark:from-[#141210] dark:via-stone-900 dark:to-[#141210] transition-colors duration-300 relative overflow-hidden">
         <div className="container-width section-padding relative z-10">
           <motion.div 
             className="text-center mb-16"
@@ -656,13 +656,40 @@ function HomePage() {
             </motion.p>
           </motion.div>
 
-          {/* BounceCards Interactive Showcase */}
+          {/* Template Cards - Desktop: BounceCards fan, Mobile: horizontal scroll grid */}
+          {/* Mobile card grid - shown only on small screens */}
+          <div className="md:hidden w-full mt-6 mb-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {[
+                { id: 'developer', label: 'Web Developer', emoji: '💻', bg: 'bg-[#141210]', text: 'text-stone-100', sub: 'text-stone-400', badge: 'bg-pink-500/20 text-pink-300', badgeText: 'Dev' },
+                { id: 'designer', label: 'UI/UX Designer', emoji: '🎨', bg: 'bg-[#fdfbf7] dark:bg-stone-900', text: 'text-stone-900 dark:text-stone-100', sub: 'text-stone-500 dark:text-stone-400', badge: 'bg-[#f5ebe0] dark:bg-stone-800 text-stone-700 dark:text-pink-300', badgeText: 'Design' },
+                { id: 'photographer', label: 'Photographer', emoji: '📷', bg: 'bg-[#141210]', text: 'text-stone-100', sub: 'text-stone-400', badge: 'bg-pink-500/20 text-pink-300', badgeText: 'Photo' },
+                { id: 'videographer', label: 'Video Editor', emoji: '🎬', bg: 'bg-[#fdfbf7] dark:bg-stone-900', text: 'text-stone-900 dark:text-stone-100', sub: 'text-stone-500 dark:text-stone-400', badge: 'bg-[#f5ebe0] dark:bg-stone-800 text-stone-700 dark:text-pink-300', badgeText: 'Video' },
+                { id: 'general', label: 'General Portfolio', emoji: '✨', bg: 'bg-[#141210]', text: 'text-stone-100', sub: 'text-stone-400', badge: 'bg-pink-500/20 text-pink-300', badgeText: 'All' },
+              ].map((card) => (
+                <button
+                  key={card.id}
+                  onClick={() => handleProfessionSelect({ id: card.id })}
+                  className={`${card.bg} rounded-2xl border border-[#e6ccb2] dark:border-stone-800 p-4 flex flex-col gap-2 text-left shadow-md hover:shadow-lg active:scale-95 transition-all duration-200 ${card.id === 'general' ? 'col-span-2' : ''}`}
+                >
+                  <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full w-fit ${card.badge}`}>{card.badgeText}</span>
+                  <div className="text-2xl">{card.emoji}</div>
+                  <div>
+                    <p className={`text-sm font-bold ${card.text}`}>{card.label}</p>
+                    <p className={`text-[11px] mt-0.5 ${card.sub}`}>Tap to use →</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Desktop BounceCards Interactive Showcase */}
           <motion.div
             variants={fadeInUp}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true }}
-            className="w-full flex justify-center py-6 overflow-hidden min-h-[420px]"
+            className="hidden md:flex w-full justify-center py-6 overflow-hidden min-h-[420px]"
           >
             <BounceCards
               cards={[
@@ -686,7 +713,7 @@ function HomePage() {
                           &#125;;
                         </div>
                         <h4 className="text-lg font-bold text-stone-100">Web Developer</h4>
-                        <p className="text-xs text-stone-400 line-clamp-2">For software engineers, frontend & full-stack devs.</p>
+                        <p className="text-xs text-stone-400 line-clamp-2">For software engineers, frontend &amp; full-stack devs.</p>
                       </div>
                       <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-xs font-bold text-pink-400 group-hover:translate-x-0.5 transition-transform">
                         <span>Use Template</span>
@@ -715,7 +742,7 @@ function HomePage() {
                           <div className="h-2 w-1/2 bg-pink-300 dark:bg-pink-500/40 rounded" />
                         </div>
                         <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">UI/UX Designer</h4>
-                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">Figma creators, case studies & design systems.</p>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">Figma creators, case studies &amp; design systems.</p>
                       </div>
                       <div className="pt-2 border-t border-[#e6ccb2] dark:border-stone-800 flex justify-between items-center text-xs font-bold text-pink-600 dark:text-pink-400 group-hover:translate-x-0.5 transition-transform">
                         <span>Use Template</span>
@@ -730,7 +757,7 @@ function HomePage() {
                   content: (
                     <div className="w-full h-full p-5 bg-[#141210] text-stone-100 flex flex-col justify-between relative group select-none">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="px-2.5 py-1 bg-pink-500/20 text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Visual & Photo</span>
+                        <span className="px-2.5 py-1 bg-pink-500/20 text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Visual &amp; Photo</span>
                         <Camera className="w-4 h-4 text-pink-400" />
                       </div>
                       <div className="my-auto space-y-3">
@@ -740,7 +767,7 @@ function HomePage() {
                           </div>
                         </div>
                         <h4 className="text-lg font-bold text-stone-100">Photographer</h4>
-                        <p className="text-xs text-stone-400 line-clamp-2">Distraction-free layout for photo galleries & artists.</p>
+                        <p className="text-xs text-stone-400 line-clamp-2">Distraction-free layout for photo galleries &amp; artists.</p>
                       </div>
                       <div className="pt-2 border-t border-stone-800 flex justify-between items-center text-xs font-bold text-pink-400 group-hover:translate-x-0.5 transition-transform">
                         <span>Use Template</span>
@@ -755,7 +782,7 @@ function HomePage() {
                   content: (
                     <div className="w-full h-full p-5 bg-[#fdfbf7] dark:bg-stone-900 text-stone-900 dark:text-stone-100 flex flex-col justify-between relative group border border-[#e6ccb2] dark:border-stone-800 select-none">
                       <div className="flex items-center justify-between text-xs">
-                        <span className="px-2.5 py-1 bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Motion & Video</span>
+                        <span className="px-2.5 py-1 bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-pink-300 rounded-full font-bold uppercase tracking-wider text-[10px]">Motion &amp; Video</span>
                         <Film className="w-4 h-4 text-pink-500" />
                       </div>
                       <div className="my-auto space-y-3">
@@ -765,7 +792,7 @@ function HomePage() {
                           </div>
                         </div>
                         <h4 className="text-lg font-bold text-stone-900 dark:text-stone-100">Video Editor</h4>
-                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">4K showreels, animators & video creators.</p>
+                        <p className="text-xs text-stone-600 dark:text-stone-400 line-clamp-2">4K showreels, animators &amp; video creators.</p>
                       </div>
                       <div className="pt-2 border-t border-[#e6ccb2] dark:border-stone-800 flex justify-between items-center text-xs font-bold text-pink-600 dark:text-pink-400 group-hover:translate-x-0.5 transition-transform">
                         <span>Use Template</span>
@@ -891,7 +918,7 @@ function HomePage() {
               {[...testimonials, ...testimonials, ...testimonials].map((testimonial, index) => (
                 <div 
                   key={index}
-                  className="w-[340px] sm:w-[380px] flex-shrink-0 bg-[#fdfbf7] dark:bg-[#1a1816] rounded-2xl p-6 sm:p-7 shadow-md hover:shadow-xl transition-all duration-300 border border-[#e6ccb2] dark:border-stone-800 flex flex-col justify-between group hover:-translate-y-1 relative"
+                  className="w-[280px] sm:w-[380px] max-w-[calc(100vw-3rem)] flex-shrink-0 bg-[#fdfbf7] dark:bg-[#1a1816] rounded-2xl p-6 sm:p-7 shadow-md hover:shadow-xl transition-all duration-300 border border-[#e6ccb2] dark:border-stone-800 flex flex-col justify-between group hover:-translate-y-1 relative"
                 >
                   {/* Top: Stars & Highlight Badge */}
                   <div>

@@ -6,8 +6,8 @@
 
 @media (max-width: 768px) {
   .pill-nav-container {
-    width: 100%;
-    left: 0;
+    width: auto;
+    left: auto;
   }
 }
 
@@ -17,6 +17,7 @@
   --pill-pad-x: 20px;
   --pill-gap: 4px;
   width: max-content;
+  max-width: 100%;
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -24,9 +25,9 @@
 
 @media (max-width: 768px) {
   .pill-nav {
-    width: 100%;
-    justify-content: space-between;
-    padding: 0 0.5rem;
+    width: auto;
+    justify-content: center;
+    padding: 0;
     background: transparent;
   }
 }
@@ -193,15 +194,17 @@
 }
 
 .mobile-menu-popover {
-  position: absolute;
-  top: 3.5em;
-  left: 0;
-  right: 0;
+  position: fixed;
+  top: 4.5rem;
+  left: 1rem;
+  right: 1rem;
+  max-width: 360px;
+  margin: 0 auto;
   background: var(--base, #f5ebe0);
   border: 1px solid rgba(230, 204, 178, 0.9);
   border-radius: 20px;
-  box-shadow: 0 12px 32px rgba(28, 25, 23, 0.15);
-  z-index: 998;
+  box-shadow: 0 12px 32px rgba(28, 25, 23, 0.2);
+  z-index: 999;
   opacity: 0;
   transform-origin: top center;
   visibility: hidden;
