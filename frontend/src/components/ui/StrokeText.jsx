@@ -83,7 +83,7 @@ const StrokeText = ({
       const next = {
         x: Math.max(0, bbox.x - pad),
         y: bbox.y - pad,
-        width: bbox.width + pad * 4 + 16,
+        width: bbox.width + pad * 6 + 40,
         height: bbox.height + pad * 2
       };
 
