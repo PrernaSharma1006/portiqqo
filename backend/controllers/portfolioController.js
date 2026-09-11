@@ -216,10 +216,14 @@ exports.publishPortfolio = async (req, res) => {
     await portfolio.save();
 
     // Generate public URL with path routing or custom domain
-    const baseUrl = process.env.APP_URL || process.env.FRONTEND_URL || 'https://portiqqo.vercel.app';
+    const cleanSubdomain = (portfolio.subdomain || '').replace(/\.portiqqo\.me$/i, '').trim();
+    let baseUrl = process.env.APP_URL || process.env.FRONTEND_URL || 'https://portiqqo.vercel.app';
+    if (baseUrl.includes('portiqqo.me')) {
+      baseUrl = 'https://portiqqo.vercel.app';
+    }
     const publicUrl = portfolio.customDomain && portfolio.customDomainVerified
       ? `https://${portfolio.customDomain}`
-      : `${baseUrl.replace(/\/$/, '')}/${portfolio.subdomain}`;
+      : `${baseUrl.replace(/\/$/, '')}/${cleanSubdomain}`;
 
     res.status(200).json({
       success: true,

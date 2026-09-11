@@ -8,8 +8,26 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
 
   if (!isOpen) return null;
 
+  // Format link as path-based Vercel URL
+  const getCleanVercelUrl = () => {
+    let cleanSub = (subdomain || '').replace(/\.portiqqo\.me$/i, '').trim();
+    if (!cleanSub && portfolioUrl) {
+      cleanSub = portfolioUrl
+        .replace(/^https?:\/\//, '')
+        .replace(/\.portiqqo\.me.*$/, '')
+        .split('/')
+        .pop();
+    }
+    const origin = window.location.origin.includes('localhost') 
+      ? window.location.origin 
+      : 'https://portiqqo.vercel.app';
+    return cleanSub ? `${origin}/${cleanSub}` : (portfolioUrl || origin);
+  };
+
+  const finalUrl = getCleanVercelUrl();
+
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(portfolioUrl);
+    navigator.clipboard.writeText(finalUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -43,7 +61,7 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
             <div className="flex items-center space-x-2 bg-gray-50 border border-gray-300 rounded-lg p-3">
               <input
                 type="text"
-                value={portfolioUrl}
+                value={finalUrl}
                 readOnly
                 className="flex-1 bg-transparent text-sm text-gray-900 outline-none select-all"
                 onClick={(e) => e.target.select()}
@@ -85,7 +103,7 @@ export default function PublishSuccessModal({ isOpen, onClose, portfolioUrl, sub
 
           <div className="space-y-3">
             <a
-              href={portfolioUrl}
+              href={finalUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-3 rounded-lg hover:from-purple-600 hover:to-purple-700 transition-all shadow-md hover:shadow-lg"
