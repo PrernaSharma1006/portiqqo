@@ -20,7 +20,7 @@ setInterval(() => {
 // @access  Public
 const sendOTP = async (req, res) => {
   try {
-    const { email, action = 'login' } = req.body;
+    const { email, action = 'login' } = req.body || {};
 
     // Validate email
     if (!email || !authService.validateEmail(email)) {
@@ -100,7 +100,8 @@ const sendOTP = async (req, res) => {
     console.error('SendOTP critical error:', error);
     return res.status(500).json({
       success: false,
-      error: error.message || 'Failed to send OTP'
+      error: error.message || 'Failed to send OTP',
+      details: String(error)
     });
   }
 };
