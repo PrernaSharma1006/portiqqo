@@ -271,7 +271,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.error || data.message || 'Failed to send verification code');
       }
 
-      return { success: true, message: data.message, devOTP: data.data?.devOTP };
+      return { success: true, message: data.message };
     } catch (error) {
       console.error('OTP request error:', error);
       throw error;

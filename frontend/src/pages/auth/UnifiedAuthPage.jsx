@@ -223,7 +223,7 @@ function UnifiedAuthPage() {
       const otpRes = await sendOTP(formData.email)
       setOtpData({ 
         email: formData.email, 
-        otp: otpRes?.devOTP || '', 
+        otp: '', 
         verified: false,
         attempts: 0,
         blocked: false,

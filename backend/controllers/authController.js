@@ -147,8 +147,7 @@ const sendOTP = async (req, res) => {
       message: 'Verification code generated successfully',
       data: {
         email: cleanEmail,
-        expiresIn: '10 minutes',
-        devOTP: otp
+        expiresIn: '10 minutes'
       }
     });
   } catch (error) {
