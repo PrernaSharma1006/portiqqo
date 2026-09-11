@@ -480,21 +480,9 @@ function HomePage() {
                 <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
                   <h1 className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-center lg:items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
                     <span>Build Your</span>
-                    <StrokeText 
-                      text="Dream Portfolio"
-                      fillColor="#f472b6"
-                      strokeColor="#f472b6"
-                      strokeWidth={2}
-                      fontSize={isMobile ? 38 : 88}
-                      alignCenter={isMobile}
-                      fontWeight={900}
-                      letterSpacing={-1}
-                      trigger="loop"
-                      repeatDelay={2.5}
-                      fillMode="wipe"
-                      drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full my-0.5"
-                    />
+                    <span className="bg-gradient-to-r from-[#f472b6] via-pink-400 to-[#f472b6] bg-clip-text text-transparent font-black tracking-tight py-0.5">
+                      Dream Portfolio
+                    </span>
                     <span>Today</span>
                   </h1>
                 </motion.div>
