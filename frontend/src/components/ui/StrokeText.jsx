@@ -41,9 +41,9 @@ const StrokeText = ({
   const defaultBox = useMemo(() => {
     const estimatedWidth = Math.max(characters.length * fontSize * 0.7, 350);
     return {
-      x: -30,
+      x: -2,
       y: -fontSize * 0.95,
-      width: estimatedWidth + 50,
+      width: estimatedWidth + 20,
       height: fontSize * 1.35
     };
   }, [characters, fontSize]);
@@ -78,7 +78,7 @@ const StrokeText = ({
       }
       if (!bbox || !bbox.width) return;
 
-      const padL = 30;
+      const padL = 2;
       const padR = 20;
       const padY = 15;
       const next = {
@@ -236,12 +236,13 @@ const StrokeText = ({
   const activeBox = box || defaultBox;
   const viewBox = `${activeBox.x} ${activeBox.y} ${activeBox.width} ${activeBox.height}`;
   const svgHeight = `${(activeBox.height / fontSize)}em`;
+  const offsetLeftEm = `${(activeBox.x / fontSize)}em`;
 
   return (
     <span
       ref={rootRef}
       className={`stroke-text ${trigger === 'hover' ? 'stroke-text--hover' : ''} ${className}`.trim()}
-      style={{ display: 'inline-block', verticalAlign: 'baseline', lineHeight: 1, ...style }}
+      style={{ display: 'inline-block', verticalAlign: 'baseline', lineHeight: 1, marginLeft: offsetLeftEm, ...style }}
       role="img"
       aria-label={String(text ?? '')}
     >
