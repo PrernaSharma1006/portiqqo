@@ -109,8 +109,8 @@ function Header() {
             <span className="text-stone-900 dark:text-stone-100 transition-colors">o</span>
           </Link>
 
-          {/* PillNav Center Component */}
-          <div className="flex-1 flex justify-center min-w-0">
+          {/* Desktop Center: PillNav */}
+          <div className="hidden md:flex flex-1 justify-center min-w-0">
             <PillNav
               items={navItems}
               activeHref={location.pathname}
@@ -122,9 +122,35 @@ function Header() {
             />
           </div>
 
-          {/* Right Actions: Theme Toggle + Auth */}
-          <div className="flex items-center gap-1.5 sm:gap-3 flex-shrink-0">
-            {/* Theme Toggle Button */}
+          {/* Mobile Center: Get Started Button + Theme Toggle */}
+          <div className="flex md:hidden flex-1 justify-center items-center gap-1.5 min-w-0">
+            <button
+              onClick={toggleTheme}
+              className="p-1.5 rounded-full bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-[#e6ccb2] dark:border-stone-700 hover:scale-105 transition-all duration-200"
+              title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+            >
+              {isDark ? <Sun className="w-3.5 h-3.5 text-pink-400" /> : <Moon className="w-3.5 h-3.5 text-stone-700" />}
+            </button>
+
+            {isAuthenticated && user ? (
+              <Link
+                to="/dashboard"
+                className="px-3.5 py-1.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs shadow-sm"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="px-3.5 py-1.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs shadow-sm transition-all duration-300"
+              >
+                Get Started
+              </Link>
+            )}
+          </div>
+
+          {/* Desktop Right: Theme Toggle + Auth */}
+          <div className="hidden md:flex items-center gap-3 flex-shrink-0">
             <button
               onClick={toggleTheme}
               className="p-2 rounded-full bg-[#f5ebe0] dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-[#e6ccb2] dark:border-stone-700 hover:scale-105 transition-all duration-200"
@@ -133,7 +159,6 @@ function Header() {
               {isDark ? <Sun className="w-4 h-4 text-pink-400" /> : <Moon className="w-4 h-4 text-stone-700" />}
             </button>
 
-            {/* Auth Buttons / User Menu */}
             {isAuthenticated && user ? (
               <div className="relative">
                 <button
@@ -143,7 +168,7 @@ function Header() {
                   <div className="w-7 h-7 bg-pink-500 rounded-full flex items-center justify-center text-stone-950 text-xs font-black">
                     {getUserInitials()}
                   </div>
-                  <span className="text-stone-900 dark:text-stone-100 font-bold text-xs sm:text-sm hidden sm:inline">
+                  <span className="text-stone-900 dark:text-stone-100 font-bold text-sm hidden sm:inline">
                     {getUserDisplayName()}
                   </span>
                   <ChevronDown className="w-3.5 h-3.5 text-stone-600 dark:text-stone-400" />
@@ -212,11 +237,24 @@ function Header() {
             ) : (
               <Link
                 to="/auth"
-                className="px-5 py-2 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-xs sm:text-sm shadow-md shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5"
+                className="px-5 py-2 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-full font-extrabold text-sm shadow-md shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5"
               >
                 Get Started
               </Link>
             )}
+          </div>
+
+          {/* Mobile Right: Menu Icon (=) in the Far Right Corner */}
+          <div className="flex md:hidden items-center flex-shrink-0">
+            <PillNav
+              items={navItems}
+              activeHref={location.pathname}
+              baseColor={isDark ? '#26221f' : '#f5ebe0'}
+              pillColor={isDark ? '#141210' : '#1c1917'}
+              hoveredPillTextColor="#1c1917"
+              pillTextColor={isDark ? '#fdfbf7' : '#fdfbf7'}
+              initialLoadAnimation={false}
+            />
           </div>
         </div>
       </div>
