@@ -2,11 +2,12 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
-    // Check if email configuration is provided
-    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
+    // Check if email configuration is provided or if running on Render (where outbound SMTP port 587 is blocked)
+    if (process.env.RENDER || process.env.DISABLE_SMTP === 'true' || 
+        !process.env.EMAIL_USER || !process.env.EMAIL_PASS || 
         process.env.EMAIL_USER === 'your_email@gmail.com' || 
         process.env.EMAIL_PASS === 'your_app_password') {
-      console.warn('⚠️ Email configuration missing or using default values. Email functionality will be disabled.');
+      console.warn('⚠️ Direct SMTP disabled or running on Render. Using fast in-memory OTP mode.');
       this.isConfigured = false;
       return;
     }
