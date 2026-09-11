@@ -6,7 +6,6 @@ import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, Ex
 import { useState, useEffect } from 'react'
 import { portfolioAPI, getApiUrl } from '../../services/api'
 import toast from 'react-hot-toast'
-import TemplateMosaicGrid from '../../components/templates/TemplateMosaicGrid'
 import PortfolioAnalyticsModal from '../../components/modals/PortfolioAnalyticsModal'
 
 const templates = [
@@ -378,12 +377,10 @@ function DashboardPage() {
             </div>
             
             <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-4 tracking-tight">
-              {existingPortfolios.length > 0 ? 'Your Portfolio Dashboard' : 'Choose Your Perfect Template'}
+              Your Portfolio Dashboard
             </h1>
             <p className="text-base sm:text-lg text-stone-600 dark:text-stone-300 max-w-2xl mx-auto mb-3 leading-relaxed">
-              {existingPortfolios.length > 0 
-                ? 'Manage your portfolio website, track visitor analytics, and set up your custom domain.'
-                : 'Select a professionally designed template that matches your craft and publish your portfolio in minutes.'}
+              Manage your portfolio website, track visitor analytics, and set up your custom domain.
             </p>
             {isAuthenticated && user && (
               <p className="text-xs text-stone-500 dark:text-stone-400 break-all mb-6">
@@ -605,19 +602,28 @@ function DashboardPage() {
             </motion.div>
           )}
 
-          {/* Templates Grid — Only shown when user has NO existing portfolio */}
-          {existingPortfolios.length === 0 && (
-            <div className="max-w-7xl mx-auto">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-2">
-                  Choose a Template to Get Started
-                </h2>
-                <p className="text-stone-600 dark:text-stone-300 text-sm">
-                  Select a template below to start building your portfolio
-                </p>
+          {/* Empty State when user has NO existing portfolio */}
+          {!loadingPortfolios && existingPortfolios.length === 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="max-w-2xl mx-auto text-center bg-[#fdfbf7] dark:bg-[#1a1816] border border-[#e6ccb2] dark:border-stone-800 rounded-2xl p-8 sm:p-12 shadow-md my-6"
+            >
+              <div className="w-16 h-16 bg-[#f5ebe0] dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl flex items-center justify-center mx-auto mb-4 text-pink-500 shadow-sm">
+                <Sparkles className="w-8 h-8" />
               </div>
-              <TemplateMosaicGrid isDashboard={true} onSelectTemplate={(t) => handleTemplateSelect(t.id)} />
-            </div>
+              <h3 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2">No Portfolio Created Yet</h3>
+              <p className="text-stone-600 dark:text-stone-300 text-sm mb-6 max-w-md mx-auto leading-relaxed">
+                You haven't built a portfolio website yet. Browse our template collection to select a design and get started.
+              </p>
+              <button
+                onClick={() => navigate('/templates')}
+                className="px-6 py-3 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 font-extrabold rounded-xl transition-all duration-300 shadow-md shadow-pink-500/20 inline-flex items-center gap-2"
+              >
+                <Sparkles className="w-4 h-4 text-stone-950" />
+                <span>Choose a Template</span>
+              </button>
+            </motion.div>
           )}
         </div>
       </div>
