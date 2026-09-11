@@ -545,55 +545,16 @@ function HomePage() {
                     <span>6+ Profession Presets</span>
                   </div>
                 </motion.div>
-
-                {/* Mobile Visual Card (Shown only on Mobile/Tablet < lg) */}
-                <motion.div 
-                  variants={fadeInUp}
-                  className="lg:hidden w-full pt-4"
-                >
-                  <div className="relative w-full bg-[#fdfbf7] dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-800 rounded-3xl p-5 shadow-lg space-y-4 text-left">
-                    <div className="flex items-center justify-between border-b border-[#e6ccb2]/60 dark:border-stone-800 pb-3">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-950/60 text-pink-500 flex items-center justify-center font-bold text-xs">
-                          PQ
-                        </div>
-                        <div>
-                          <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Live Presets Available</div>
-                          <div className="text-[10px] text-stone-500 dark:text-stone-400">Tailored for your profession</div>
-                        </div>
-                      </div>
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                        Ready
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2 text-center">
-                      <div className="p-2.5 bg-[#f5ebe0]/60 dark:bg-stone-800/60 rounded-xl border border-[#e6ccb2]/60 dark:border-stone-700/50">
-                        <div className="text-base mb-1">💻</div>
-                        <div className="text-[11px] font-bold text-stone-900 dark:text-stone-200">Developer</div>
-                      </div>
-                      <div className="p-2.5 bg-pink-50 dark:bg-pink-950/30 rounded-xl border border-pink-200 dark:border-pink-800/40">
-                        <div className="text-base mb-1">🎨</div>
-                        <div className="text-[11px] font-bold text-pink-700 dark:text-pink-300">Designer</div>
-                      </div>
-                      <div className="p-2.5 bg-[#f5ebe0]/60 dark:bg-stone-800/60 rounded-xl border border-[#e6ccb2]/60 dark:border-stone-700/50">
-                        <div className="text-base mb-1">📸</div>
-                        <div className="text-[11px] font-bold text-stone-900 dark:text-stone-200">Marketer</div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
               </div>
 
-              {/* Right Content - Visual Element (Desktop) */}
+              {/* Right Content - Visual Element (Responsive on Mobile & Desktop) */}
               <motion.div 
-                className="relative hidden lg:block"
+                className="relative w-full pt-4 lg:pt-0"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
+                <div className="relative w-full h-[260px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
                   {/* Rotating Circle - Editorial Beige Version */}
-                  <div className="hidden lg:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
+                  <div className="absolute pointer-events-none w-[260px] h-[260px] sm:w-[380px] sm:h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
                     <svg className="w-full h-full" viewBox="0 0 450 450">
                       <defs>
                         <path
@@ -601,7 +562,7 @@ function HomePage() {
                           d="M 225, 225 m -215, 0 a 215,215 0 1,1 430,0 a 215,215 0 1,1 -430,0"
                         />
                       </defs>
-                      <text className="text-[15px] lg:text-[17px]" fontWeight="700" fill="#a89f91" opacity="0.45" letterSpacing="6">
+                      <text className="text-[14px] sm:text-[15px] lg:text-[17px]" fontWeight="700" fill="#a89f91" opacity="0.45" letterSpacing="5">
                         <textPath href="#circlePath">
                           PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK
                         </textPath>
@@ -609,33 +570,34 @@ function HomePage() {
                     </svg>
                   </div>
 
-                  {/* Center Content - Cards and Icon */}
+                  {/* Center Content - Decorative Cards and Globe Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
-                      {/* Decorative Cards */}
+                      {/* Decorative Floating Card 1 */}
                       <motion.div 
-                        className="hidden lg:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-36 h-26 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-xl p-4 rotate-[-10deg]"
-                        animate={{ y: [0, -8, 0], rotate: [-10, -6, -10] }}
+                        className="absolute -top-8 -left-10 sm:-top-16 lg:-top-20 sm:-left-16 lg:-left-20 w-32 h-22 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 rotate-[-10deg]"
+                        animate={{ y: [0, -6, 0], rotate: [-10, -6, -10] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
-                        <div className="text-stone-900 dark:text-stone-100 text-xs sm:text-sm font-bold mb-2">Web Developer</div>
-                        <div className="w-full h-2 bg-pink-400/30 rounded-full mb-1.5"></div>
-                        <div className="w-3/4 h-2 bg-pink-400/30 rounded-full"></div>
+                        <div className="text-stone-900 dark:text-stone-100 text-[11px] sm:text-sm font-bold mb-1 sm:mb-2">Web Developer</div>
+                        <div className="w-full h-1.5 sm:h-2 bg-pink-400/30 rounded-full mb-1"></div>
+                        <div className="w-3/4 h-1.5 sm:h-2 bg-pink-400/30 rounded-full"></div>
                       </motion.div>
 
+                      {/* Decorative Floating Card 2 */}
                       <motion.div 
-                        className="hidden lg:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-36 h-26 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-2xl shadow-xl p-4 rotate-[8deg]"
-                        animate={{ y: [0, 8, 0], rotate: [8, 11, 8] }}
+                        className="absolute -bottom-8 -right-8 sm:-bottom-14 lg:-bottom-16 sm:-right-14 lg:-right-16 w-30 h-20 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 rotate-[8deg]"
+                        animate={{ y: [0, 6, 0], rotate: [8, 11, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
-                        <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Photographer</div>
-                        <div className="w-full h-1.5 sm:h-2 bg-white/30 rounded-full mb-1"></div>
-                        <div className="w-2/3 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
+                        <div className="text-stone-950 font-bold text-[10px] sm:text-xs lg:text-sm mb-1 sm:mb-2">Photographer</div>
+                        <div className="w-full h-1.5 sm:h-2 bg-stone-950/20 rounded-full mb-1"></div>
+                        <div className="w-2/3 h-1.5 sm:h-2 bg-stone-950/20 rounded-full"></div>
                       </motion.div>
 
                       {/* Center Icon */}
-                      <div className="flex w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
-                        <Globe className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
+                      <div className="flex w-16 h-16 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
+                        <Globe className="w-8 h-8 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                       </div>
                     </div>
                   </div>
