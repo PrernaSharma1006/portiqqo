@@ -485,7 +485,7 @@ function HomePage() {
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={isMobile ? 48 : 88}
+                      fontSize={isMobile ? 38 : 88}
                       alignCenter={isMobile}
                       fontWeight={900}
                       letterSpacing={-1}

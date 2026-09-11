@@ -247,7 +247,16 @@ const StrokeText = ({
         {fillMode === 'wipe' && activeBox && (
           <defs>
             <clipPath id={wipeId} clipPathUnits="userSpaceOnUse">
-              <rect ref={wipeRectRef} x={activeBox.x} y={activeBox.y} width="0" height={activeBox.height} />
+              <rect
+                ref={wipeRectRef}
+                x={activeBox.x - 10}
+                y={activeBox.y - 10}
+                width="0"
+                height={activeBox.height + 20}
+                fill="white"
+                stroke="none"
+                strokeWidth="0"
+              />
             </clipPath>
           </defs>
         )}
