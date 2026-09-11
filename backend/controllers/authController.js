@@ -68,36 +68,23 @@ const sendOTP = async (req, res) => {
       console.error('User updateOne warning during OTP generation:', saveErr.message);
     }
 
-    // Send OTP email with dev fallback
-    try {
-      await emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]);
-      console.log(`📧 OTP sent successfully to: ${cleanEmail}`);
+    // Send OTP email in background (non-blocking) so request completes instantly
+    emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]).catch(err => {
+      console.warn('Background email send note:', err.message || err);
+    });
 
-      return res.status(200).json({
-        success: true,
-        message: 'Verification code sent to your email',
-        data: {
-          email: cleanEmail,
-          expiresIn: '10 minutes',
-          action: action,
-          devOTP: otp
-        }
-      });
-    } catch (emailError) {
-      console.error('❌ Email service error:', emailError.message || emailError);
-      console.log(`🔑 [DEV/FALLBACK MODE] OTP for ${cleanEmail}: ${otp}`);
-      
-      return res.status(200).json({
-        success: true,
-        message: 'Verification code generated (email service unavailable)',
-        data: {
-          email: cleanEmail,
-          expiresIn: '10 minutes',
-          action: action,
-          devOTP: otp
-        }
-      });
-    }
+    console.log(`🔑 OTP generated for ${cleanEmail}: ${otp}`);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Verification code sent to your email',
+      data: {
+        email: cleanEmail,
+        expiresIn: '10 minutes',
+        action: action,
+        devOTP: otp
+      }
+    });
 
   } catch (error) {
     console.error('SendOTP critical error:', error);
