@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../contexts/AuthContext'
 import { useTheme } from '../../contexts/ThemeContext'
-import { User, LogOut, Settings, ChevronDown, Sun, Moon } from 'lucide-react'
+import { User, LogOut, Settings, ChevronDown, Sun, Moon, LayoutDashboard } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import PillNav from '../ui/PillNav'
 
@@ -50,38 +50,47 @@ function Header() {
     }
   }
 
-  const navItems = useMemo(() => [
-    { 
-      label: 'Home', 
-      href: '/',
-      onClick: (e) => {
-        if (location.pathname === '/') {
-          e?.preventDefault?.()
-          window.scrollTo({ top: 0, behavior: 'smooth' })
+  const navItems = useMemo(() => {
+    const items = [
+      { 
+        label: 'Home', 
+        href: '/',
+        onClick: (e) => {
+          if (location.pathname === '/') {
+            e?.preventDefault?.()
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+          }
+        }
+      },
+      { 
+        label: 'Templates', 
+        href: '/#templates',
+        onClick: (e) => {
+          if (location.pathname === '/') {
+            e?.preventDefault?.()
+            scrollToSection('templates')
+          }
+        }
+      },
+      { 
+        label: 'Pricing', 
+        href: '/#pricing',
+        onClick: (e) => {
+          if (location.pathname === '/') {
+            e?.preventDefault?.()
+            scrollToSection('pricing')
+          }
         }
       }
-    },
-    { 
-      label: 'Templates', 
-      href: '/#templates',
-      onClick: (e) => {
-        if (location.pathname === '/') {
-          e?.preventDefault?.()
-          scrollToSection('templates')
-        }
-      }
-    },
-    { 
-      label: 'Pricing', 
-      href: '/#pricing',
-      onClick: (e) => {
-        if (location.pathname === '/') {
-          e?.preventDefault?.()
-          scrollToSection('pricing')
-        }
-      }
+    ]
+    if (isAuthenticated) {
+      items.push({
+        label: 'Dashboard',
+        href: '/dashboard'
+      })
     }
-  ], [location.pathname])
+    return items
+  }, [location.pathname, isAuthenticated])
 
   return (
     <header className="sticky top-0 z-50 py-1.5 bg-[#f9f6f0]/95 dark:bg-[#141210]/95 backdrop-blur-md border-b border-[#e6ccb2]/80 dark:border-stone-800 transition-colors duration-300">
@@ -159,6 +168,15 @@ function Header() {
                         </p>
                       </div>
                       
+                      <Link
+                        to="/dashboard"
+                        className="flex items-center px-5 py-3 text-sm font-bold text-stone-900 dark:text-stone-100 hover:bg-[#f5ebe0] dark:hover:bg-stone-800 transition-all border-b border-[#e6ccb2]/40 dark:border-stone-800"
+                        onClick={() => setShowUserMenu(false)}
+                      >
+                        <LayoutDashboard className="w-4 h-4 mr-3 text-pink-500" />
+                        My Dashboard
+                      </Link>
+
                       <Link
                         to="/#templates"
                         className="flex items-center px-5 py-3 text-sm font-medium text-stone-800 dark:text-stone-200 hover:bg-[#f5ebe0] dark:hover:bg-stone-800 transition-all"

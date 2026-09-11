@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { Check, Zap, Crown, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { getApiUrl } from '../services/api'
 
 const MONTHLY_AMOUNT = 81
 const YEARLY_AMOUNT = 1499
@@ -21,7 +22,7 @@ export default function PricingPage() {
   const fetchSubscription = async () => {
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch('/api/subscriptions/me', {
+      const res = await fetch(getApiUrl('/api/subscriptions/me'), {
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
@@ -53,7 +54,7 @@ export default function PricingPage() {
       if (!loaded) { toast.error('Failed to load payment gateway'); setLoading(false); return }
 
       const token = localStorage.getItem('authToken')
-      const res = await fetch('/api/subscriptions/create-order', {
+      const res = await fetch(getApiUrl('/api/subscriptions/create-order'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ plan: billingCycle })
@@ -75,7 +76,7 @@ export default function PricingPage() {
         theme: { color: '#7c3aed' },
         handler: async (response) => {
           try {
-            const verifyRes = await fetch('/api/subscriptions/verify-payment', {
+            const verifyRes = await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
               body: JSON.stringify({

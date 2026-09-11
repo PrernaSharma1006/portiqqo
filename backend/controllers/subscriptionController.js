@@ -181,14 +181,27 @@ exports.verifyPayment = async (req, res) => {
 // @access  Private
 exports.getSubscription = async (req, res) => {
   try {
-    const subscription = await Subscription.findOne({ user: req.user._id });
+    const userId = req.user._id;
+    const subscription = await Subscription.findOne({ user: userId });
+
+    // Compute 7-day trial info based on user creation date
+    const createdAt = req.user.createdAt ? new Date(req.user.createdAt) : new Date();
+    const trialEnd = new Date(createdAt.getTime() + 7 * 24 * 60 * 60 * 1000);
+    const now = new Date();
+    const trialMsLeft = trialEnd.getTime() - now.getTime();
+    const trialDaysLeft = Math.max(0, Math.ceil(trialMsLeft / (1000 * 60 * 60 * 24)));
+    const isTrialExpired = trialDaysLeft <= 0;
 
     if (!subscription) {
       return res.status(200).json({
         success: true,
         subscription: {
           type: 'free',
-          status: 'active',
+          planId: 'free_trial',
+          planName: isTrialExpired ? 'Free Trial Expired' : '7-Day Free Trial',
+          status: isTrialExpired ? 'expired' : 'active',
+          trialDaysLeft,
+          trialEndsAt: trialEnd,
           portfolioLimit: 1
         }
       });
@@ -198,18 +211,28 @@ exports.getSubscription = async (req, res) => {
     if (subscription.type === 'premium' && subscription.currentPeriodEnd < new Date()) {
       subscription.type = 'free';
       subscription.status = 'inactive';
-      subscription.usage.portfolioLimit = 1;
+      if (subscription.usage) subscription.usage.portfolioLimit = 1;
       await subscription.save();
     }
+
+    const isYearly = subscription.planId === 'yearly' || subscription.billing?.interval === 'year';
+    const planName = subscription.type === 'premium'
+      ? (isYearly ? 'Yearly Premium Plan (₹1,499/yr)' : 'Monthly Premium Plan (₹81/mo)')
+      : (isTrialExpired ? 'Free Trial Expired' : '7-Day Free Trial');
 
     res.status(200).json({
       success: true,
       subscription: {
         type: subscription.type,
+        planId: subscription.planId || (subscription.type === 'premium' ? (isYearly ? 'yearly' : 'monthly') : 'free_trial'),
+        planName,
         status: subscription.status,
         currentPeriodEnd: subscription.currentPeriodEnd,
-        portfolioLimit: subscription.usage.portfolioLimit,
-        daysRemaining: subscription.daysRemaining
+        trialDaysLeft,
+        trialEndsAt: trialEnd,
+        portfolioLimit: subscription.usage?.portfolioLimit || (subscription.type === 'premium' ? 999 : 1),
+        billingInterval: subscription.billing?.interval || (isYearly ? 'year' : 'month'),
+        billingAmount: subscription.billing?.amount || (isYearly ? 149900 : 8100)
       }
     });
   } catch (error) {

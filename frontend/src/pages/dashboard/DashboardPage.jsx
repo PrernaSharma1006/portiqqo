@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Sparkles, Palette, Camera, Code, Layers, Briefcase, Pencil, Monitor, ExternalLink, Edit, Trash2, Copy, Check, Crown, Clock, Globe, ShieldCheck, CheckCircle2, AlertCircle, X, Loader2, BarChart3, TrendingUp, Eye } from 'lucide-react'
 import { useState, useEffect } from 'react'
-import { portfolioAPI } from '../../services/api'
+import { portfolioAPI, getApiUrl } from '../../services/api'
 import toast from 'react-hot-toast'
 import TemplateMosaicGrid from '../../components/templates/TemplateMosaicGrid'
 import PortfolioAnalyticsModal from '../../components/modals/PortfolioAnalyticsModal'
@@ -94,7 +94,7 @@ function DashboardPage() {
   const fetchSubscription = async () => {
     try {
       const token = localStorage.getItem('authToken')
-      const res = await fetch('/api/subscriptions/me', {
+      const res = await fetch(getApiUrl('/api/subscriptions/me'), {
         headers: { Authorization: `Bearer ${token}` }
       })
       const data = await res.json()
@@ -384,10 +384,73 @@ function DashboardPage() {
               Select a professionally designed template that matches your profession and start building your stunning portfolio in minutes
             </p>
             {isAuthenticated && user && (
-              <p className="text-sm text-slate-500 dark:text-slate-400 break-all">
+              <p className="text-sm text-slate-500 dark:text-slate-400 break-all mb-6">
                 Signed in as <span className="font-medium text-slate-700 dark:text-slate-200">{user.email}</span>
               </p>
             )}
+
+            {/* ── Subscription & Plan Status Banner ── */}
+            <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden text-left transition-all">
+              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${isPremium ? 'from-amber-400 via-purple-500 to-indigo-600' : 'from-blue-500 via-purple-500 to-pink-500'}`} />
+
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {isPremium ? (
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
+                        <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                        {subscription?.planName || (subscription?.billingInterval === 'year' ? 'Yearly Premium Plan' : 'Monthly Premium Plan')}
+                      </span>
+                    ) : (
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${
+                        (subscription?.trialDaysLeft ?? 7) > 0 
+                          ? 'bg-purple-100 text-purple-900 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300 dark:border-purple-700' 
+                          : 'bg-red-100 text-red-900 dark:bg-red-950/60 dark:text-red-300 border border-red-300 dark:border-red-700'
+                      }`}>
+                        <Clock className="w-3.5 h-3.5" />
+                        {(subscription?.trialDaysLeft ?? 7) > 0 
+                          ? `7-Day Free Trial (${subscription?.trialDaysLeft ?? 7} ${subscription?.trialDaysLeft === 1 ? 'day' : 'days'} remaining)` 
+                          : 'Free Trial Expired'}
+                      </span>
+                    )}
+
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                      Limit: {existingPortfolios.length} / {subscription?.portfolioLimit || 1} {subscription?.portfolioLimit === 1 ? 'portfolio' : 'portfolios'}
+                    </span>
+                  </div>
+
+                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    {isPremium ? 'Portiqqo Premium Membership Active' : 'Portfolio Plan Status'}
+                  </h3>
+
+                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                    {isPremium ? (
+                      <>Unlimited portfolio creation, custom domain mapping & zero branding active until <strong className="text-purple-600 dark:text-purple-400">{subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Next Renewal'}</strong>.</>
+                    ) : (
+                      (subscription?.trialDaysLeft ?? 7) > 0 ? (
+                        <>You are currently on your <strong>7-Day Free Trial</strong>. Upgrade to <strong>Monthly (₹81/mo)</strong> or <strong>Yearly (₹1,499/yr)</strong> to unlock custom domain mapping & unlimited publishing.</>
+                      ) : (
+                        <>Your free trial has ended. Upgrade via Razorpay to publish portfolios and unlock custom domains!</>
+                      )
+                    )}
+                  </p>
+                </div>
+
+                <div className="flex-shrink-0">
+                  <button
+                    onClick={() => navigate('/pricing')}
+                    className={`w-full sm:w-auto px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm shadow-md transition-all duration-300 flex items-center justify-center gap-2 ${
+                      isPremium
+                        ? 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600'
+                        : 'bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-500/25'
+                    }`}
+                  >
+                    <Crown className="w-4 h-4 text-amber-300" />
+                    <span>{isPremium ? 'Manage Plan' : 'Upgrade via Razorpay'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
           </motion.div>
 
           {/* Existing Portfolios Section */}
