@@ -132,14 +132,15 @@ const sendOTP = async (req, res) => {
 
     console.log(`🔑 OTP generated for ${cleanEmail}: ${otp}`);
 
-    // Asynchronous background email dispatch (non-blocking)
+    // Dispatch email and log output
     try {
       const emailService = require('../services/emailService');
-      emailService.sendOTP(cleanEmail, otp).catch(err => {
-        console.error('Background email error:', err.message);
-      });
+      const emailResult = await emailService.sendOTP(cleanEmail, otp);
+      if (emailResult && !emailResult.success) {
+        console.error(`⚠️ OTP email delivery issue for ${cleanEmail}:`, emailResult.error);
+      }
     } catch (e) {
-      console.warn('Could not trigger background emailService:', e.message);
+      console.error('Email dispatch error:', e.message);
     }
 
     return res.status(200).json({

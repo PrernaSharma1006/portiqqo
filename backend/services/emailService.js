@@ -2,60 +2,78 @@ const nodemailer = require('nodemailer');
 
 class EmailService {
   constructor() {
+    this.initTransporter();
+  }
+
+  initTransporter() {
     const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : '';
     const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
     const port = parseInt(process.env.EMAIL_PORT) || 465;
 
     if (!user || !pass || user === 'your_email@gmail.com' || pass === 'your_app_password') {
-      console.warn('⚠️ SMTP credentials missing or default in environment variables. Email sending disabled.');
+      console.warn('⚠️ [SMTP WARNING] EMAIL_USER or EMAIL_PASS missing or default in environment variables! Set EMAIL_USER and EMAIL_PASS in Render Environment Variables.');
       this.isConfigured = false;
       return;
     }
 
     this.isConfigured = true;
+    this.user = user;
+    this.pass = pass;
+    this.host = host;
+    this.port = port;
+
+    // Primary Transporter with explicit 8-second socket timeouts
     this.transporter = nodemailer.createTransport({
       host: host,
       port: port,
-      secure: true, // Port 465 uses direct SSL (secure: true)
+      secure: port === 465,
       auth: {
         user: user,
         pass: pass
       },
+      connectionTimeout: 8000,
+      greetingTimeout: 8000,
+      socketTimeout: 8000,
       tls: {
         rejectUnauthorized: false
       }
     });
 
-    console.log(`📧 Email service initialized on ${host}:${port} (SSL) for ${user}`);
+    console.log(`📧 Email service initialized on ${host}:${port} (${port === 465 ? 'SSL' : 'TLS'}) for ${user}`);
   }
 
   async verifyConnection() {
+    this.initTransporter();
     if (!this.isConfigured) {
-      console.log('📧 Email service not configured - skipping verification');
+      console.warn('⚠️ Cannot verify email service: EMAIL_USER / EMAIL_PASS missing in environment');
       return false;
     }
 
     try {
       await this.transporter.verify();
-      console.log('✅ Email service connection verified successfully');
+      console.log('✅ SMTP connection verified successfully');
       return true;
     } catch (error) {
-      console.error('❌ Email service verification failed:', error.message);
+      console.error('❌ SMTP connection verification failed:', error.message);
       return false;
     }
   }
 
   async sendOTP(email, otp, firstName = '') {
+    this.initTransporter();
+
     if (!this.isConfigured) {
-      console.log(`🔧 [DEV MODE] OTP for ${email}: ${otp}`);
-      return { success: true, messageId: 'dev-mode-' + Date.now() };
+      console.error(`❌ [CRITICAL] Cannot send OTP email to ${email}: EMAIL_USER and EMAIL_PASS are NOT configured in Render Environment Variables! Please set EMAIL_USER=prernasharma0018@gmail.com and EMAIL_PASS on Render Dashboard.`);
+      return { success: false, error: 'SMTP credentials missing in environment variables' };
     }
+
+    console.log(`📤 Sending OTP email (${otp}) to ${email}...`);
 
     const mailOptions = {
       from: {
         name: 'Portfolio Builder',
-        address: process.env.EMAIL_FROM || process.env.EMAIL_USER
+        address: process.env.EMAIL_FROM || this.user
       },
       to: email,
       subject: 'Your Portfolio Builder Verification Code',
@@ -128,23 +146,50 @@ class EmailService {
       `
     };
 
+    // Primary delivery attempt (Port 465 SSL or configured port)
     try {
       const result = await this.transporter.sendMail(mailOptions);
-      console.log(`✅ OTP email sent successfully to ${email}. Message ID: ${result.messageId}`);
+      console.log(`✅ OTP email sent successfully to ${email} (Port ${this.port}). Message ID: ${result.messageId}`);
       return { success: true, messageId: result.messageId };
-    } catch (error) {
-      console.error(`❌ Failed to send OTP email to ${email}:`, error.message);
-      return { success: false, error: error.message };
+    } catch (primaryError) {
+      console.warn(`⚠️ Primary SMTP delivery (Port ${this.port}) failed for ${email}: ${primaryError.message}. Retrying via Fallback Port 587 STARTTLS...`);
+
+      // Fallback delivery attempt (Port 587 STARTTLS)
+      try {
+        const fallbackTransporter = nodemailer.createTransport({
+          host: this.host,
+          port: 587,
+          secure: false,
+          auth: {
+            user: this.user,
+            pass: this.pass
+          },
+          connectionTimeout: 8000,
+          greetingTimeout: 8000,
+          socketTimeout: 8000,
+          tls: {
+            rejectUnauthorized: false
+          }
+        });
+
+        const result = await fallbackTransporter.sendMail(mailOptions);
+        console.log(`✅ OTP email sent successfully to ${email} via Fallback Port 587. Message ID: ${result.messageId}`);
+        return { success: true, messageId: result.messageId };
+      } catch (fallbackError) {
+        console.error(`❌ All SMTP delivery attempts failed for ${email}. Primary: ${primaryError.message} | Fallback: ${fallbackError.message}`);
+        return { success: false, error: `Primary: ${primaryError.message} | Fallback: ${fallbackError.message}` };
+      }
     }
   }
 
   async sendWelcomeEmail(email, firstName, lastName) {
+    this.initTransporter();
     if (!this.isConfigured) return { success: true };
 
     const mailOptions = {
       from: {
         name: 'Portfolio Builder',
-        address: process.env.EMAIL_FROM || process.env.EMAIL_USER
+        address: process.env.EMAIL_FROM || this.user
       },
       to: email,
       subject: 'Welcome to Portfolio Builder! 🎉',
@@ -161,13 +206,14 @@ class EmailService {
   }
 
   async sendPasswordResetEmail(email, resetToken, firstName = '') {
+    this.initTransporter();
     if (!this.isConfigured) return { success: true };
 
     const resetUrl = `${process.env.APP_URL}/reset-password?token=${resetToken}`;
     const mailOptions = {
       from: {
         name: 'Portfolio Builder',
-        address: process.env.EMAIL_FROM || process.env.EMAIL_USER
+        address: process.env.EMAIL_FROM || this.user
       },
       to: email,
       subject: 'Reset Your Password',
