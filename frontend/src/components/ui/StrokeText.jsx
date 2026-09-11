@@ -237,55 +237,11 @@ const StrokeText = ({
   return (
     <span
       ref={rootRef}
-      className={`stroke-text ${trigger === 'hover' ? 'stroke-text--hover' : ''} ${className}`.trim()}
+      className={`stroke-text stroke-text-html ${trigger === 'hover' ? 'stroke-text--hover' : ''} ${className}`.trim()}
       style={style}
-      role="img"
       aria-label={String(text ?? '')}
     >
-      <svg className="stroke-text__svg" viewBox={viewBox} preserveAspectRatio="xMinYMid meet" aria-hidden="true">
-        {fillMode === 'wipe' && activeBox && (
-          <defs>
-            <clipPath id={wipeId} clipPathUnits="userSpaceOnUse">
-              <rect ref={wipeRectRef} x={activeBox.x} y={activeBox.y} width="0" height={activeBox.height} />
-            </clipPath>
-          </defs>
-        )}
-
-        <text
-          ref={strokeTextRef}
-          className="stroke-text__stroke"
-          x="0"
-          y="0"
-          fill="none"
-          stroke={strokeColor}
-          strokeWidth={strokeWidth}
-          strokeLinejoin="round"
-          strokeLinecap="round"
-          style={fontStyle}
-        >
-          {characters.map((char, index) => (
-            <tspan data-stroke-char key={`s-${index}`}>
-              {char}
-            </tspan>
-          ))}
-        </text>
-
-        <text
-          className="stroke-text__fill"
-          x="0"
-          y="0"
-          fill={fillColor}
-          stroke="none"
-          style={fontStyle}
-          clipPath={fillMode === 'wipe' && activeBox ? `url(#${wipeId})` : undefined}
-        >
-          {characters.map((char, index) => (
-            <tspan data-fill-char key={`f-${index}`}>
-              {char}
-            </tspan>
-          ))}
-        </text>
-      </svg>
+      {text}
     </span>
   );
 };
