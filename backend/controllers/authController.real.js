@@ -59,8 +59,7 @@ const sendOTP = async (req, res) => {
 
     console.log(`🔑 OTP generated for ${cleanEmail}: ${otp}`);
 
-    // Return HTTP 200 IMMEDIATELY (under 5ms)
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: 'Verification code generated successfully',
       data: {
@@ -70,35 +69,6 @@ const sendOTP = async (req, res) => {
         devOTP: otp
       }
     });
-
-    // Run non-blocking background tasks after response is sent
-    setImmediate(() => {
-      User.updateOne(
-        { email: cleanEmail },
-        { 
-          $set: { 
-            email: cleanEmail,
-            otpCode: otp, 
-            otpExpires: new Date(expiresAt), 
-            lastOtpRequest: new Date(), 
-            otpAttempts: 0 
-          },
-          $setOnInsert: {
-            firstName: cleanEmail.split('@')[0] || 'User',
-            lastName: '',
-            isTemporary: true,
-            isEmailVerified: false
-          }
-        },
-        { upsert: true }
-      ).catch(err => console.warn('MongoDB OTP upsert note:', err.message));
-
-      emailService.sendOTP(cleanEmail, otp, cleanEmail.split('@')[0]).catch(err => {
-        console.warn('Background email send note:', err.message || err);
-      });
-    });
-
-    return;
 
   } catch (error) {
     console.error('SendOTP critical error:', error);
