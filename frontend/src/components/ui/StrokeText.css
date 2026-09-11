@@ -3,54 +3,21 @@
   line-height: inherit;
   margin: 0;
   padding: 0;
-  vertical-align: baseline;
+  vertical-align: middle;
   max-width: 100%;
+  overflow: visible;
 }
 
 .stroke-text--hover {
   cursor: pointer;
 }
 
-.stroke-text-html {
-  display: inline-block;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-  letter-spacing: inherit;
-  color: #f472b6;
-  -webkit-text-stroke: 1.5px #f472b6;
-  background: linear-gradient(to right, #f472b6 50%, transparent 50%);
-  background-size: 200% 100%;
-  background-position: 100% 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: textStrokeWipe 4s ease-in-out infinite;
-}
-
-@keyframes textStrokeWipe {
-  0% {
-    background-position: 100% 0;
-    -webkit-text-fill-color: transparent;
-  }
-  30%, 75% {
-    background-position: 0 0;
-    -webkit-text-fill-color: #f472b6;
-  }
-  100% {
-    background-position: 100% 0;
-    -webkit-text-fill-color: transparent;
-  }
-}
-
 .stroke-text__svg {
   display: inline-block;
-  height: 1em;
   width: auto;
   max-width: 100%;
   overflow: visible;
-  vertical-align: top;
+  vertical-align: middle;
 }
 
 .stroke-text__stroke,

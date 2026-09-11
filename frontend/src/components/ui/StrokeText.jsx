@@ -39,11 +39,11 @@ const StrokeText = ({
   const characters = useMemo(() => Array.from(String(text ?? '')), [text]);
 
   const defaultBox = useMemo(() => {
-    const estimatedWidth = Math.max(characters.length * fontSize * 0.65, 300);
+    const estimatedWidth = Math.max(characters.length * fontSize * 0.7, 350);
     return {
-      x: -15,
+      x: -30,
       y: -fontSize * 0.95,
-      width: estimatedWidth,
+      width: estimatedWidth + 50,
       height: fontSize * 1.35
     };
   }, [characters, fontSize]);
@@ -54,7 +54,7 @@ const StrokeText = ({
 
   const fontStyle = useMemo(
     () => ({
-      fontFamily: "'Poppins', 'Inter', sans-serif",
+      fontFamily: "'Plus Jakarta Sans', 'Outfit', 'Poppins', 'Inter', sans-serif",
       fontSize: `${fontSize}px`,
       fontWeight: fontWeight || 900,
       letterSpacing: letterSpacing !== undefined ? `${letterSpacing}px` : 'normal'
@@ -78,12 +78,14 @@ const StrokeText = ({
       }
       if (!bbox || !bbox.width) return;
 
-      const pad = Math.max(Number(strokeWidth) * 2, 4);
+      const padL = 30;
+      const padR = 20;
+      const padY = 15;
       const next = {
-        x: bbox.x - pad,
-        y: bbox.y - pad,
-        width: bbox.width + pad * 2,
-        height: bbox.height + pad * 2
+        x: bbox.x - padL,
+        y: bbox.y - padY,
+        width: bbox.width + padL + padR,
+        height: bbox.height + padY * 2
       };
 
       setBox(prev =>
@@ -233,17 +235,69 @@ const StrokeText = ({
 
   const activeBox = box || defaultBox;
   const viewBox = `${activeBox.x} ${activeBox.y} ${activeBox.width} ${activeBox.height}`;
+  const svgHeight = `${(activeBox.height / fontSize)}em`;
 
   return (
     <span
       ref={rootRef}
-      className={`stroke-text stroke-text-html ${trigger === 'hover' ? 'stroke-text--hover' : ''} ${className}`.trim()}
-      style={style}
+      className={`stroke-text ${trigger === 'hover' ? 'stroke-text--hover' : ''} ${className}`.trim()}
+      style={{ display: 'inline-block', verticalAlign: 'baseline', lineHeight: 1, ...style }}
+      role="img"
       aria-label={String(text ?? '')}
     >
-      {text}
+      <svg 
+        className="stroke-text__svg" 
+        viewBox={viewBox} 
+        style={{ height: svgHeight, width: 'auto', overflow: 'visible' }}
+        preserveAspectRatio="xMinYMid meet" 
+        aria-hidden="true"
+      >
+        {fillMode === 'wipe' && activeBox && (
+          <defs>
+            <clipPath id={wipeId} clipPathUnits="userSpaceOnUse">
+              <rect ref={wipeRectRef} x={activeBox.x} y={activeBox.y} width="0" height={activeBox.height} />
+            </clipPath>
+          </defs>
+        )}
+
+        <text
+          ref={strokeTextRef}
+          className="stroke-text__stroke"
+          x="0"
+          y="0"
+          fill="none"
+          stroke={strokeColor}
+          strokeWidth={strokeWidth}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+          style={fontStyle}
+        >
+          {characters.map((char, index) => (
+            <tspan data-stroke-char key={`s-${index}`}>
+              {char}
+            </tspan>
+          ))}
+        </text>
+
+        <text
+          className="stroke-text__fill"
+          x="0"
+          y="0"
+          fill={fillColor}
+          stroke="none"
+          style={fontStyle}
+          clipPath={fillMode === 'wipe' && activeBox ? `url(#${wipeId})` : undefined}
+        >
+          {characters.map((char, index) => (
+            <tspan data-fill-char key={`f-${index}`}>
+              {char}
+            </tspan>
+          ))}
+        </text>
+      </svg>
     </span>
   );
+
 };
 
 export default StrokeText;
