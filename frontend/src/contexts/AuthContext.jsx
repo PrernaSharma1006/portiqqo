@@ -117,29 +117,6 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const verifyOTP = async (email, otp) => {
-    try {
-      const response = await fetch(getApiUrl('/api/auth/verify-otp'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, otp })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'OTP verification failed');
-      }
-      
-      return { success: true, data };
-    } catch (error) {
-      console.error('OTP verification error:', error);
-      throw error;
-    }
-  };
-
   const signup = async ({ email, password, firstName, lastName }) => {
     try {
       setIsLoading(true);
@@ -209,33 +186,6 @@ export const AuthProvider = ({ children }) => {
     setAuthToken(null);
     setUser(null);
     setIsAuthenticated(false);
-  };
-
-  const sendOTP = async (email) => {
-    try {
-      const response = await fetch(getApiUrl('/api/auth/send-otp'), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email })
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || data.message || 'Failed to send OTP');
-      }
-      
-      return { success: true, message: data.message, devOTP: data.data?.devOTP };
-    } catch (error) {
-      console.error('OTP request error:', error);
-      throw error;
-    }
-  };
-
-  const requestOTP = async (email) => {
-    return sendOTP(email); // Alias for backward compatibility
   };
 
   const checkEmailExists = async (email) => {
@@ -312,9 +262,6 @@ export const AuthProvider = ({ children }) => {
     login,
     signup,
     logout,
-    sendOTP,
-    requestOTP,
-    verifyOTP,
     checkEmailExists,
     updateProfile,
     getCurrentUser,

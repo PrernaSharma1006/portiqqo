@@ -1,19 +1,6 @@
 const User = require('../models/User');
 const authService = require('../services/authService');
 
-// Clean in-memory OTP store (email -> { otp, expiresAt, attempts, lastRequest })
-const otpStore = new Map();
-
-// Periodic cleanup of expired OTPs every 10 minutes
-setInterval(() => {
-  const now = Date.now();
-  for (const [email, record] of otpStore.entries()) {
-    if (now > record.expiresAt) {
-      otpStore.delete(email);
-    }
-  }
-}, 10 * 60 * 1000);
-
 // @desc    Check if email exists
 // @route   POST /api/auth/check-email
 // @access  Public
@@ -47,143 +34,6 @@ const checkEmail = async (req, res) => {
     return res.status(500).json({
       success: false,
       error: 'Failed to check email'
-    });
-  }
-};
-
-// @desc    Send 6-digit OTP for verification
-// @route   POST /api/auth/send-otp
-// @access  Public
-const sendOTP = async (req, res) => {
-  try {
-    const { email, action = 'signup' } = req.body || {};
-
-    if (!email || !authService.validateEmail(email)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Please provide a valid email address'
-      });
-    }
-
-    const cleanEmail = email.toLowerCase().trim();
-
-    // 30-second rate limit cooldown per email
-    const existingRecord = otpStore.get(cleanEmail);
-    if (existingRecord && existingRecord.lastRequest) {
-      const timePassed = Date.now() - existingRecord.lastRequest;
-      if (timePassed < 30000) {
-        return res.status(429).json({
-          success: false,
-          error: 'Please wait before requesting another code',
-          waitTime: Math.ceil((30000 - timePassed) / 1000)
-        });
-      }
-    }
-
-    // Generate 6-digit OTP
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = Date.now() + 10 * 60 * 1000; // 10 mins
-
-    otpStore.set(cleanEmail, {
-      otp,
-      expiresAt,
-      attempts: 0,
-      lastRequest: Date.now()
-    });
-
-    console.log(`🔑 OTP code generated for ${cleanEmail}: ${otp}`);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Verification code generated successfully',
-      data: {
-        email: cleanEmail,
-        expiresIn: '10 minutes',
-        action: action,
-        devOTP: otp
-      }
-    });
-  } catch (error) {
-    console.error('SendOTP error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Failed to send OTP'
-    });
-  }
-};
-
-// @desc    Verify 6-digit OTP code
-// @route   POST /api/auth/verify-otp
-// @access  Public
-const verifyOTP = async (req, res) => {
-  try {
-    const { email, otp } = req.body || {};
-
-    if (!email || !otp) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and verification code are required'
-      });
-    }
-
-    const cleanEmail = email.toLowerCase().trim();
-    const record = otpStore.get(cleanEmail);
-    const cleanOTP = otp.toString().trim();
-
-    let isValid = false;
-
-    if (record) {
-      if (Date.now() > record.expiresAt) {
-        otpStore.delete(cleanEmail);
-        return res.status(400).json({
-          success: false,
-          error: 'Verification code has expired. Please request a new code.'
-        });
-      }
-
-      if (record.attempts >= 5) {
-        return res.status(429).json({
-          success: false,
-          error: 'Too many failed attempts. Please request a new code.'
-        });
-      }
-
-      if (record.otp === cleanOTP || cleanOTP === '123456') {
-        isValid = true;
-      } else {
-        record.attempts += 1;
-        return res.status(400).json({
-          success: false,
-          error: `Invalid verification code. ${5 - record.attempts} attempts remaining.`
-        });
-      }
-    } else if (cleanOTP === '123456') {
-      isValid = true;
-    }
-
-    if (!isValid) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid or expired verification code'
-      });
-    }
-
-    console.log(`✅ OTP verified for ${cleanEmail}`);
-
-    return res.status(200).json({
-      success: true,
-      message: 'Email verified successfully',
-      data: {
-        email: cleanEmail,
-        verified: true,
-        verifiedAt: new Date()
-      }
-    });
-  } catch (error) {
-    console.error('VerifyOTP error:', error);
-    return res.status(500).json({
-      success: false,
-      error: 'Verification failed'
     });
   }
 };
@@ -229,9 +79,6 @@ const signup = async (req, res) => {
       });
       await user.save();
     }
-
-    // Clean up OTP after registration
-    otpStore.delete(cleanEmail);
 
     // Create JWT token response
     const tokenResponse = authService.createTokenResponse(user);
@@ -422,8 +269,6 @@ const logout = (req, res) => {
 };
 
 module.exports = {
-  sendOTP,
-  verifyOTP,
   login,
   loginWithPassword,
   signup,
