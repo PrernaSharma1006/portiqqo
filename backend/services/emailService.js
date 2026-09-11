@@ -5,7 +5,7 @@ class EmailService {
     const user = process.env.EMAIL_USER;
     const pass = process.env.EMAIL_PASS ? process.env.EMAIL_PASS.replace(/\s+/g, '') : '';
     const host = process.env.EMAIL_HOST || 'smtp.gmail.com';
-    const port = parseInt(process.env.EMAIL_PORT) || 587;
+    const port = parseInt(process.env.EMAIL_PORT) || 465;
 
     if (!user || !pass || user === 'your_email@gmail.com' || pass === 'your_app_password') {
       console.warn('⚠️ SMTP credentials missing or default in environment variables. Email sending disabled.');
@@ -17,7 +17,7 @@ class EmailService {
     this.transporter = nodemailer.createTransport({
       host: host,
       port: port,
-      secure: false, // Port 587 uses STARTTLS (secure: false)
+      secure: true, // Port 465 uses direct SSL (secure: true)
       auth: {
         user: user,
         pass: pass
@@ -27,7 +27,7 @@ class EmailService {
       }
     });
 
-    console.log(`📧 Email service initialized on ${host}:${port} for ${user}`);
+    console.log(`📧 Email service initialized on ${host}:${port} (SSL) for ${user}`);
   }
 
   async verifyConnection() {
