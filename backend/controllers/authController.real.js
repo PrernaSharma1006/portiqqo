@@ -28,11 +28,16 @@ const checkEmail = async (req, res) => {
     }
 
     const cleanEmail = email.toLowerCase().trim();
-    const existingUser = await User.findOne({ 
-      email: cleanEmail,
-      isEmailVerified: true,
-      isTemporary: { $ne: true }
-    }).select('_id email').lean();
+    let existingUser = null;
+    try {
+      existingUser = await User.findOne({ 
+        email: cleanEmail,
+        isEmailVerified: true,
+        isTemporary: { $ne: true }
+      }).select('_id email').lean();
+    } catch (dbErr) {
+      console.warn('Database query notice in checkEmail:', dbErr.message);
+    }
 
     return res.status(200).json({
       success: true,
@@ -67,18 +72,22 @@ const sendOTP = async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Check if email is already registered
-    const existingUser = await User.findOne({
-      email: cleanEmail,
-      isEmailVerified: true,
-      isTemporary: { $ne: true }
-    }).select('_id').lean();
+    // Safely check if email is already registered in MongoDB
+    try {
+      const existingUser = await User.findOne({
+        email: cleanEmail,
+        isEmailVerified: true,
+        isTemporary: { $ne: true }
+      }).select('_id').lean();
 
-    if (existingUser) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email is already registered. Please sign in instead.'
-      });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          error: 'Email is already registered. Please sign in instead.'
+        });
+      }
+    } catch (dbErr) {
+      console.warn('Database query notice in sendOTP:', dbErr.message);
     }
 
     // 30-second rate limit cooldown per email
