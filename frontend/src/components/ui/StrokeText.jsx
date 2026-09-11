@@ -26,6 +26,7 @@ const StrokeText = ({
   fontWeight = 800,
   letterSpacing = -4,
   reverse = false,
+  alignCenter = false,
   className = '',
   style = {}
 }) => {
@@ -39,7 +40,7 @@ const StrokeText = ({
   const characters = useMemo(() => Array.from(String(text ?? '')), [text]);
 
   const defaultBox = useMemo(() => {
-    const estimatedWidth = Math.max(characters.length * fontSize * 0.65, 300);
+    const estimatedWidth = Math.max(characters.length * fontSize * 0.75, 340);
     return {
       x: 0,
       y: -fontSize * 0.95,
@@ -78,11 +79,11 @@ const StrokeText = ({
       }
       if (!bbox || !bbox.width) return;
 
-      const pad = Math.max(Number(strokeWidth) * 2, 4);
+      const pad = Math.max(Number(strokeWidth) * 2, 8);
       const next = {
         x: Math.max(0, bbox.x - pad),
         y: bbox.y - pad,
-        width: bbox.width + pad * 2,
+        width: bbox.width + pad * 4 + 16,
         height: bbox.height + pad * 2
       };
 
@@ -242,7 +243,7 @@ const StrokeText = ({
       role="img"
       aria-label={String(text ?? '')}
     >
-      <svg className="stroke-text__svg" viewBox={viewBox} preserveAspectRatio="xMinYMid meet" aria-hidden="true">
+      <svg className="stroke-text__svg" viewBox={viewBox} preserveAspectRatio={alignCenter ? "xMidYMid meet" : "xMinYMid meet"} aria-hidden="true">
         {fillMode === 'wipe' && activeBox && (
           <defs>
             <clipPath id={wipeId} clipPathUnits="userSpaceOnUse">

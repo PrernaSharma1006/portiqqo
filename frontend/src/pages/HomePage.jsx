@@ -34,6 +34,17 @@ function HomePage() {
   const { user, isAuthenticated } = useAuth()
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(typeof window !== 'undefined' && (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches))
+    }
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
   const [testimonials, setTestimonials] = useState([
     {
       name: "Sarah Johnson",
@@ -449,7 +460,7 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-x-hidden max-w-full w-full min-h-[calc(100vh-64px)] flex items-center bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 py-10 sm:py-16 lg:py-24">
+      <section className="relative overflow-x-hidden max-w-full w-full min-h-[calc(100vh-64px)] flex flex-col justify-center bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 py-8 sm:py-16 lg:py-24">
         <div className="relative container-width section-padding max-w-full overflow-x-hidden w-full">
           <motion.div 
             className="max-w-7xl mx-auto w-full"
@@ -459,36 +470,37 @@ function HomePage() {
           >
             {/* Main Hero Content */}
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
-              {/* Left Content */}
-              <div className="space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1.5 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm">
+              {/* Left Content (Centered on mobile, left-aligned on desktop) */}
+              <div className="space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden text-center lg:text-left flex flex-col items-center lg:items-start">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1.5 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm mx-auto lg:mx-0">
                   <Zap className="w-4 h-4 text-pink-500 flex-shrink-0" />
                   <span className="truncate">No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
                 <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
-                  <h1 className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
+                  <h1 className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-center lg:items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
                     <span>Build Your</span>
                     <StrokeText 
                       text="Dream Portfolio"
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={88}
+                      fontSize={isMobile ? 48 : 88}
+                      alignCenter={isMobile}
                       fontWeight={900}
                       letterSpacing={-1}
                       trigger="loop"
                       repeatDelay={2.5}
                       fillMode="wipe"
                       drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full"
+                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full my-0.5"
                     />
                     <span>Today</span>
                   </h1>
                 </motion.div>
                 
                 <motion.p 
-                  className="text-base sm:text-xl text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl font-normal"
+                  className="text-base sm:text-xl text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal"
                   variants={fadeInUp}
                 >
                   Stunning templates, powerful customization, and your own domain. 
@@ -496,12 +508,12 @@ function HomePage() {
                 </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 pt-2"
+                  className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto pt-1 justify-center lg:justify-start"
                   variants={fadeInUp}
                 >
                   <Link 
                     to="/auth" 
-                    className="group px-7 sm:px-8 py-4 sm:py-4 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base sm:text-lg shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center"
+                    className="w-full sm:w-auto px-8 py-4 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base sm:text-lg shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center group"
                   >
                     Start Building Free
                     <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -509,7 +521,7 @@ function HomePage() {
                   
                   <button 
                     onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="px-7 sm:px-8 py-4 sm:py-4 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
+                    className="w-full sm:w-auto px-8 py-4 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm flex items-center justify-center"
                   >
                     Explore Templates
                   </button>
@@ -518,7 +530,7 @@ function HomePage() {
                 {/* Hero Stat / Trust Highlights */}
                 <motion.div 
                   variants={fadeInUp}
-                  className="pt-4 border-t border-[#e6ccb2]/60 dark:border-stone-800/60 flex items-center gap-6 text-stone-600 dark:text-stone-400 text-xs sm:text-sm font-semibold"
+                  className="pt-4 border-t border-[#e6ccb2]/60 dark:border-stone-800/60 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-stone-600 dark:text-stone-400 text-xs sm:text-sm font-semibold w-full"
                 >
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
@@ -528,17 +540,60 @@ function HomePage() {
                     <span className="text-pink-500 font-bold">⚡</span>
                     <span>Sub-0.4s Fast Load</span>
                   </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-amber-500 font-bold">Presets</span>
+                    <span>6+ Profession Presets</span>
+                  </div>
+                </motion.div>
+
+                {/* Mobile Visual Card (Shown only on Mobile/Tablet < lg) */}
+                <motion.div 
+                  variants={fadeInUp}
+                  className="lg:hidden w-full pt-4"
+                >
+                  <div className="relative w-full bg-[#fdfbf7] dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-800 rounded-3xl p-5 shadow-lg space-y-4 text-left">
+                    <div className="flex items-center justify-between border-b border-[#e6ccb2]/60 dark:border-stone-800 pb-3">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-950/60 text-pink-500 flex items-center justify-center font-bold text-xs">
+                          PQ
+                        </div>
+                        <div>
+                          <div className="text-xs font-bold text-stone-900 dark:text-stone-100">Live Presets Available</div>
+                          <div className="text-[10px] text-stone-500 dark:text-stone-400">Tailored for your profession</div>
+                        </div>
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/40 px-2 py-0.5 rounded-full">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                        Ready
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="p-2.5 bg-[#f5ebe0]/60 dark:bg-stone-800/60 rounded-xl border border-[#e6ccb2]/60 dark:border-stone-700/50">
+                        <div className="text-base mb-1">💻</div>
+                        <div className="text-[11px] font-bold text-stone-900 dark:text-stone-200">Developer</div>
+                      </div>
+                      <div className="p-2.5 bg-pink-50 dark:bg-pink-950/30 rounded-xl border border-pink-200 dark:border-pink-800/40">
+                        <div className="text-base mb-1">🎨</div>
+                        <div className="text-[11px] font-bold text-pink-700 dark:text-pink-300">Designer</div>
+                      </div>
+                      <div className="p-2.5 bg-[#f5ebe0]/60 dark:bg-stone-800/60 rounded-xl border border-[#e6ccb2]/60 dark:border-stone-700/50">
+                        <div className="text-base mb-1">📸</div>
+                        <div className="text-[11px] font-bold text-stone-900 dark:text-stone-200">Marketer</div>
+                      </div>
+                    </div>
+                  </div>
                 </motion.div>
               </div>
 
-              {/* Right Content - Visual Element */}
+              {/* Right Content - Visual Element (Desktop) */}
               <motion.div 
-                className="relative hidden md:block"
+                className="relative hidden lg:block"
                 variants={fadeInUp}
               >
                 <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
                   {/* Rotating Circle - Editorial Beige Version */}
-                  <div className="hidden md:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
+                  <div className="hidden lg:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
                     <svg className="w-full h-full" viewBox="0 0 450 450">
                       <defs>
                         <path
@@ -559,7 +614,7 @@ function HomePage() {
                     <div className="relative">
                       {/* Decorative Cards */}
                       <motion.div 
-                        className="hidden md:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-36 h-26 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-xl p-4 rotate-[-10deg]"
+                        className="hidden lg:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-36 h-26 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-xl p-4 rotate-[-10deg]"
                         animate={{ y: [0, -8, 0], rotate: [-10, -6, -10] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
@@ -569,7 +624,7 @@ function HomePage() {
                       </motion.div>
 
                       <motion.div 
-                        className="hidden md:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-36 h-26 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-2xl shadow-xl p-4 rotate-[8deg]"
+                        className="hidden lg:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-36 h-26 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-2xl shadow-xl p-4 rotate-[8deg]"
                         animate={{ y: [0, 8, 0], rotate: [8, 11, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
@@ -578,8 +633,8 @@ function HomePage() {
                         <div className="w-2/3 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
                       </motion.div>
 
-                      {/* Center Icon - Hidden on mobile, shown on md and up */}
-                      <div className="hidden md:flex w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
+                      {/* Center Icon */}
+                      <div className="flex w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
                         <Globe className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                       </div>
                     </div>
