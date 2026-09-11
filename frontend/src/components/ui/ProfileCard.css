@@ -55,36 +55,6 @@
   border-radius: calc(var(--card-radius) + 8px);
 }
 
-@media (max-width: 768px), (pointer: coarse) {
-  .pc-card-wrapper {
-    perspective: none !important;
-    transform: none !important;
-    touch-action: pan-y !important;
-  }
-
-  .pc-card {
-    animation: none !important;
-    transform: none !important;
-    transition: none !important;
-    box-shadow: 0 4px 20px -4px rgba(244, 114, 182, 0.15) !important;
-  }
-
-  .pc-card:hover,
-  .pc-card.active {
-    transform: none !important;
-  }
-
-  .pc-shine,
-  .pc-glare,
-  .pc-behind {
-    display: none !important;
-  }
-
-  .pc-content-body {
-    transform: none !important;
-  }
-}
-
 .pc-card-wrapper:hover,
 .pc-card-wrapper.active {
   --card-opacity: 1;

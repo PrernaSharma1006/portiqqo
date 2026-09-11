@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useCallback, useMemo, useState } from 'react';
+import React, { useEffect, useRef, useCallback, useMemo } from 'react';
 import './ProfileCard.css';
 
 const DEFAULT_INNER_GRADIENT = 'linear-gradient(145deg, rgba(244, 114, 182, 0.12) 0%, rgba(245, 235, 224, 0.5) 100%)';
@@ -42,17 +42,6 @@ const ProfileCardComponent = ({
 
   const enterTimerRef = useRef(null);
   const leaveRafRef = useRef(null);
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches));
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const tiltEngine = useMemo(() => {
     if (!enableTilt) return null;
@@ -244,11 +233,6 @@ const ProfileCardComponent = ({
   useEffect(() => {
     if (!enableTilt || !tiltEngine) return;
 
-    // Skip tilt engine and pointer listeners on mobile/touch screens to ensure unblocked swiping
-    if (typeof window !== 'undefined' && (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches)) {
-      return;
-    }
-
     const shell = shellRef.current;
     if (!shell) return;
 
@@ -320,17 +304,6 @@ const ProfileCardComponent = ({
   const handleContactClick = useCallback(() => {
     onContactClick?.();
   }, [onContactClick]);
-
-  if (isMobile) {
-    return (
-      <div 
-        className={`w-full h-full bg-[#fdfbf7] dark:bg-[#1a1816] rounded-3xl p-6 sm:p-8 border border-pink-400/30 dark:border-pink-500/30 shadow-md flex flex-col justify-between ${className}`.trim()}
-        style={{ touchAction: 'pan-y' }}
-      >
-        {children}
-      </div>
-    );
-  }
 
   return (
     <div ref={wrapRef} className={`pc-card-wrapper ${className}`.trim()} style={cardStyle}>

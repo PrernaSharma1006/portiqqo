@@ -449,39 +449,39 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-x-hidden max-w-full w-full bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
-        <div className="relative container-width section-padding max-w-full overflow-x-hidden">
+      <section className="relative overflow-hidden bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
+        <div className="relative container-width section-padding">
           <motion.div 
-            className="max-w-7xl mx-auto w-full"
+            className="max-w-7xl mx-auto"
             initial="initial"
             animate="animate"
             variants={staggerChildren}
           >
             {/* Main Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center w-full">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
               {/* Left Content */}
-              <div className="space-y-4 sm:space-y-5 w-full max-w-full overflow-x-hidden">
+              <div className="space-y-4 sm:space-y-5">
                 <motion.div variants={fadeInUp} className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-[11px] sm:text-xs font-semibold tracking-wide uppercase shadow-sm">
                   <Zap className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
                   <span className="truncate">No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
-                <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
-                  <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
+                <motion.div variants={fadeInUp}>
+                  <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2">
                     <span>Build Your</span>
                     <StrokeText 
                       text="Dream Portfolio"
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={64}
+                      fontSize={100}
                       fontWeight={900}
                       letterSpacing={-1}
                       trigger="loop"
                       repeatDelay={2.5}
                       fillMode="wipe"
                       drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full"
+                      className="text-[#f472b6] dark:text-[#f472b6]"
                     />
                     <span>Today</span>
                   </h1>

@@ -41,7 +41,7 @@ const StrokeText = ({
   const defaultBox = useMemo(() => {
     const estimatedWidth = Math.max(characters.length * fontSize * 0.65, 300);
     return {
-      x: 0,
+      x: -15,
       y: -fontSize * 0.95,
       width: estimatedWidth,
       height: fontSize * 1.35
@@ -80,7 +80,7 @@ const StrokeText = ({
 
       const pad = Math.max(Number(strokeWidth) * 2, 4);
       const next = {
-        x: Math.max(0, bbox.x - pad),
+        x: bbox.x - pad,
         y: bbox.y - pad,
         width: bbox.width + pad * 2,
         height: bbox.height + pad * 2

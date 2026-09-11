@@ -4,11 +4,11 @@ import Threads from '../ui/Threads'
 
 function Layout({ children }) {
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden w-full max-w-full">
+    <div className="min-h-screen bg-white">
       <Header />
       
       {/* Main Content */}
-      <main className="flex-1 overflow-x-hidden w-full max-w-full">
+      <main className="flex-1">
         {children}
       </main>
 

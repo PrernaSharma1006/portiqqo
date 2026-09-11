@@ -1,4 +1,4 @@
-import { useRef, useState, useEffect } from 'react';
+import { useRef } from 'react';
 import gsap from 'gsap';
 import { CheckCircle2 } from 'lucide-react';
 
@@ -7,17 +7,6 @@ export default function Cube3DCard({ feature }) {
   const cubeRef = useRef(null);
   const rotationRef = useRef({ flip: 0, tiltX: 0, tiltY: 0 });
   const isFlippedRef = useRef(false);
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches));
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
 
   const cardDepth = 220; // 3D depth of the cube in pixels
   const PARALLAX_STRENGTH = 35;
@@ -79,9 +68,6 @@ export default function Cube3DCard({ feature }) {
   };
 
   const handleTouchToggle = () => {
-    if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-      return; // Static on mobile view for easy swiping
-    }
     const targetFlip = rotationRef.current.flip === 0 ? 180 : 0;
     gsap.to(rotationRef.current, {
       flip: targetFlip,
@@ -96,36 +82,6 @@ export default function Cube3DCard({ feature }) {
       },
     });
   };
-
-  if (isMobile) {
-    return (
-      <div 
-        className="w-full h-[340px] bg-[#fdfbf7] dark:bg-stone-900/95 rounded-3xl p-7 flex flex-col justify-between border border-[#e6ccb2] dark:border-stone-800 shadow-md overflow-hidden"
-        style={{ touchAction: 'pan-y' }}
-      >
-        <div className="relative z-10">
-          <div className="flex items-center justify-between mb-6">
-            <div className={`w-14 h-14 rounded-2xl ${feature.iconBg} border flex items-center justify-center shadow-sm`}>
-              {feature.icon}
-            </div>
-
-            {feature.badge && (
-              <span className="text-[11px] font-extrabold px-3.5 py-1 rounded-full uppercase tracking-wider bg-[#f5ebe0] dark:bg-stone-800 text-stone-900 dark:text-pink-300 border border-[#e6ccb2] dark:border-stone-700 shadow-sm">
-                {feature.badge}
-              </span>
-            )}
-          </div>
-
-          <h3 className="text-xl sm:text-2xl font-bold text-stone-900 dark:text-stone-100 mb-3 tracking-tight">
-            {feature.title}
-          </h3>
-          <p className="text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-            {feature.description}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div
@@ -215,10 +171,10 @@ export default function Cube3DCard({ feature }) {
           </div>
         </div>
 
-        {/* 3D SIDE FACES FOR SOLID CUBE EFFECT - hidden on small mobile to prevent layout overflow */}
+        {/* 3D SIDE FACES FOR SOLID CUBE EFFECT */}
         {/* Right Face */}
         <div
-          className={`face-3d face-3d-right hidden sm:block absolute top-0 rounded-2xl ${feature.sideColor || 'bg-[#f472b6] dark:bg-pink-600'} border border-pink-400/60 backdrop-blur-md`}
+          className={`face-3d face-3d-right absolute top-0 rounded-2xl ${feature.sideColor || 'bg-[#f472b6] dark:bg-pink-600'} border border-pink-400/60 backdrop-blur-md`}
           style={{
             width: `${cardDepth}px`,
             height: '100%',
@@ -230,7 +186,7 @@ export default function Cube3DCard({ feature }) {
 
         {/* Left Face */}
         <div
-          className={`face-3d face-3d-left hidden sm:block absolute top-0 rounded-2xl ${feature.sideColor || 'bg-[#f472b6] dark:bg-pink-600'} border border-pink-400/60 backdrop-blur-md`}
+          className={`face-3d face-3d-left absolute top-0 rounded-2xl ${feature.sideColor || 'bg-[#f472b6] dark:bg-pink-600'} border border-pink-400/60 backdrop-blur-md`}
           style={{
             width: `${cardDepth}px`,
             height: '100%',
@@ -242,7 +198,7 @@ export default function Cube3DCard({ feature }) {
 
         {/* Top Face */}
         <div
-          className={`face-3d face-3d-top hidden sm:block absolute left-0 rounded-2xl ${feature.topColor || 'bg-[#f472b6]/90 dark:bg-pink-500/90'} border border-pink-400/60 backdrop-blur-md`}
+          className={`face-3d face-3d-top absolute left-0 rounded-2xl ${feature.topColor || 'bg-[#f472b6]/90 dark:bg-pink-500/90'} border border-pink-400/60 backdrop-blur-md`}
           style={{
             width: '100%',
             height: `${cardDepth}px`,
@@ -254,7 +210,7 @@ export default function Cube3DCard({ feature }) {
 
         {/* Bottom Face */}
         <div
-          className={`face-3d face-3d-bottom hidden sm:block absolute left-0 rounded-2xl ${feature.topColor || 'bg-[#f472b6]/90 dark:bg-pink-500/90'} border border-pink-400/60 backdrop-blur-md`}
+          className={`face-3d face-3d-bottom absolute left-0 rounded-2xl ${feature.topColor || 'bg-[#f472b6]/90 dark:bg-pink-500/90'} border border-pink-400/60 backdrop-blur-md`}
           style={{
             width: '100%',
             height: `${cardDepth}px`,
