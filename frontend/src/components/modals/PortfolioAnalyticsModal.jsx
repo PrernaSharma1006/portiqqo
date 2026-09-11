@@ -85,7 +85,7 @@ export default function PortfolioAnalyticsModal({ isOpen, onClose, portfolio }) 
                 {portfolio?.title || 'Portfolio'} Insights
               </h2>
               <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                Subdomain: <span className="font-mono text-purple-400">{portfolio?.subdomain}.portiqqo.me</span>
+                Public URL: <span className="font-mono text-purple-400">{portfolio?.publicUrl || `${window.location.origin}/${portfolio?.subdomain}`}</span>
                 {portfolio?.customDomain && (
                   <span className="ml-2 font-mono text-cyan-400">({portfolio.customDomain})</span>
                 )}

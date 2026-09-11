@@ -462,8 +462,9 @@ portfolioSchema.virtual('fullUrl').get(function() {
   if (this.customDomain && this.customDomainVerified) {
     return `https://${this.customDomain}`;
   }
-  const baseUrl = process.env.SUBDOMAIN_BASE || 'portiqqo.me';
-  return `https://${this.subdomain}.${baseUrl}`;
+  const baseUrl = process.env.APP_URL || process.env.FRONTEND_URL || 'https://portiqqo.vercel.app';
+  const cleanBase = baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`;
+  return `${cleanBase.replace(/\/$/, '')}/${this.subdomain}`;
 });
 
 // Virtual for storage used calculation

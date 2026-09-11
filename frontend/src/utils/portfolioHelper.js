@@ -118,8 +118,8 @@ export const publishPortfolioToBackend = async (profession, onSuccess) => {
     // Call API to publish
     const response = await portfolioAPI.publish(portfolioId, profession);
     
-    const publicUrl = response.data.portfolio.publicUrl;
     const subdomain = response.data.portfolio.subdomain;
+    const publicUrl = response.data.portfolio.publicUrl || `${window.location.origin}/${subdomain}`;
     
     toast.dismiss(toastId); // Dismiss loading toast
     

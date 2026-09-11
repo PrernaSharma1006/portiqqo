@@ -178,23 +178,26 @@ function DashboardPage() {
     navigate(route, { state: { portfolioId: portfolio._id, existingPortfolio: portfolio } })
   }
 
-  const handleViewPortfolio = (portfolio) => {
+  const getPortfolioUrl = (portfolio) => {
+    if (!portfolio) return null
+    if (portfolio.publicUrl) return portfolio.publicUrl
+    if (portfolio.customDomain && portfolio.customDomainVerified) return `https://${portfolio.customDomain}`
     const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
-    const url = `https://${sub}.portiqqo.me`
-    window.open(url, '_blank')
+    return sub ? `${window.location.origin}/${sub}` : null
+  }
+
+  const handleViewPortfolio = (portfolio) => {
+    const url = getPortfolioUrl(portfolio)
+    if (url) window.open(url, '_blank')
   }
 
   const handleCopyLink = (portfolio) => {
-    const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
-    const url = `https://${sub}.portiqqo.me`
-    navigator.clipboard.writeText(url)
-    setCopiedId(portfolio._id)
-    setTimeout(() => setCopiedId(null), 2000)
-  }
-
-  const getPortfolioUrl = (portfolio) => {
-    const sub = portfolio.subdomain?.replace(/\.portiqqo\.me$/, '')
-    return sub ? `${sub}.portiqqo.me` : null
+    const url = getPortfolioUrl(portfolio)
+    if (url) {
+      navigator.clipboard.writeText(url)
+      setCopiedId(portfolio._id)
+      setTimeout(() => setCopiedId(null), 2000)
+    }
   }
 
   const getTrialInfo = (portfolio) => {
@@ -469,7 +472,7 @@ function DashboardPage() {
                             <>
                               <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
                               <a 
-                                href={`https://${getPortfolioUrl(portfolio)}`}
+                                href={getPortfolioUrl(portfolio)}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate flex-1 font-mono"
@@ -698,7 +701,7 @@ function DashboardPage() {
               </p>
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 This will permanently delete your portfolio at{' '}
-                <span className="font-medium">{portfolioToDelete.subdomain}.portiqqo.me</span>
+                <span className="font-medium">{getPortfolioUrl(portfolioToDelete) || portfolioToDelete.subdomain}</span>
               </p>
             </div>
 
@@ -751,7 +754,7 @@ function DashboardPage() {
               <div>
                 <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">Custom Domain</h3>
                 <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                  {domainPortfolio.title} ({domainPortfolio.subdomain}.portiqqo.me)
+                  {domainPortfolio.title} ({getPortfolioUrl(domainPortfolio) || domainPortfolio.subdomain})
                 </p>
               </div>
             </div>

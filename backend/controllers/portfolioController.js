@@ -215,8 +215,11 @@ exports.publishPortfolio = async (req, res) => {
     portfolio.isPublished = true;
     await portfolio.save();
 
-    // Generate public URL with subdomain
-    const publicUrl = `https://${portfolio.subdomain}.portiqqo.me`;
+    // Generate public URL with path routing or custom domain
+    const baseUrl = process.env.APP_URL || process.env.FRONTEND_URL || 'https://portiqqo.vercel.app';
+    const publicUrl = portfolio.customDomain && portfolio.customDomainVerified
+      ? `https://${portfolio.customDomain}`
+      : `${baseUrl.replace(/\/$/, '')}/${portfolio.subdomain}`;
 
     res.status(200).json({
       success: true,
