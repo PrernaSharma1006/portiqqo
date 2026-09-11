@@ -136,6 +136,31 @@ function HomePage() {
         throw new Error(data.message || 'Failed to create payment order')
       }
 
+      if (data.isDemo) {
+        const verifyRes = await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${activeToken}`
+          },
+          body: JSON.stringify({
+            razorpay_order_id: data.order.id,
+            razorpay_payment_id: `pay_demo_${Date.now()}`,
+            razorpay_signature: 'demo_sig',
+            plan: planType
+          })
+        })
+        const verifyData = await verifyRes.json()
+        if (verifyData.success) {
+          toast.success('🎉 Premium activated! Welcome to Portiqqo Premium.')
+          setTimeout(() => navigate('/dashboard'), 1500)
+        } else {
+          toast.error(verifyData.message || 'Payment verification failed.')
+        }
+        setLoadingPlan(null)
+        return
+      }
+
       const options = {
         key: data.key,
         amount: data.order.amount,

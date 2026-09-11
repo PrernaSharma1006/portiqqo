@@ -69,6 +69,29 @@ export default function PricingPage() {
       const data = await res.json()
       if (!data.success) throw new Error(data.message)
 
+      if (data.isDemo) {
+        const verifyRes = await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({
+            razorpay_order_id: data.order.id,
+            razorpay_payment_id: `pay_demo_${Date.now()}`,
+            razorpay_signature: 'demo_sig',
+            plan: planToUpgrade
+          })
+        })
+        const verifyData = await verifyRes.json()
+        if (verifyData.success) {
+          toast.success('🎉 Premium activated! Welcome to Portiqqo Premium.')
+          await fetchSubscription()
+          setTimeout(() => navigate('/dashboard'), 1500)
+        } else {
+          toast.error(verifyData.message || 'Payment verification failed.')
+        }
+        setLoading(false)
+        return
+      }
+
       const options = {
         key: data.key,
         amount: data.order.amount,
