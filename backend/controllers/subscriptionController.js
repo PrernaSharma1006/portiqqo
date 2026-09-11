@@ -23,7 +23,7 @@ const PLANS = {
     durationDays: 30
   },
   yearly: {
-    amount: 149900,     // ₹1499/year
+    amount: 70000,      // ₹700/year
     currency: 'INR',
     interval: 'year',
     description: 'Portiqqo Premium - Yearly',

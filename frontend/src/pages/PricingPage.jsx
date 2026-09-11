@@ -6,22 +6,28 @@ import toast from 'react-hot-toast'
 import { getApiUrl } from '../services/api'
 
 const MONTHLY_AMOUNT = 81
-const YEARLY_AMOUNT = 1499
+const YEARLY_AMOUNT = 700
 
 export default function PricingPage() {
   const { user, isAuthenticated } = useAuth()
   const navigate = useNavigate()
-  const [billingCycle, setBillingCycle] = useState('monthly')
+  const [billingCycle, setBillingCycle] = useState(() => {
+    const searchParams = new URLSearchParams(window.location.search)
+    const planParam = searchParams.get('plan')
+    return planParam === 'yearly' ? 'yearly' : 'monthly'
+  })
   const [loading, setLoading] = useState(false)
   const [subscription, setSubscription] = useState(null)
 
   useEffect(() => {
-    if (isAuthenticated) fetchSubscription()
+    const token = localStorage.getItem('authToken')
+    if (isAuthenticated || token) fetchSubscription()
   }, [isAuthenticated])
 
   const fetchSubscription = async () => {
     try {
       const token = localStorage.getItem('authToken')
+      if (!token) return
       const res = await fetch(getApiUrl('/api/subscriptions/me'), {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -41,9 +47,10 @@ export default function PricingPage() {
     })
   }
 
-  const handleUpgrade = async () => {
-    if (!isAuthenticated) {
-      localStorage.setItem('redirectAfterAuth', '/pricing')
+  const handleUpgrade = async (planToUpgrade = billingCycle) => {
+    const token = localStorage.getItem('authToken')
+    if (!isAuthenticated && !token) {
+      localStorage.setItem('redirectAfterAuth', `/pricing?plan=${planToUpgrade}`)
       navigate('/auth')
       return
     }
@@ -57,7 +64,7 @@ export default function PricingPage() {
       const res = await fetch(getApiUrl('/api/subscriptions/create-order'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ plan: billingCycle })
+        body: JSON.stringify({ plan: planToUpgrade })
       })
       const data = await res.json()
       if (!data.success) throw new Error(data.message)
@@ -73,7 +80,7 @@ export default function PricingPage() {
           name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '',
           email: user?.email || ''
         },
-        theme: { color: '#7c3aed' },
+        theme: { color: '#ec4899' },
         handler: async (response) => {
           try {
             const verifyRes = await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
@@ -83,7 +90,7 @@ export default function PricingPage() {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
                 razorpay_signature: response.razorpay_signature,
-                plan: billingCycle
+                plan: planToUpgrade
               })
             })
             const verifyData = await verifyRes.json()

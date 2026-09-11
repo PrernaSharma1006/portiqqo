@@ -4,6 +4,8 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ArrowRight, Palette, Globe, Upload, Zap, Users, Star, Check, ExternalLink, Eye, Quote, CheckCircle2, Heart, MessageSquare, Bot, BarChart3, Sparkles } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useAuth } from '../contexts/AuthContext'
+import toast from 'react-hot-toast'
+import { getApiUrl } from '../services/api'
 import TemplateSelectionModal, { professionTemplates } from '../components/modals/TemplateSelectionModal'
 import FeedbackModal from '../components/modals/FeedbackModal'
 import { markFeedbackGiven } from '../utils/feedbackHelper'
@@ -89,6 +91,106 @@ function HomePage() {
     }
   ])
   const navigate = useNavigate()
+  const [loadingPlan, setLoadingPlan] = useState(null)
+
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      if (window.Razorpay) { resolve(true); return }
+      const script = document.createElement('script')
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+      script.onload = () => resolve(true)
+      script.onerror = () => resolve(false)
+      document.body.appendChild(script)
+    })
+  }
+
+  const handlePlanPayment = async (planType) => {
+    const token = localStorage.getItem('authToken')
+    if (!isAuthenticated && !token) {
+      localStorage.setItem('redirectAfterAuth', `/pricing?plan=${planType}`)
+      navigate('/auth')
+      return
+    }
+
+    setLoadingPlan(planType)
+    try {
+      const loaded = await loadRazorpayScript()
+      if (!loaded) {
+        toast.error('Failed to load Razorpay payment gateway')
+        setLoadingPlan(null)
+        return
+      }
+
+      const activeToken = token || localStorage.getItem('authToken')
+      const res = await fetch(getApiUrl('/api/subscriptions/create-order'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${activeToken}`
+        },
+        body: JSON.stringify({ plan: planType })
+      })
+
+      const data = await res.json()
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to create payment order')
+      }
+
+      const options = {
+        key: data.key,
+        amount: data.order.amount,
+        currency: data.order.currency,
+        name: 'Portiqqo',
+        description: data.order.description,
+        order_id: data.order.id,
+        prefill: {
+          name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '',
+          email: user?.email || ''
+        },
+        theme: { color: '#ec4899' },
+        handler: async (response) => {
+          try {
+            const verifyRes = await fetch(getApiUrl('/api/subscriptions/verify-payment'), {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${activeToken}`
+              },
+              body: JSON.stringify({
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                plan: planType
+              })
+            })
+            const verifyData = await verifyRes.json()
+            if (verifyData.success) {
+              toast.success('🎉 Premium activated! Welcome to Portiqqo Premium.')
+              setTimeout(() => navigate('/dashboard'), 1500)
+            } else {
+              toast.error(verifyData.message || 'Payment verification failed.')
+            }
+          } catch (err) {
+            toast.error('Payment verification failed.')
+          }
+          setLoadingPlan(null)
+        },
+        modal: {
+          ondismiss: () => setLoadingPlan(null)
+        }
+      }
+
+      const rzp = new window.Razorpay(options)
+      rzp.on('payment.failed', (response) => {
+        toast.error(`Payment failed: ${response.error?.description || 'Transaction cancelled'}`)
+        setLoadingPlan(null)
+      })
+      rzp.open()
+    } catch (error) {
+      toast.error(error.message || 'Something went wrong with payment')
+      setLoadingPlan(null)
+    }
+  }
 
   useEffect(() => {
     // Load testimonials from localStorage
@@ -923,13 +1025,14 @@ function HomePage() {
 
                 <div>
                   <div className="mt-5 text-center">
-                    <Link 
-                      to="/auth"
-                      className="w-full py-3.5 text-sm font-extrabold text-stone-100 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group"
+                    <button 
+                      onClick={() => handlePlanPayment('monthly')}
+                      disabled={loadingPlan === 'monthly'}
+                      className="w-full py-3.5 text-sm font-extrabold text-stone-100 bg-stone-900 hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-white rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-60 cursor-pointer"
                     >
-                      <span>Start Monthly Trial</span>
+                      <span>{loadingPlan === 'monthly' ? 'Opening Payment...' : 'Start Monthly Trial'}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
 
                   <div className="mt-3 text-center">
@@ -990,13 +1093,14 @@ function HomePage() {
 
                 <div>
                   <div className="mt-5 text-center">
-                    <Link 
-                      to="/auth"
-                      className="w-full py-3.5 text-sm font-extrabold text-stone-950 bg-[#f472b6] hover:bg-[#ec4899] rounded-xl shadow-lg shadow-pink-500/25 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 group"
+                    <button 
+                      onClick={() => handlePlanPayment('yearly')}
+                      disabled={loadingPlan === 'yearly'}
+                      className="w-full py-3.5 text-sm font-extrabold text-stone-950 bg-[#f472b6] hover:bg-[#ec4899] rounded-xl shadow-lg shadow-pink-500/25 hover:scale-[1.02] transition-all duration-300 flex items-center justify-center gap-2 group disabled:opacity-60 cursor-pointer"
                     >
-                      <span>Get Annual Access</span>
+                      <span>{loadingPlan === 'yearly' ? 'Opening Payment...' : 'Get Annual Access'}</span>
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    </button>
                   </div>
 
                   <div className="mt-3 text-center">
