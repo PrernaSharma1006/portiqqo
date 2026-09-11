@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const authService = require('../services/authService');
+const mongoose = require('mongoose');
 
 // In-memory OTP store (email -> { otp, expiresAt, attempts, lastRequest })
 const otpStore = new Map();
@@ -30,11 +31,19 @@ const checkEmail = async (req, res) => {
     const cleanEmail = email.toLowerCase().trim();
     let existingUser = null;
     try {
-      existingUser = await User.findOne({ 
-        email: cleanEmail,
-        isEmailVerified: true,
-        isTemporary: { $ne: true }
-      }).select('_id email').lean();
+      if (mongoose.connection.readyState === 1) {
+        const queryPromise = User.findOne({ 
+          email: cleanEmail,
+          isEmailVerified: true,
+          isTemporary: { $ne: true }
+        }).select('_id email').lean();
+
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('DB timeout')), 2000)
+        );
+
+        existingUser = await Promise.race([queryPromise, timeoutPromise]);
+      }
     } catch (dbErr) {
       console.warn('Database query notice in checkEmail:', dbErr.message);
     }
@@ -72,19 +81,26 @@ const sendOTP = async (req, res) => {
 
     const cleanEmail = email.toLowerCase().trim();
 
-    // Safely check if email is already registered in MongoDB
+    // Safely check if email is already registered in MongoDB (with 2s timeout)
     try {
-      const existingUser = await User.findOne({
-        email: cleanEmail,
-        isEmailVerified: true,
-        isTemporary: { $ne: true }
-      }).select('_id').lean();
+      if (mongoose.connection.readyState === 1) {
+        const queryPromise = User.findOne({
+          email: cleanEmail,
+          isEmailVerified: true,
+          isTemporary: { $ne: true }
+        }).select('_id').lean();
 
-      if (existingUser) {
-        return res.status(400).json({
-          success: false,
-          error: 'Email is already registered. Please sign in instead.'
-        });
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('DB query timeout')), 2000)
+        );
+
+        const existingUser = await Promise.race([queryPromise, timeoutPromise]);
+        if (existingUser) {
+          return res.status(400).json({
+            success: false,
+            error: 'Email is already registered. Please sign in instead.'
+          });
+        }
       }
     } catch (dbErr) {
       console.warn('Database query notice in sendOTP:', dbErr.message);
