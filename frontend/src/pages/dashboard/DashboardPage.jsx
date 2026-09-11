@@ -353,82 +353,84 @@ function DashboardPage() {
   return (
     <>
       <Helmet>
-        <title>Choose Your Template - Portiqqo</title>
-        <meta name="description" content="Select the perfect template for your portfolio" />
+        <title>Dashboard - Portiqqo</title>
+        <meta name="description" content="Manage your portfolio website, analytics, and custom domain settings" />
       </Helmet>
 
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 transition-colors duration-300">
+      <div className="min-h-screen bg-[#f9f6f0] dark:bg-[#141210] text-stone-900 dark:text-stone-100 transition-colors duration-300">
         <div className="container-width section-padding page-padding">
           {/* Header */}
           <motion.div 
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-16"
+            className="text-center mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-700 rounded-full mb-6">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-300" />
-              <span className="text-sm font-medium text-purple-800 dark:text-purple-200">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#f5ebe0] dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-800 rounded-full mb-6 text-xs sm:text-sm font-semibold text-stone-900 dark:text-pink-300 shadow-sm">
+              <Sparkles className="w-4 h-4 text-pink-500" />
+              <span>
                 {isAuthenticated && user ? `Welcome back, ${user.firstName}!` : 'Welcome!'}
               </span>
               {isPremium && (
-                <span className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-xs font-bold rounded-full ml-1">
-                  <Crown className="w-3 h-3" /> Premium
+                <span className="flex items-center gap-1 px-2.5 py-0.5 bg-[#f472b6] text-stone-950 text-xs font-black rounded-full ml-1">
+                  <Crown className="w-3 h-3 fill-stone-950" /> Premium
                 </span>
               )}
             </div>
             
-            <h1 className="text-3xl sm:text-5xl md:text-6xl font-bold bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-500 dark:from-purple-400 dark:via-blue-400 dark:to-cyan-300 bg-clip-text text-transparent mb-6">
-              Choose Your Perfect Template
+            <h1 className="text-3xl sm:text-5xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-4 tracking-tight">
+              {existingPortfolios.length > 0 ? 'Your Portfolio Dashboard' : 'Choose Your Perfect Template'}
             </h1>
-            <p className="text-lg sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-4">
-              Select a professionally designed template that matches your profession and start building your stunning portfolio in minutes
+            <p className="text-base sm:text-lg text-stone-600 dark:text-stone-300 max-w-2xl mx-auto mb-3 leading-relaxed">
+              {existingPortfolios.length > 0 
+                ? 'Manage your portfolio website, track visitor analytics, and set up your custom domain.'
+                : 'Select a professionally designed template that matches your craft and publish your portfolio in minutes.'}
             </p>
             {isAuthenticated && user && (
-              <p className="text-sm text-slate-500 dark:text-slate-400 break-all mb-6">
-                Signed in as <span className="font-medium text-slate-700 dark:text-slate-200">{user.email}</span>
+              <p className="text-xs text-stone-500 dark:text-stone-400 break-all mb-6">
+                Signed in as <span className="font-medium text-stone-800 dark:text-stone-200">{user.email}</span>
               </p>
             )}
 
             {/* ── Subscription & Plan Status Banner ── */}
-            <div className="max-w-3xl mx-auto bg-white dark:bg-slate-800/90 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-xl relative overflow-hidden text-left transition-all">
-              <div className={`absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r ${isPremium ? 'from-amber-400 via-purple-500 to-indigo-600' : 'from-blue-500 via-purple-500 to-pink-500'}`} />
+            <div className="max-w-3xl mx-auto bg-[#fdfbf7] dark:bg-[#1a1816] border border-[#e6ccb2] dark:border-stone-800 rounded-2xl p-6 shadow-md relative overflow-hidden text-left transition-all">
+              <div className={`absolute top-0 left-0 right-0 h-1.5 ${isPremium ? 'bg-[#f472b6]' : 'bg-gradient-to-r from-pink-400 via-amber-400 to-pink-500'}`} />
 
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-2">
                   <div className="flex items-center gap-2 flex-wrap">
                     {isPremium ? (
-                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-amber-100 text-amber-900 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-300 dark:border-amber-700">
-                        <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-400" />
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-pink-100 text-pink-800 dark:bg-pink-950/80 dark:text-pink-300 border border-pink-300 dark:border-pink-800">
+                        <Crown className="w-3.5 h-3.5 text-pink-500 fill-pink-500" />
                         {subscription?.planName || (subscription?.billingInterval === 'year' ? 'Yearly Premium Plan' : 'Monthly Premium Plan')}
                       </span>
                     ) : (
                       <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold ${
                         (subscription?.trialDaysLeft ?? 7) > 0 
-                          ? 'bg-purple-100 text-purple-900 dark:bg-purple-950/60 dark:text-purple-300 border border-purple-300 dark:border-purple-700' 
+                          ? 'bg-[#f5ebe0] text-stone-900 dark:bg-stone-900 dark:text-pink-300 border border-[#e6ccb2] dark:border-stone-700' 
                           : 'bg-red-100 text-red-900 dark:bg-red-950/60 dark:text-red-300 border border-red-300 dark:border-red-700'
                       }`}>
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-3.5 h-3.5 text-pink-500" />
                         {(subscription?.trialDaysLeft ?? 7) > 0 
                           ? `7-Day Free Trial (${subscription?.trialDaysLeft ?? 7} ${subscription?.trialDaysLeft === 1 ? 'day' : 'days'} remaining)` 
                           : 'Free Trial Expired'}
                       </span>
                     )}
 
-                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                    <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-[#f5ebe0] dark:bg-stone-800 text-stone-700 dark:text-stone-300 border border-[#e6ccb2] dark:border-stone-700">
                       Limit: {existingPortfolios.length} / {subscription?.portfolioLimit || 1} {subscription?.portfolioLimit === 1 ? 'portfolio' : 'portfolios'}
                     </span>
                   </div>
 
-                  <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                  <h3 className="text-xl font-bold text-stone-900 dark:text-stone-100">
                     {isPremium ? 'Portiqqo Premium Membership Active' : 'Portfolio Plan Status'}
                   </h3>
 
-                  <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
+                  <p className="text-xs sm:text-sm text-stone-600 dark:text-stone-300">
                     {isPremium ? (
-                      <>Unlimited portfolio creation, custom domain mapping & zero branding active until <strong className="text-purple-600 dark:text-purple-400">{subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Next Renewal'}</strong>.</>
+                      <>Unlimited portfolio creation, custom domain mapping & zero branding active until <strong className="text-pink-600 dark:text-pink-400">{subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Next Renewal'}</strong>.</>
                     ) : (
                       (subscription?.trialDaysLeft ?? 7) > 0 ? (
-                        <>You are currently on your <strong>7-Day Free Trial</strong>. Upgrade to <strong>Monthly (₹81/mo)</strong> or <strong>Yearly (₹1,499/yr)</strong> to unlock custom domain mapping & unlimited publishing.</>
+                        <>You are currently on your <strong>7-Day Free Trial</strong>. Upgrade to <strong>Monthly (₹81/mo)</strong> or <strong>Yearly (₹700/yr)</strong> to unlock custom domain mapping & unlimited publishing.</>
                       ) : (
                         <>Your free trial has ended. Upgrade via Razorpay to publish portfolios and unlock custom domains!</>
                       )
@@ -439,13 +441,13 @@ function DashboardPage() {
                 <div className="flex-shrink-0">
                   <button
                     onClick={() => navigate('/pricing')}
-                    className={`w-full sm:w-auto px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm shadow-md transition-all duration-300 flex items-center justify-center gap-2 ${
+                    className={`w-full sm:w-auto px-5 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2 ${
                       isPremium
-                        ? 'bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 border border-slate-300 dark:border-slate-600'
-                        : 'bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-purple-500/25'
+                        ? 'bg-[#f5ebe0] dark:bg-stone-800 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 text-stone-900 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-700'
+                        : 'bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 shadow-md shadow-pink-500/20'
                     }`}
                   >
-                    <Crown className="w-4 h-4 text-amber-300" />
+                    <Crown className="w-4 h-4 text-stone-950" />
                     <span>{isPremium ? 'Manage Plan' : 'Upgrade via Razorpay'}</span>
                   </button>
                 </div>
@@ -458,11 +460,11 @@ function DashboardPage() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mb-16"
+              className="mb-12"
             >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-6">
-                <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100">Your Portfolios</h2>
-                <span className="text-sm text-slate-500 dark:text-slate-400">
+                <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-stone-900 dark:text-stone-50">Your Portfolio</h2>
+                <span className="text-sm text-stone-500 dark:text-stone-400 font-semibold">
                   {existingPortfolios.length} {existingPortfolios.length === 1 ? 'portfolio' : 'portfolios'}
                 </span>
               </div>
@@ -472,110 +474,83 @@ function DashboardPage() {
                   <motion.div
                     key={portfolio._id}
                     whileHover={{ y: -4 }}
-                    className="bg-white dark:bg-slate-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-200 dark:border-slate-700"
+                    className="bg-[#fdfbf7] dark:bg-[#1a1816] rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden border border-[#e6ccb2] dark:border-stone-800"
                   >
                     <div className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1">{portfolio.title}</h3>
-                          <p className="text-sm text-slate-500 dark:text-slate-400 capitalize">
+                          <h3 className="text-xl font-bold text-stone-900 dark:text-stone-100 mb-1">{portfolio.title}</h3>
+                          <p className="text-xs font-bold text-pink-600 dark:text-pink-400 uppercase tracking-wider">
                             {portfolio.profession?.replace(/-/g, ' ')}
                           </p>
                         </div>
                         <div className="flex flex-col items-end gap-1">
                           <div className="flex items-center gap-1.5">
                             {portfolio.isPublished && (
-                              <span className="px-2 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded-full">
+                              <span className="px-2.5 py-0.5 bg-emerald-100 text-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300 text-xs font-bold rounded-full border border-emerald-300 dark:border-emerald-800">
                                 Published
                               </span>
                             )}
                             <button
                               onClick={() => handleOpenAnalyticsModal(portfolio)}
-                              className="px-2 py-0.5 bg-purple-50 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 text-xs font-semibold rounded-full flex items-center gap-1 border border-purple-200 dark:border-purple-800/60 hover:bg-purple-100 dark:hover:bg-purple-900/50 transition-colors cursor-pointer"
+                              className="px-2.5 py-0.5 bg-[#f5ebe0] dark:bg-stone-800 text-stone-900 dark:text-pink-300 text-xs font-bold rounded-full flex items-center gap-1 border border-[#e6ccb2] dark:border-stone-700 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 transition-colors cursor-pointer"
                               title="View Visitor Analytics"
                             >
-                              <Eye className="w-3 h-3 text-purple-500" />
+                              <Eye className="w-3 h-3 text-pink-500" />
                               <span>{portfolio.views || 0}</span>
                             </button>
                           </div>
-                          {isPremium ? (
-                            <span className="px-2 py-0.5 bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs font-medium rounded-full flex items-center gap-1">
-                              <Crown className="w-3 h-3" />
-                              Premium
-                            </span>
-                          ) : (() => {
-                            const trial = getTrialInfo(portfolio)
-                            if (!trial) return null
-                            if (trial.expired) return (
-                              <span className="px-2 py-0.5 bg-red-100 text-red-700 text-xs font-medium rounded-full flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                Trial Expired
-                              </span>
-                            )
-                            if (trial.daysLeft <= 3) return (
-                              <span className="px-2 py-0.5 bg-orange-100 text-orange-700 text-xs font-medium rounded-full flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {trial.daysLeft}d left
-                              </span>
-                            )
-                            return (
-                              <span className="px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-medium rounded-full flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                Free: {trial.daysLeft}d left
-                              </span>
-                            )
-                          })()}
                         </div>
                       </div>
                       
                       {/* URLs Section */}
-                      <div className="space-y-1.5 mb-4">
-                        <div className="flex items-center gap-2 min-h-[24px]">
+                      <div className="space-y-2 mb-5">
+                        <div className="flex items-center gap-2 min-h-[28px] bg-[#f5ebe0]/60 dark:bg-stone-900/60 p-2 rounded-xl border border-[#e6ccb2]/60 dark:border-stone-800">
                           {getPortfolioUrl(portfolio) ? (
                             <>
-                              <ExternalLink className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
+                              <ExternalLink className="w-4 h-4 text-stone-400 dark:text-stone-500 flex-shrink-0" />
                               <a 
                                 href={getPortfolioUrl(portfolio)}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-sm text-purple-600 hover:text-purple-700 hover:underline truncate flex-1 font-mono"
+                                className="text-xs font-mono font-bold text-pink-600 dark:text-pink-400 hover:underline truncate flex-1"
                               >
                                 {getPortfolioUrl(portfolio)}
                               </a>
                               <button
                                 onClick={() => handleCopyLink(portfolio)}
-                                className="flex-shrink-0 p-1 rounded hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+                                className="flex-shrink-0 p-1.5 rounded-lg hover:bg-[#e6ccb2] dark:hover:bg-stone-800 transition-colors text-stone-600 dark:text-stone-400"
                                 title="Copy link"
                               >
                                 {copiedId === portfolio._id
-                                  ? <Check className="w-4 h-4 text-green-500" />
-                                  : <Copy className="w-4 h-4 text-slate-400 dark:text-slate-500" />}
+                                  ? <Check className="w-4 h-4 text-emerald-500 stroke-[3]" />
+                                  : <Copy className="w-4 h-4" />}
                               </button>
                             </>
                           ) : (
-                            <span className="text-sm text-slate-400 dark:text-slate-500 italic">Save portfolio to generate your link</span>
+                            <span className="text-xs text-stone-400 dark:text-stone-500 italic">Save portfolio to generate your link</span>
                           )}
                         </div>
 
                         {/* Custom Domain Badge if configured */}
                         {portfolio.customDomain && (
-                          <div className="flex items-center gap-2 text-xs bg-slate-50 dark:bg-slate-700/50 px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700">
-                            <Globe className="w-3.5 h-3.5 text-indigo-500 flex-shrink-0" />
+                          <div className="flex items-center gap-2 text-xs bg-[#f5ebe0]/80 dark:bg-stone-900/80 px-3 py-1.5 rounded-xl border border-[#e6ccb2] dark:border-stone-800">
+                            <Globe className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
                             <a
                               href={`https://${portfolio.customDomain}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="font-medium text-slate-700 dark:text-slate-200 hover:underline truncate flex-1"
+                              className="font-mono text-xs font-bold text-stone-900 dark:text-stone-100 hover:underline truncate flex-1"
                             >
                               {portfolio.customDomain}
                             </a>
                             {portfolio.customDomainVerified ? (
-                              <span className="text-[10px] font-semibold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                              <span className="text-[10px] font-bold bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 px-2 py-0.5 rounded-full flex items-center gap-0.5">
                                 <Check className="w-2.5 h-2.5" /> Verified
                               </span>
                             ) : (
-                              <span className="text-[10px] font-semibold bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                                <Clock className="w-2.5 h-2.5" /> DNS Pending
+                              <span className="text-[10px] font-bold bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300 px-2 py-0.5 rounded-full flex items-center gap-0.5">
+                                <Clock className="w-2.5 h-2.5" /> Pending
                               </span>
                             )}
                           </div>
@@ -585,31 +560,31 @@ function DashboardPage() {
                       <div className="flex gap-2">
                         <button
                           onClick={() => handleEditPortfolio(portfolio)}
-                          className="flex-1 py-2 px-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-lg font-medium transition-all duration-300 flex items-center justify-center gap-1.5 text-sm"
+                          className="flex-1 py-2.5 px-3 bg-stone-900 hover:bg-stone-800 text-stone-100 dark:bg-stone-100 dark:hover:bg-white dark:text-stone-950 rounded-xl font-extrabold transition-all duration-300 flex items-center justify-center gap-1.5 text-xs sm:text-sm shadow-sm"
                         >
                           <Edit className="w-3.5 h-3.5" />
-                          Edit
+                          Edit Portfolio
                         </button>
                         <button
                           onClick={() => handleOpenAnalyticsModal(portfolio)}
-                          className="py-2 px-3 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50 text-purple-700 dark:text-purple-300 rounded-lg font-medium transition-all duration-300 flex items-center gap-1.5 text-sm border border-purple-200 dark:border-purple-800/60"
+                          className="py-2.5 px-3 bg-[#f5ebe0] dark:bg-stone-800 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 text-stone-900 dark:text-stone-200 rounded-xl font-bold transition-all duration-300 flex items-center gap-1.5 text-xs border border-[#e6ccb2] dark:border-stone-700"
                           title="Visitor Analytics & Insights"
                         >
-                          <BarChart3 className="w-3.5 h-3.5 text-purple-500" />
+                          <BarChart3 className="w-3.5 h-3.5 text-pink-500" />
                           <span className="hidden sm:inline">Analytics</span>
                         </button>
                         <button
                           onClick={() => handleOpenDomainModal(portfolio)}
-                          className="py-2 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300 flex items-center gap-1.5 text-sm"
+                          className="py-2.5 px-3 bg-[#f5ebe0] dark:bg-stone-800 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 text-stone-900 dark:text-stone-200 rounded-xl font-bold transition-all duration-300 flex items-center gap-1.5 text-xs border border-[#e6ccb2] dark:border-stone-700"
                           title="Custom Domain Settings"
                         >
-                          <Globe className="w-3.5 h-3.5 text-indigo-500" />
+                          <Globe className="w-3.5 h-3.5 text-pink-500" />
                           <span className="hidden sm:inline">Domain</span>
                         </button>
                         {getPortfolioUrl(portfolio) && (
                           <button
                             onClick={() => handleViewPortfolio(portfolio)}
-                            className="py-2 px-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-medium transition-all duration-300"
+                            className="py-2.5 px-3 bg-[#f5ebe0] dark:bg-stone-800 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 text-stone-900 dark:text-stone-200 rounded-xl font-bold transition-all duration-300 border border-[#e6ccb2] dark:border-stone-700"
                             title="View Portfolio"
                           >
                             <ExternalLink className="w-3.5 h-3.5" />
@@ -617,7 +592,7 @@ function DashboardPage() {
                         )}
                         <button
                           onClick={() => handleDeleteClick(portfolio)}
-                          className="py-2 px-3 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-300 rounded-lg font-medium transition-all duration-300"
+                          className="py-2.5 px-3 bg-red-50 dark:bg-red-950/40 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-600 dark:text-red-400 rounded-xl font-bold transition-all duration-300 border border-red-200 dark:border-red-900/40"
                           title="Delete Portfolio"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -627,34 +602,23 @@ function DashboardPage() {
                   </motion.div>
                 ))}
               </div>
-              
-              {/* Separator */}
-              <div className="mt-16 mb-12">
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
-                  </div>
-                  <div className="relative flex justify-center">
-                    <span className="px-4 bg-gradient-to-br from-slate-50 via-purple-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 text-slate-500 dark:text-slate-400 text-sm font-medium">
-                      Want to switch to a different template?
-                    </span>
-                  </div>
-                </div>
-              </div>
             </motion.div>
           )}
 
-          {/* Templates Grid */}
-          {existingPortfolios.length > 0 && (
-            <div className="mb-8">
-              <h2 className="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-slate-100 mb-6 text-center">
-                Switch Your Template
-              </h2>
+          {/* Templates Grid — Only shown when user has NO existing portfolio */}
+          {existingPortfolios.length === 0 && (
+            <div className="max-w-7xl mx-auto">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl sm:text-3xl font-heading font-extrabold text-stone-900 dark:text-stone-50 mb-2">
+                  Choose a Template to Get Started
+                </h2>
+                <p className="text-stone-600 dark:text-stone-300 text-sm">
+                  Select a template below to start building your portfolio
+                </p>
+              </div>
+              <TemplateMosaicGrid isDashboard={true} onSelectTemplate={(t) => handleTemplateSelect(t.id)} />
             </div>
           )}
-          <div className="max-w-7xl mx-auto">
-            <TemplateMosaicGrid isDashboard={true} onSelectTemplate={(t) => handleTemplateSelect(t.id)} />
-          </div>
         </div>
       </div>
 
@@ -664,11 +628,11 @@ function DashboardPage() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl max-w-md w-full p-8 relative transition-colors duration-300"
+            className="bg-[#fdfbf7] dark:bg-[#1a1816] border border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-2xl max-w-md w-full p-8 relative transition-colors duration-300"
           >
             <button
               onClick={() => setPendingTemplate(null)}
-              className="absolute top-4 right-4 text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+              className="absolute top-4 right-4 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-200 transition-colors"
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -676,22 +640,22 @@ function DashboardPage() {
             </button>
 
             <div className="text-center mb-6">
-              <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Crown className="w-8 h-8 text-purple-500 dark:text-purple-400" />
+              <div className="w-16 h-16 bg-[#f5ebe0] dark:bg-stone-900 border border-[#e6ccb2] dark:border-stone-800 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Crown className="w-8 h-8 text-pink-500 fill-pink-500" />
               </div>
-              <h3 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Want Another Portfolio?</h3>
-              <p className="text-slate-600 dark:text-slate-300">
+              <h3 className="text-2xl font-bold text-stone-900 dark:text-stone-100 mb-2">Want Another Portfolio?</h3>
+              <p className="text-sm text-stone-600 dark:text-stone-300">
                 Free accounts are limited to <strong>1 portfolio</strong>. Upgrade to Premium for unlimited portfolios, or delete your existing one to switch.
               </p>
             </div>
 
             {existingPortfolios[0] && (
-              <div className="bg-slate-50 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl p-4 mb-6">
-                <p className="text-sm text-slate-700 dark:text-slate-200 font-medium text-center">
+              <div className="bg-[#f5ebe0]/60 dark:bg-stone-900/60 border border-[#e6ccb2] dark:border-stone-800 rounded-xl p-4 mb-6">
+                <p className="text-sm text-stone-800 dark:text-stone-200 font-medium text-center">
                   Current portfolio: <span className="font-bold">{existingPortfolios[0].title}</span>
                 </p>
                 {getPortfolioUrl(existingPortfolios[0]) && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 text-center mt-1">
+                  <p className="text-xs font-mono text-pink-600 dark:text-pink-400 text-center mt-1">
                     {getPortfolioUrl(existingPortfolios[0])}
                   </p>
                 )}
@@ -702,9 +666,9 @@ function DashboardPage() {
             {!isPremium && (
               <button
                 onClick={() => { setPendingTemplate(null); navigate('/pricing') }}
-                className="w-full mb-3 py-3 px-4 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
+                className="w-full mb-3 py-3 px-4 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-xl font-extrabold transition-all duration-300 flex items-center justify-center gap-2 shadow-md"
               >
-                <Crown className="w-5 h-5" />
+                <Crown className="w-5 h-5 text-stone-950" />
                 Upgrade to Premium — Unlock Unlimited Portfolios
               </button>
             )}
@@ -712,16 +676,16 @@ function DashboardPage() {
             {/* Divider */}
             <div className="relative my-4">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200 dark:border-slate-700"></div>
+                <div className="w-full border-t border-[#e6ccb2] dark:border-stone-800"></div>
               </div>
               <div className="relative flex justify-center">
-                <span className="px-3 bg-white dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs">{isPremium ? 'Delete existing to create a new one' : 'or'}</span>
+                <span className="px-3 bg-[#fdfbf7] dark:bg-[#1a1816] text-stone-400 dark:text-stone-500 text-xs">{isPremium ? 'Delete existing to create a new one' : 'or'}</span>
               </div>
             </div>
 
             {/* Delete & switch option */}
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-3 mb-3">
-              <p className="text-xs text-red-700 dark:text-red-400 text-center">
+            <div className="bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900/40 rounded-xl p-3 mb-3">
+              <p className="text-xs text-red-700 dark:text-red-300 font-semibold text-center">
                 ⚠️ Deleting is permanent and cannot be undone
               </p>
             </div>
@@ -729,7 +693,7 @@ function DashboardPage() {
               <button
                 onClick={() => setPendingTemplate(null)}
                 disabled={switchingPortfolio}
-                className="flex-1 py-3 px-4 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50"
+                className="flex-1 py-3 px-4 bg-[#f5ebe0] dark:bg-stone-800 hover:bg-[#e6ccb2] dark:hover:bg-stone-700 text-stone-900 dark:text-stone-200 rounded-xl font-semibold transition-all duration-300 disabled:opacity-50 border border-[#e6ccb2] dark:border-stone-700"
               >
                 Cancel
               </button>
