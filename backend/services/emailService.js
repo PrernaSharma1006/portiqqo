@@ -45,6 +45,7 @@ class EmailService {
       return true;
     } catch (error) {
       console.error('❌ Email service error:', error.message);
+      this.isConfigured = false; // Disable SMTP if connection check fails so sockets don't hang
       return false;
     }
   }
@@ -142,13 +143,14 @@ class EmailService {
     try {
       const sendPromise = this.transporter.sendMail(mailOptions);
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Email send connection timeout')), 4000)
+        setTimeout(() => reject(new Error('Email send connection timeout')), 3000)
       );
       const result = await Promise.race([sendPromise, timeoutPromise]);
       console.log('✅ OTP email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('❌ Failed to send OTP email (using dev/fallback mode):', error.message);
+      console.error('❌ Failed to send OTP email (disabling SMTP transporter):', error.message);
+      this.isConfigured = false; // Disable SMTP if sending fails so sockets don't hang
       return { success: true, messageId: 'fallback-otp-' + Date.now(), isFallback: true };
     }
   }
