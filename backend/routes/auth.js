@@ -14,7 +14,7 @@ const {
   getMe,
   updateProfile,
   checkEmail
-} = require('../controllers/authController.real');
+} = require('../controllers/authController');
 
 // @route   POST /api/auth/send-otp
 // @desc    Send OTP for login/registration

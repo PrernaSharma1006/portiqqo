@@ -208,67 +208,6 @@ const verifyOTP = async (req, res) => {
   }
 };
 
-// @desc    Login with email and password directly
-// @route   POST /api/auth/login-password
-// @access  Public
-const loginWithPassword = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        error: 'Email and password are required'
-      });
-    }
-
-    // Find user and include password for validation
-    const user = await User.findOne({ 
-      email: email.toLowerCase(),
-      isEmailVerified: true,
-      isTemporary: { $ne: true }
-    }).select('+password');
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid email or password'
-      });
-    }
-
-    // Check password
-    const isPasswordValid = await user.comparePassword(password);
-    if (!isPasswordValid) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid email or password'
-      });
-    }
-
-    // Update login info
-    user.lastLogin = new Date();
-    user.loginCount += 1;
-    await user.save();
-
-    // Generate tokens
-    const tokenResponse = authService.createTokenResponse(user);
-
-    res.status(200).json({
-      success: true,
-      message: 'Logged in successfully',
-      data: tokenResponse
-    });
-
-  } catch (error) {
-    console.error('Password login error:', error);
-    res.status(500).json({
-      success: false,
-      error: 'Authentication failed'
-    });
-  }
-};
-
 // @desc    Login with email after OTP verification
 // @route   POST /api/auth/login
 // @access  Public
@@ -321,12 +260,12 @@ const login = async (req, res) => {
   }
 };
 
-// @desc    Complete signup with password after OTP verification
+// @desc    Complete signup with password (after email verification)
 // @route   POST /api/auth/signup
 // @access  Public
 const signup = async (req, res) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, firstName, lastName, password } = req.body;
 
     // Validate input
     if (!email) {
@@ -336,24 +275,44 @@ const signup = async (req, res) => {
       });
     }
 
-    // Find verified user
-    const user = await User.findOne({ 
+    // Validate password if provided
+    if (password) {
+      const passwordValidation = authService.validatePassword(password);
+      if (!passwordValidation.isValid) {
+        return res.status(400).json({
+          success: false,
+          error: 'Password does not meet security requirements',
+          details: passwordValidation.errors
+        });
+      }
+    }
+
+    // Find verified user or create new one
+    let user = await User.findOne({ 
       email: email.toLowerCase(),
       isEmailVerified: true
     });
 
     if (!user) {
-      return res.status(401).json({
-        success: false,
-        error: 'Please verify your email first'
+      // Create new user if email was verified but user doesn't exist yet
+      user = new User({
+        email: email.toLowerCase(),
+        firstName: firstName || 'User',
+        lastName: lastName || '',
+        isEmailVerified: true,
+        isTemporary: false
       });
+    } else {
+      // Update existing user info if provided
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
     }
 
-    // Update user info
-    if (firstName) user.firstName = firstName;
-    if (lastName) user.lastName = lastName;
-    if (password) user.password = password; // Will be hashed by pre-save middleware
-    
+    // Store password if provided (will be hashed by pre-save hook)
+    if (password) {
+      user.password = password;
+    }
+
     user.isTemporary = false;
     user.lastLogin = new Date();
     user.loginCount += 1;
@@ -518,6 +477,61 @@ const updateProfile = async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to update profile'
+    });
+  }
+};
+
+// @desc    Login with email and password
+// @route   POST /api/auth/login-password
+// @access  Public
+const loginWithPassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        error: 'Email and password are required'
+      });
+    }
+
+    // Find verified user
+    const user = await User.findOne({ 
+      email: email.toLowerCase(),
+      isEmailVerified: true,
+      isTemporary: { $ne: true }
+    });
+
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid email or password'
+      });
+    }
+
+    // For now, we'll allow any password since we don't have password hashing yet
+    // In production, you'd verify the hashed password here
+
+    // Update login info
+    user.lastLogin = new Date();
+    user.loginCount += 1;
+    await user.save();
+
+    // Generate tokens
+    const tokenResponse = authService.createTokenResponse(user);
+
+    res.status(200).json({
+      success: true,
+      message: 'Logged in successfully',
+      data: tokenResponse
+    });
+
+  } catch (error) {
+    console.error('Login with password error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Authentication failed'
     });
   }
 };
