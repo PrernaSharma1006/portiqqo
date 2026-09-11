@@ -34,17 +34,6 @@ function HomePage() {
   const { user, isAuthenticated } = useAuth()
   const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false)
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(typeof window !== 'undefined' && (window.innerWidth <= 768 || window.matchMedia('(pointer: coarse)').matches))
-    }
-    checkMobile()
-    window.addEventListener('resize', checkMobile)
-    return () => window.removeEventListener('resize', checkMobile)
-  }, [])
-
   const [testimonials, setTestimonials] = useState([
     {
       name: "Sarah Johnson",
@@ -460,8 +449,8 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-x-hidden max-w-full w-full min-h-[calc(100vh-64px)] flex flex-col justify-center bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 py-8 sm:py-16 lg:py-24">
-        <div className="relative container-width section-padding max-w-full overflow-x-hidden w-full">
+      <section className="relative overflow-x-hidden max-w-full w-full bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-2 sm:pt-4 md:pt-6 pb-8 md:pb-14">
+        <div className="relative container-width section-padding max-w-full overflow-x-hidden">
           <motion.div 
             className="max-w-7xl mx-auto w-full"
             initial="initial"
@@ -469,38 +458,37 @@ function HomePage() {
             variants={staggerChildren}
           >
             {/* Main Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
-              {/* Left Content (Centered on mobile, left-aligned on desktop) */}
-              <div className="space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden text-center lg:text-left flex flex-col items-center lg:items-start">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1.5 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm mx-auto lg:mx-0">
-                  <Zap className="w-4 h-4 text-pink-500 flex-shrink-0" />
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center w-full">
+              {/* Left Content */}
+              <div className="space-y-4 sm:space-y-5 w-full max-w-full overflow-x-hidden">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-[11px] sm:text-xs font-semibold tracking-wide uppercase shadow-sm">
+                  <Zap className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
                   <span className="truncate">No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
                 <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
-                  <h1 className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-center lg:items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
+                  <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
                     <span>Build Your</span>
                     <StrokeText 
                       text="Dream Portfolio"
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={isMobile ? 48 : 88}
-                      alignCenter={isMobile}
+                      fontSize={64}
                       fontWeight={900}
                       letterSpacing={-1}
                       trigger="loop"
                       repeatDelay={2.5}
                       fillMode="wipe"
                       drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full my-0.5"
+                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full"
                     />
                     <span>Today</span>
                   </h1>
                 </motion.div>
                 
                 <motion.p 
-                  className="text-base sm:text-xl text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal"
+                  className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-lg font-normal"
                   variants={fadeInUp}
                 >
                   Stunning templates, powerful customization, and your own domain. 
@@ -508,53 +496,34 @@ function HomePage() {
                 </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto pt-1 justify-center lg:justify-start"
+                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-1"
                   variants={fadeInUp}
                 >
                   <Link 
                     to="/auth" 
-                    className="w-full sm:w-auto px-8 py-4 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base sm:text-lg shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center group"
+                    className="group px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center"
                   >
                     Start Building Free
-                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   
                   <button 
                     onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full sm:w-auto px-8 py-4 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm flex items-center justify-center"
+                    className="px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base transition-all duration-300 hover:-translate-y-0.5 shadow-sm"
                   >
                     Explore Templates
                   </button>
                 </motion.div>
-
-                {/* Hero Stat / Trust Highlights */}
-                <motion.div 
-                  variants={fadeInUp}
-                  className="pt-4 border-t border-[#e6ccb2]/60 dark:border-stone-800/60 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-stone-600 dark:text-stone-400 text-xs sm:text-sm font-semibold w-full"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                    <span>2,500+ Portfolios Created</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-pink-500 font-bold">⚡</span>
-                    <span>Sub-0.4s Fast Load</span>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-amber-500 font-bold">Presets</span>
-                    <span>6+ Profession Presets</span>
-                  </div>
-                </motion.div>
               </div>
 
-              {/* Right Content - Visual Element (Responsive on Mobile & Desktop) */}
+              {/* Right Content - Visual Element */}
               <motion.div 
-                className="relative w-full pt-4 lg:pt-0"
+                className="relative hidden md:block"
                 variants={fadeInUp}
               >
-                <div className="relative w-full h-[260px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
+                <div className="relative w-full h-[280px] sm:h-[350px] lg:h-[450px] flex items-center justify-center overflow-hidden">
                   {/* Rotating Circle - Editorial Beige Version */}
-                  <div className="absolute pointer-events-none w-[260px] h-[260px] sm:w-[380px] sm:h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
+                  <div className="hidden md:block absolute pointer-events-none w-[380px] h-[380px] lg:w-[450px] lg:h-[450px]" style={{ animation: 'spin-slow 25s linear infinite' }}>
                     <svg className="w-full h-full" viewBox="0 0 450 450">
                       <defs>
                         <path
@@ -562,7 +531,7 @@ function HomePage() {
                           d="M 225, 225 m -215, 0 a 215,215 0 1,1 430,0 a 215,215 0 1,1 -430,0"
                         />
                       </defs>
-                      <text className="text-[14px] sm:text-[15px] lg:text-[17px]" fontWeight="700" fill="#a89f91" opacity="0.45" letterSpacing="5">
+                      <text className="text-[15px] lg:text-[17px]" fontWeight="700" fill="#a89f91" opacity="0.45" letterSpacing="6">
                         <textPath href="#circlePath">
                           PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK • PORTIQQO • SHOWCASE YOUR WORK
                         </textPath>
@@ -570,34 +539,33 @@ function HomePage() {
                     </svg>
                   </div>
 
-                  {/* Center Content - Decorative Cards and Globe Icon */}
+                  {/* Center Content - Cards and Icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="relative">
-                      {/* Decorative Floating Card 1 */}
+                      {/* Decorative Cards */}
                       <motion.div 
-                        className="absolute -top-8 -left-10 sm:-top-16 lg:-top-20 sm:-left-16 lg:-left-20 w-32 h-22 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 rotate-[-10deg]"
-                        animate={{ y: [0, -6, 0], rotate: [-10, -6, -10] }}
+                        className="hidden md:block absolute -top-12 sm:-top-16 lg:-top-20 -left-12 sm:-left-16 lg:-left-20 w-36 h-26 sm:w-44 sm:h-30 lg:w-52 lg:h-34 bg-[#fdfbf7] dark:bg-stone-900 border-2 border-[#e6ccb2] dark:border-stone-800 rounded-2xl shadow-xl p-4 rotate-[-10deg]"
+                        animate={{ y: [0, -8, 0], rotate: [-10, -6, -10] }}
                         transition={{ duration: 4, repeat: Infinity }}
                       >
-                        <div className="text-stone-900 dark:text-stone-100 text-[11px] sm:text-sm font-bold mb-1 sm:mb-2">Web Developer</div>
-                        <div className="w-full h-1.5 sm:h-2 bg-pink-400/30 rounded-full mb-1"></div>
-                        <div className="w-3/4 h-1.5 sm:h-2 bg-pink-400/30 rounded-full"></div>
+                        <div className="text-stone-900 dark:text-stone-100 text-xs sm:text-sm font-bold mb-2">Web Developer</div>
+                        <div className="w-full h-2 bg-pink-400/30 rounded-full mb-1.5"></div>
+                        <div className="w-3/4 h-2 bg-pink-400/30 rounded-full"></div>
                       </motion.div>
 
-                      {/* Decorative Floating Card 2 */}
                       <motion.div 
-                        className="absolute -bottom-8 -right-8 sm:-bottom-14 lg:-bottom-16 sm:-right-14 lg:-right-16 w-30 h-20 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-xl sm:rounded-2xl shadow-xl p-2.5 sm:p-4 rotate-[8deg]"
-                        animate={{ y: [0, 6, 0], rotate: [8, 11, 8] }}
+                        className="hidden md:block absolute -bottom-10 sm:-bottom-14 lg:-bottom-16 -right-10 sm:-right-14 lg:-right-16 w-36 h-26 sm:w-42 sm:h-28 lg:w-48 lg:h-30 bg-[#f472b6] text-stone-950 rounded-2xl shadow-xl p-4 rotate-[8deg]"
+                        animate={{ y: [0, 8, 0], rotate: [8, 11, 8] }}
                         transition={{ duration: 3, repeat: Infinity, delay: 0.5 }}
                       >
-                        <div className="text-stone-950 font-bold text-[10px] sm:text-xs lg:text-sm mb-1 sm:mb-2">Photographer</div>
-                        <div className="w-full h-1.5 sm:h-2 bg-stone-950/20 rounded-full mb-1"></div>
-                        <div className="w-2/3 h-1.5 sm:h-2 bg-stone-950/20 rounded-full"></div>
+                        <div className="text-white/90 text-[10px] sm:text-xs lg:text-sm font-semibold mb-1 sm:mb-2">Photographer</div>
+                        <div className="w-full h-1.5 sm:h-2 bg-white/30 rounded-full mb-1"></div>
+                        <div className="w-2/3 h-1.5 sm:h-2 bg-white/30 rounded-full"></div>
                       </motion.div>
 
-                      {/* Center Icon */}
-                      <div className="flex w-16 h-16 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
-                        <Globe className="w-8 h-8 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
+                      {/* Center Icon - Hidden on mobile, shown on md and up */}
+                      <div className="hidden md:flex w-20 h-20 sm:w-28 sm:h-28 lg:w-32 lg:h-32 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl sm:rounded-3xl items-center justify-center shadow-2xl">
+                        <Globe className="w-10 h-10 sm:w-14 sm:h-14 lg:w-16 lg:h-16 text-white" />
                       </div>
                     </div>
                   </div>
