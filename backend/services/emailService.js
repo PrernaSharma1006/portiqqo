@@ -13,13 +13,15 @@ class EmailService {
     }
 
     const cleanPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
-    const emailPort = parseInt(process.env.EMAIL_PORT) || 587;
+    // Default to Port 465 (SSL) which is open on cloud hosting providers like Render
+    const emailPort = parseInt(process.env.EMAIL_PORT) || 465;
+    const isSecure = emailPort === 465 || process.env.EMAIL_SECURE === 'true';
 
     this.isConfigured = true;
     this.transporter = nodemailer.createTransport({
       host: process.env.EMAIL_HOST || 'smtp.gmail.com',
       port: emailPort,
-      secure: emailPort === 465, // true for 465, false for 587/other
+      secure: isSecure, // true for 465 (SSL)
       connectionTimeout: 10000,
       greetingTimeout: 10000,
       socketTimeout: 10000,
@@ -146,14 +148,35 @@ class EmailService {
     try {
       const sendPromise = this.transporter.sendMail(mailOptions);
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Email send connection timeout')), 10000)
+        setTimeout(() => reject(new Error('Email send connection timeout')), 8000)
       );
       const result = await Promise.race([sendPromise, timeoutPromise]);
       console.log('✅ OTP email sent successfully:', result.messageId);
       return { success: true, messageId: result.messageId };
     } catch (error) {
-      console.error('❌ Failed to send OTP email via SMTP:', error.message);
-      return { success: true, messageId: 'fallback-otp-' + Date.now(), isFallback: true };
+      console.warn('⚠️ Primary SMTP transport notice (' + error.message + '). Retrying via Port 465 SSL...');
+      try {
+        const cleanPass = (process.env.EMAIL_PASS || '').replace(/\s+/g, '');
+        const fallbackTransporter = nodemailer.createTransport({
+          host: process.env.EMAIL_HOST || 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          connectionTimeout: 10000,
+          greetingTimeout: 10000,
+          socketTimeout: 10000,
+          auth: {
+            user: process.env.EMAIL_USER,
+            pass: cleanPass
+          },
+          tls: { rejectUnauthorized: false }
+        });
+        const fallbackResult = await fallbackTransporter.sendMail(mailOptions);
+        console.log('✅ OTP email sent successfully via Port 465 SSL fallback:', fallbackResult.messageId);
+        return { success: true, messageId: fallbackResult.messageId };
+      } catch (fallbackErr) {
+        console.error('❌ Failed to send OTP email via Port 465 SSL:', fallbackErr.message);
+        return { success: true, messageId: 'fallback-otp-' + Date.now(), isFallback: true };
+      }
     }
   }
 
