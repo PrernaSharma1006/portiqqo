@@ -51,7 +51,7 @@ const StrokeText = ({
 
   const [box, setBox] = useState(defaultBox);
 
-  const dash = Math.max(fontSize * 40, 3000);
+  const dash = Math.max(fontSize * 7, 300);
 
   const fontStyle = useMemo(
     () => ({
@@ -83,7 +83,7 @@ const StrokeText = ({
       const next = {
         x: Math.max(0, bbox.x - pad),
         y: bbox.y - pad,
-        width: bbox.width + pad * 6 + 40,
+        width: bbox.width + pad * 4 + 16,
         height: bbox.height + pad * 2
       };
 
@@ -247,16 +247,7 @@ const StrokeText = ({
         {fillMode === 'wipe' && activeBox && (
           <defs>
             <clipPath id={wipeId} clipPathUnits="userSpaceOnUse">
-              <rect
-                ref={wipeRectRef}
-                x={activeBox.x - 10}
-                y={activeBox.y - 10}
-                width="0"
-                height={activeBox.height + 20}
-                fill="white"
-                stroke="none"
-                strokeWidth="0"
-              />
+              <rect ref={wipeRectRef} x={activeBox.x} y={activeBox.y} width="0" height={activeBox.height} />
             </clipPath>
           </defs>
         )}

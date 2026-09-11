@@ -34,7 +34,7 @@
     }
   }
   
-  /* Custom scrollbar */
+  /* Custom scrollbar for desktop */
   ::-webkit-scrollbar {
     width: 6px;
   }
@@ -49,6 +49,26 @@
   
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-pink-500 dark:bg-pink-400;
+  }
+
+  /* Hide scrollbar on mobile view to remove pink line on the right edge */
+  @media (max-width: 768px) {
+    ::-webkit-scrollbar {
+      display: none;
+      width: 0 !important;
+      height: 0 !important;
+    }
+
+    html, body {
+      scrollbar-width: none !important;
+      -ms-overflow-style: none !important;
+    }
+
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+      display: none !important;
+      width: 0 !important;
+      height: 0 !important;
+    }
   }
 }
 

@@ -460,7 +460,7 @@ function HomePage() {
       </Helmet>
 
       {/* Hero Section */}
-      <section className="relative overflow-x-hidden max-w-full w-full bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 pt-6 sm:pt-10 lg:pt-4 pb-10 sm:pb-16 lg:pb-14">
+      <section className="relative overflow-x-hidden max-w-full w-full min-h-[calc(100vh-64px)] flex flex-col justify-center bg-[#f9f6f0] dark:bg-[#141210] border-b border-[#e6ccb2]/60 dark:border-stone-800/80 py-8 sm:py-16 lg:py-24">
         <div className="relative container-width section-padding max-w-full overflow-x-hidden w-full">
           <motion.div 
             className="max-w-7xl mx-auto w-full"
@@ -469,23 +469,23 @@ function HomePage() {
             variants={staggerChildren}
           >
             {/* Main Hero Content */}
-            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center w-full">
-              {/* Left Content */}
-              <div className="space-y-5 lg:space-y-5 w-full max-w-full overflow-x-hidden text-center lg:text-left flex flex-col items-center lg:items-start">
-                <motion.div variants={fadeInUp} className="inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-3.5 py-1 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-[11px] sm:text-xs font-semibold tracking-wide uppercase shadow-sm mx-auto lg:mx-0">
-                  <Zap className="w-3.5 h-3.5 text-pink-500 flex-shrink-0" />
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center w-full">
+              {/* Left Content (Centered on mobile, left-aligned on desktop) */}
+              <div className="space-y-6 sm:space-y-8 w-full max-w-full overflow-x-hidden text-center lg:text-left flex flex-col items-center lg:items-start">
+                <motion.div variants={fadeInUp} className="inline-flex items-center gap-2 px-3.5 py-1.5 max-w-full bg-[#f5ebe0] border border-[#e6ccb2] dark:bg-stone-900/90 dark:border-stone-800 rounded-full text-stone-900 dark:text-pink-300 text-xs font-semibold tracking-wide uppercase shadow-sm mx-auto lg:mx-0">
+                  <Zap className="w-4 h-4 text-pink-500 flex-shrink-0" />
                   <span className="truncate">No Coding Required • Launch in Minutes</span>
                 </motion.div>
 
                 <motion.div variants={fadeInUp} className="w-full max-w-full overflow-x-hidden">
-                  <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-center lg:items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
+                  <h1 className="text-4xl sm:text-6xl md:text-6xl lg:text-7xl font-heading font-black text-stone-900 dark:text-stone-50 leading-[1.08] tracking-tight flex flex-col items-center lg:items-start gap-1 sm:gap-2 max-w-full overflow-x-hidden">
                     <span>Build Your</span>
                     <StrokeText 
                       text="Dream Portfolio"
                       fillColor="#f472b6"
                       strokeColor="#f472b6"
                       strokeWidth={2}
-                      fontSize={isMobile ? 38 : 100}
+                      fontSize={isMobile ? 48 : 88}
                       alignCenter={isMobile}
                       fontWeight={900}
                       letterSpacing={-1}
@@ -493,14 +493,14 @@ function HomePage() {
                       repeatDelay={2.5}
                       fillMode="wipe"
                       drawDuration={1.4}
-                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full"
+                      className="text-[#f472b6] dark:text-[#f472b6] max-w-full my-0.5"
                     />
                     <span>Today</span>
                   </h1>
                 </motion.div>
                 
                 <motion.p 
-                  className="text-base sm:text-lg text-stone-600 dark:text-stone-300 leading-relaxed max-w-lg mx-auto lg:mx-0 font-normal"
+                  className="text-base sm:text-xl text-stone-600 dark:text-stone-300 leading-relaxed max-w-xl mx-auto lg:mx-0 font-normal"
                   variants={fadeInUp}
                 >
                   Stunning templates, powerful customization, and your own domain. 
@@ -508,20 +508,20 @@ function HomePage() {
                 </motion.p>
                 
                 <motion.div 
-                  className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto pt-1 justify-center lg:justify-start"
+                  className="flex flex-col sm:flex-row gap-3.5 sm:gap-4 w-full sm:w-auto pt-1 justify-center lg:justify-start"
                   variants={fadeInUp}
                 >
                   <Link 
                     to="/auth" 
-                    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center group"
+                    className="w-full sm:w-auto px-8 py-4 bg-[#f472b6] hover:bg-[#ec4899] text-stone-950 rounded-2xl font-extrabold text-base sm:text-lg shadow-lg shadow-pink-500/20 transition-all duration-300 hover:-translate-y-0.5 flex items-center justify-center group"
                   >
                     Start Building Free
-                    <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
                   </Link>
                   
                   <button 
                     onClick={() => document.getElementById('templates')?.scrollIntoView({ behavior: 'smooth' })}
-                    className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-3.5 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base transition-all duration-300 hover:-translate-y-0.5 shadow-sm flex items-center justify-center"
+                    className="w-full sm:w-auto px-8 py-4 bg-[#f5ebe0] hover:bg-[#e6ccb2] text-stone-900 dark:bg-stone-900 dark:hover:bg-stone-800 dark:text-stone-100 border border-[#e6ccb2] dark:border-stone-800 rounded-2xl font-bold text-base sm:text-lg transition-all duration-300 hover:-translate-y-0.5 shadow-sm flex items-center justify-center"
                   >
                     Explore Templates
                   </button>
@@ -533,7 +533,7 @@ function HomePage() {
                   className="pt-4 border-t border-[#e6ccb2]/60 dark:border-stone-800/60 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-stone-600 dark:text-stone-400 text-xs sm:text-sm font-semibold w-full"
                 >
                   <div className="flex items-center gap-1.5">
-                    <span className="text-emerald-500 font-bold">●</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                     <span>2,500+ Portfolios Created</span>
                   </div>
                   <div className="flex items-center gap-1.5">
