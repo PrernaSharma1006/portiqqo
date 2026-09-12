@@ -15,6 +15,7 @@
   --behind-glow-color: rgba(244, 114, 182, 0.45);
   --behind-glow-size: 50%;
   --inner-gradient: linear-gradient(150deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 235, 224, 0.6) 100%);
+  --dark-inner-gradient: linear-gradient(150deg, rgba(28, 25, 23, 0.96) 0%, rgba(44, 36, 32, 0.9) 100%);
   --sunpillar-1: hsl(340, 82%, 76%);
   --sunpillar-2: hsl(30, 90%, 75%);
   --sunpillar-3: hsl(45, 90%, 75%);
@@ -118,6 +119,10 @@
   height: 100%;
   border-radius: var(--card-radius);
   overflow: hidden;
+}
+
+.dark .pc-inside {
+  background-image: var(--dark-inner-gradient, linear-gradient(150deg, rgba(28, 25, 23, 0.96) 0%, rgba(44, 36, 32, 0.9) 100%));
 }
 
 .pc-shine {

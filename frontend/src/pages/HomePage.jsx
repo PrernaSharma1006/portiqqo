@@ -1036,6 +1036,7 @@ function HomePage() {
               enableTilt={true}
               showUserInfo={false}
               innerGradient="linear-gradient(150deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 235, 224, 0.75) 100%)"
+              darkInnerGradient="linear-gradient(150deg, rgba(28, 25, 23, 0.95) 0%, rgba(41, 37, 36, 0.9) 100%)"
               className="w-full h-full"
             >
               <div className="relative flex flex-col h-full text-stone-900 dark:text-stone-100 justify-between">
@@ -1104,6 +1105,7 @@ function HomePage() {
               enableTilt={true}
               showUserInfo={false}
               innerGradient="linear-gradient(150deg, rgba(255, 255, 255, 0.98) 0%, rgba(245, 235, 224, 0.85) 50%, rgba(244, 114, 182, 0.22) 100%)"
+              darkInnerGradient="linear-gradient(150deg, rgba(28, 25, 23, 0.98) 0%, rgba(44, 24, 38, 0.92) 50%, rgba(244, 114, 182, 0.18) 100%)"
               className="w-full h-full"
             >
               <div className="relative flex flex-col h-full text-stone-900 dark:text-stone-100 justify-between">

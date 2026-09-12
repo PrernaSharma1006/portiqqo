@@ -92,6 +92,21 @@ function Header() {
     return items
   }, [location.pathname, isAuthenticated])
 
+  const mobileNavItems = useMemo(() => {
+    const items = [...navItems]
+    if (isAuthenticated) {
+      items.push({
+        label: 'Logout',
+        href: '#logout',
+        onClick: (e) => {
+          e?.preventDefault?.()
+          handleLogout()
+        }
+      })
+    }
+    return items
+  }, [navItems, isAuthenticated])
+
   return (
     <header className="sticky top-0 z-50 py-1.5 bg-[#f9f6f0]/95 dark:bg-[#141210]/95 backdrop-blur-md border-b border-[#e6ccb2]/80 dark:border-stone-800 transition-colors duration-300">
       <div className="container-width px-3 sm:px-6 md:px-8">
@@ -246,7 +261,7 @@ function Header() {
               {isDark ? <Sun className="w-4 h-4 text-pink-400" /> : <Moon className="w-4 h-4 text-stone-700" />}
             </button>
             <PillNav
-              items={navItems}
+              items={mobileNavItems}
               activeHref={location.pathname}
               baseColor={isDark ? '#26221f' : '#f5ebe0'}
               pillColor={isDark ? '#141210' : '#1c1917'}

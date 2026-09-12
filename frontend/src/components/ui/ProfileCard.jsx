@@ -20,6 +20,7 @@ const ProfileCardComponent = ({
   iconUrl,
   grainUrl,
   innerGradient,
+  darkInnerGradient,
   behindGlowEnabled = true,
   behindGlowColor,
   behindGlowSize,
@@ -213,16 +214,21 @@ const ProfileCardComponent = ({
       const shell = shellRef.current;
       if (!shell || !tiltEngine) return;
 
-      const { beta, gamma } = event;
-      if (beta == null || gamma == null) return;
+      const beta = event.beta ?? 0;
+      const gamma = event.gamma ?? 0;
 
-      const centerX = shell.clientWidth / 2;
-      const centerY = shell.clientHeight / 2;
-      const x = clamp(centerX + gamma * mobileTiltSensitivity, 0, shell.clientWidth);
-      const y = clamp(
-        centerY + (beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) * mobileTiltSensitivity,
+      const width = shell.clientWidth || 1;
+      const height = shell.clientHeight || 1;
+
+      const x = clamp(
+        (gamma / (mobileTiltSensitivity * 2) + 0.5) * width,
         0,
-        shell.clientHeight
+        width
+      );
+      const y = clamp(
+        ((beta - ANIMATION_CONFIG.DEVICE_BETA_OFFSET) / (mobileTiltSensitivity * 2) + 0.5) * height,
+        0,
+        height
       );
 
       tiltEngine.setTarget(x, y);
@@ -231,50 +237,38 @@ const ProfileCardComponent = ({
   );
 
   useEffect(() => {
-    if (!enableTilt || !tiltEngine) return;
-
     const shell = shellRef.current;
-    if (!shell) return;
+    if (!shell || !tiltEngine) return;
 
-    const pointerMoveHandler = handlePointerMove;
-    const pointerEnterHandler = handlePointerEnter;
-    const pointerLeaveHandler = handlePointerLeave;
-    const deviceOrientationHandler = handleDeviceOrientation;
-
-    shell.addEventListener('pointerenter', pointerEnterHandler);
-    shell.addEventListener('pointermove', pointerMoveHandler);
-    shell.addEventListener('pointerleave', pointerLeaveHandler);
-
+    const pointerMoveHandler = e => handlePointerMove(e);
+    const pointerEnterHandler = e => handlePointerEnter(e);
+    const pointerLeaveHandler = () => handlePointerLeave();
     const handleClick = () => {
-      if (!enableMobileTilt || typeof window === 'undefined' || window.location.protocol !== 'https:') return;
-      const anyMotion = window.DeviceMotionEvent;
-      if (anyMotion && typeof anyMotion.requestPermission === 'function') {
-        anyMotion
-          .requestPermission()
-          .then(state => {
-            if (state === 'granted') {
-              window.addEventListener('deviceorientation', deviceOrientationHandler);
-            }
-          })
-          .catch(console.error);
-      } else {
-        window.addEventListener('deviceorientation', deviceOrientationHandler);
-      }
+      shell.classList.add('active');
     };
+
+    shell.addEventListener('pointermove', pointerMoveHandler);
+    shell.addEventListener('pointerenter', pointerEnterHandler);
+    shell.addEventListener('pointerleave', pointerLeaveHandler);
     shell.addEventListener('click', handleClick);
 
-    const initialX = (shell.clientWidth || 0) - ANIMATION_CONFIG.INITIAL_X_OFFSET;
-    const initialY = ANIMATION_CONFIG.INITIAL_Y_OFFSET;
-    tiltEngine.setImmediate(initialX, initialY);
-    tiltEngine.toCenter();
+    let deviceOrientationHandler = null;
+    if (enableMobileTilt && window.DeviceOrientationEvent) {
+      deviceOrientationHandler = e => handleDeviceOrientation(e);
+      window.addEventListener('deviceorientation', deviceOrientationHandler);
+    }
+
+    tiltEngine.setImmediate(shell.clientWidth / 2, shell.clientHeight / 2);
     tiltEngine.beginInitial(ANIMATION_CONFIG.INITIAL_DURATION);
 
     return () => {
-      shell.removeEventListener('pointerenter', pointerEnterHandler);
       shell.removeEventListener('pointermove', pointerMoveHandler);
+      shell.removeEventListener('pointerenter', pointerEnterHandler);
       shell.removeEventListener('pointerleave', pointerLeaveHandler);
       shell.removeEventListener('click', handleClick);
-      window.removeEventListener('deviceorientation', deviceOrientationHandler);
+      if (deviceOrientationHandler) {
+        window.removeEventListener('deviceorientation', deviceOrientationHandler);
+      }
       if (enterTimerRef.current) window.clearTimeout(enterTimerRef.current);
       if (leaveRafRef.current) cancelAnimationFrame(leaveRafRef.current);
       tiltEngine.cancel();
@@ -291,14 +285,20 @@ const ProfileCardComponent = ({
   ]);
 
   const cardStyle = useMemo(
-    () => ({
-      '--icon': iconUrl ? `url(${iconUrl})` : 'none',
-      '--grain': grainUrl ? `url(${grainUrl})` : 'none',
-      '--inner-gradient': innerGradient ?? DEFAULT_INNER_GRADIENT,
-      '--behind-glow-color': behindGlowColor ?? 'rgba(244, 114, 182, 0.45)',
-      '--behind-glow-size': behindGlowSize ?? '50%'
-    }),
-    [iconUrl, grainUrl, innerGradient, behindGlowColor, behindGlowSize]
+    () => {
+      const style = {
+        '--icon': iconUrl ? `url(${iconUrl})` : 'none',
+        '--grain': grainUrl ? `url(${grainUrl})` : 'none',
+        '--inner-gradient': innerGradient ?? DEFAULT_INNER_GRADIENT,
+        '--behind-glow-color': behindGlowColor ?? 'rgba(244, 114, 182, 0.45)',
+        '--behind-glow-size': behindGlowSize ?? '50%'
+      };
+      if (darkInnerGradient) {
+        style['--dark-inner-gradient'] = darkInnerGradient;
+      }
+      return style;
+    },
+    [iconUrl, grainUrl, innerGradient, darkInnerGradient, behindGlowColor, behindGlowSize]
   );
 
   const handleContactClick = useCallback(() => {
