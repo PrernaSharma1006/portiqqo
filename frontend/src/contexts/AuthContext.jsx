@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { setAuthToken, getApiUrl } from '../services/api';
+import toast from 'react-hot-toast';
 
 const AuthContext = createContext({});
+const INACTIVITY_TIMEOUT_MS = 30 * 60 * 1000; // 30 minutes of inactivity
 
 export const useAuth = () => {
   const context = useContext(AuthContext);
@@ -15,11 +17,46 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const lastActivityRef = useRef(Date.now());
+
+  const logout = useCallback((isAutoLogout = false) => {
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('lastActivityTime');
+    setAuthToken(null);
+    setUser(null);
+    setIsAuthenticated(false);
+
+    if (isAutoLogout) {
+      toast('Logged out due to inactivity for your security.', { icon: '🔒', duration: 4000 });
+    }
+  }, []);
+
+  const updateActivityTimestamp = useCallback(() => {
+    const now = Date.now();
+    // Throttle localStorage updates to once every 10 seconds
+    if (now - lastActivityRef.current > 10000) {
+      lastActivityRef.current = now;
+      localStorage.setItem('lastActivityTime', now.toString());
+    }
+  }, []);
 
   // Check for existing auth token on app start
   useEffect(() => {
     const checkAuthStatus = async () => {
       const token = localStorage.getItem('authToken');
+      const lastActiveStr = localStorage.getItem('lastActivityTime');
+
+      // Check if user was inactive for longer than timeout before making API request
+      if (token && lastActiveStr) {
+        const lastActiveTime = parseInt(lastActiveStr, 10);
+        if (Date.now() - lastActiveTime > INACTIVITY_TIMEOUT_MS) {
+          logout(true);
+          setIsLoading(false);
+          return;
+        }
+      }
+
       if (token) {
         try {
           const response = await fetch(getApiUrl('/api/auth/me'), {
@@ -34,27 +71,58 @@ export const AuthProvider = ({ children }) => {
             setUser(data.data?.user || data.data);
             setIsAuthenticated(true);
             setAuthToken(token);
+            const now = Date.now();
+            lastActivityRef.current = now;
+            localStorage.setItem('lastActivityTime', now.toString());
           } else {
-            localStorage.removeItem('authToken');
-            localStorage.removeItem('refreshToken');
-            setAuthToken(null);
-            setUser(null);
-            setIsAuthenticated(false);
+            logout(false);
           }
         } catch (error) {
           console.error('Auth verification error:', error);
-          localStorage.removeItem('authToken');
-          localStorage.removeItem('refreshToken');
-          setAuthToken(null);
-          setUser(null);
-          setIsAuthenticated(false);
+          logout(false);
         }
       }
       setIsLoading(false);
     };
 
     checkAuthStatus();
-  }, []);
+  }, [logout]);
+
+  // Listen for user interactions when logged in to track activity
+  useEffect(() => {
+    if (!isAuthenticated) return;
+
+    const now = Date.now();
+    lastActivityRef.current = now;
+    localStorage.setItem('lastActivityTime', now.toString());
+
+    const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    
+    const handleUserActivity = () => {
+      updateActivityTimestamp();
+    };
+
+    events.forEach((event) => {
+      window.addEventListener(event, handleUserActivity, { passive: true });
+    });
+
+    // Periodically check if user has been inactive for > 30 mins
+    const interval = setInterval(() => {
+      const lastActiveStr = localStorage.getItem('lastActivityTime');
+      const lastActive = lastActiveStr ? parseInt(lastActiveStr, 10) : lastActivityRef.current;
+      
+      if (Date.now() - lastActive > INACTIVITY_TIMEOUT_MS) {
+        logout(true);
+      }
+    }, 15000);
+
+    return () => {
+      events.forEach((event) => {
+        window.removeEventListener(event, handleUserActivity);
+      });
+      clearInterval(interval);
+    };
+  }, [isAuthenticated, updateActivityTimestamp, logout]);
 
   const login = async (email, password = null) => {
     try {
@@ -80,13 +148,14 @@ export const AuthProvider = ({ children }) => {
         const token = data.data.token;
         localStorage.setItem('authToken', token);
         localStorage.setItem('refreshToken', data.data.refreshToken || '');
+        localStorage.setItem('lastActivityTime', Date.now().toString());
         setAuthToken(token);
         setUser(data.data.user);
         setIsAuthenticated(true);
         
         return { success: true, user: data.data.user };
       } else {
-        // OTP-based login (existing functionality)
+        // OTP-based login
         const response = await fetch(getApiUrl('/api/auth/login'), {
           method: 'POST',
           headers: {
@@ -103,6 +172,7 @@ export const AuthProvider = ({ children }) => {
         
         const token = data.token;
         localStorage.setItem('authToken', token);
+        localStorage.setItem('lastActivityTime', Date.now().toString());
         setAuthToken(token);
         setUser(data.user);
         setIsAuthenticated(true);
@@ -137,6 +207,7 @@ export const AuthProvider = ({ children }) => {
       
       const token = data.data.token;
       localStorage.setItem('authToken', token);
+      localStorage.setItem('lastActivityTime', Date.now().toString());
       setAuthToken(token);
       setUser(data.data.user);
       setIsAuthenticated(true);
@@ -167,25 +238,18 @@ export const AuthProvider = ({ children }) => {
         const data = await response.json();
         setUser(data.data?.user || data.data);
         setIsAuthenticated(true);
+        localStorage.setItem('lastActivityTime', Date.now().toString());
         return data.data?.user || data.data;
       } else {
         // Token is invalid
-        logout();
+        logout(false);
         return null;
       }
     } catch (error) {
       console.error('Get current user error:', error);
-      logout();
+      logout(false);
       return null;
     }
-  };
-
-  const logout = () => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('refreshToken');
-    setAuthToken(null);
-    setUser(null);
-    setIsAuthenticated(false);
   };
 
   const checkEmailExists = async (email) => {
@@ -232,6 +296,7 @@ export const AuthProvider = ({ children }) => {
       }
       
       setUser(data.user);
+      localStorage.setItem('lastActivityTime', Date.now().toString());
       return { success: true, user: data.user };
     } catch (error) {
       console.error('Profile update error:', error);
@@ -243,6 +308,7 @@ export const AuthProvider = ({ children }) => {
 
   const loginWithToken = async (token) => {
     localStorage.setItem('authToken', token);
+    localStorage.setItem('lastActivityTime', Date.now().toString());
     setAuthToken(token);
     const response = await fetch(getApiUrl('/api/auth/me'), {
       headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
@@ -298,6 +364,7 @@ export const AuthProvider = ({ children }) => {
       const token = data.data?.token || data.token;
       if (token) {
         localStorage.setItem('authToken', token);
+        localStorage.setItem('lastActivityTime', Date.now().toString());
         if (data.data?.refreshToken) {
           localStorage.setItem('refreshToken', data.data.refreshToken);
         }
